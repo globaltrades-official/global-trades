@@ -8,7 +8,7 @@ import {
   isSupabaseConfigured,
 } from '@/lib/supabase';
 
-const STORAGE_KEY = 'gt_wholesale_catalog_v1';
+const STORAGE_KEY = 'gt_wholesale_catalog_v2';
 
 // Default flagship IDs for Global Trades Malabar distribution:
 // 211: Monin Mojito Mint Syrup 1L
@@ -146,15 +146,7 @@ export function useProductCatalog() {
         try {
           const parsed = JSON.parse(e.newValue);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            setProducts(
-              parsed.map((p) => ({
-                ...p,
-                isFeatured:
-                  p.isFeatured !== undefined
-                    ? Boolean(p.isFeatured)
-                    : DEFAULT_FEATURED_IDS.includes(p.id),
-              }))
-            );
+            setProducts(parsed.map(normalizeProduct));
           }
         } catch (err) {
           console.warn('Failed to parse catalog from storage event:', err);
@@ -193,16 +185,23 @@ export function useProductCatalog() {
   // Update existing product
   const updateProduct = useCallback(
     (id, updatedFields) => {
+      let updatedItem = null;
       const updated = products.map((p) => {
         if (p.id == id) {
-          return {
+          updatedItem = {
             ...p,
             ...updatedFields,
             updatedAt: new Date().toISOString(),
           };
+          return updatedItem;
         }
         return p;
       });
+
+      if (updatedItem && isSupabaseConfigured()) {
+        updateProductInPostgres(updatedItem).catch(console.warn);
+      }
+
       persist(updated);
     },
     [products, persist]
@@ -211,16 +210,23 @@ export function useProductCatalog() {
   // Toggle featured status for home page showcase
   const toggleFeatured = useCallback(
     (id) => {
+      let toggledItem = null;
       const updated = products.map((p) => {
         if (p.id == id) {
-          return {
+          toggledItem = {
             ...p,
             isFeatured: !p.isFeatured,
             updatedAt: new Date().toISOString(),
           };
+          return toggledItem;
         }
         return p;
       });
+
+      if (toggledItem && isSupabaseConfigured()) {
+        updateProductInPostgres(toggledItem).catch(console.warn);
+      }
+
       persist(updated);
     },
     [products, persist]
