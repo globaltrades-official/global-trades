@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { CATALOG_PRODUCTS } from '@/data/catalogProducts';
 import {
-  subscribeToCloudCatalog,
-  saveCatalogToCloud,
-  isCloudConfigured,
-} from '@/lib/firebase';
+  subscribeToPostgresCatalog,
+  fetchCatalogFromPostgres,
+  saveCatalogToPostgres,
+  updateProductInPostgres,
+  isSupabaseConfigured,
+} from '@/lib/supabase';
 
 const STORAGE_KEY = 'gt_wholesale_catalog_v1';
 
@@ -42,10 +44,10 @@ export function useProductCatalog() {
     }));
   });
 
-  const [isCloudConnected, setIsCloudConnected] = useState(() => isCloudConfigured());
+  const [isCloudConnected, setIsCloudConnected] = useState(() => isSupabaseConfigured());
   const isInternalUpdate = useRef(false);
 
-  // Synchronize state changes to localStorage and Cloud (Firebase Firestore)
+  // Synchronize state changes to localStorage and PostgreSQL
   const persist = useCallback((nextProducts) => {
     isInternalUpdate.current = true;
     setProducts(nextProducts);
@@ -57,10 +59,10 @@ export function useProductCatalog() {
       console.error('Failed to persist products to localStorage:', e);
     }
 
-    // Broadcast to Firebase in the background so all phones & computers update instantly
-    if (isCloudConfigured()) {
-      saveCatalogToCloud(nextProducts).catch((err) => {
-        console.warn('Cloud sync background warning:', err);
+    // Broadcast to PostgreSQL in the background so all phones & computers update instantly
+    if (isSupabaseConfigured()) {
+      saveCatalogToPostgres(nextProducts).catch((err) => {
+        console.warn('PostgreSQL sync background warning:', err);
       });
     }
 
@@ -69,35 +71,70 @@ export function useProductCatalog() {
     }, 100);
   }, []);
 
-  // Listen to real-time Cloud updates from Firebase Firestore
+  // Listen to real-time Cloud updates from PostgreSQL (Supabase / pgAdmin 4)
   useEffect(() => {
-    const checkCloud = () => setIsCloudConnected(isCloudConfigured());
-    window.addEventListener('firebase-config-updated', checkCloud);
+    const checkCloud = () => setIsCloudConnected(isSupabaseConfigured());
+    window.addEventListener('supabase-config-updated', checkCloud);
 
-    const unsubscribe = subscribeToCloudCatalog((cloudProducts) => {
-      // Avoid re-triggering if this device was the origin of the update
-      if (isInternalUpdate.current) return;
+    // Initial fetch from PostgreSQL if configured
+    if (isSupabaseConfigured()) {
+      fetchCatalogFromPostgres().then((dbProducts) => {
+        if (Array.isArray(dbProducts) && dbProducts.length > 0) {
+          setProducts((current) => {
+            // Merge with local items or replace if db is populated
+            const normalized = dbProducts.map((p) => ({
+              ...p,
+              isFeatured:
+                p.isFeatured !== undefined
+                  ? Boolean(p.isFeatured)
+                  : DEFAULT_FEATURED_IDS.includes(p.id),
+            }));
+            try {
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+              window.dispatchEvent(new Event('catalog-updated'));
+            } catch (_) {}
+            return normalized;
+          });
+        }
+      });
+    }
 
-      if (Array.isArray(cloudProducts) && cloudProducts.length > 0) {
-        const normalized = cloudProducts.map((p) => ({
-          ...p,
-          isFeatured:
-            p.isFeatured !== undefined
-              ? Boolean(p.isFeatured)
-              : DEFAULT_FEATURED_IDS.includes(p.id),
-        }));
-        setProducts(normalized);
-
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
-          window.dispatchEvent(new Event('catalog-updated'));
-        } catch (_) {}
+    // Subscribe to live row edits from pgAdmin 4 or other devices
+    const unsubscribe = subscribeToPostgresCatalog(
+      (changedProduct) => {
+        if (isInternalUpdate.current) return;
+        setProducts((current) => {
+          const index = current.findIndex((p) => p.id === changedProduct.id);
+          let next;
+          if (index !== -1) {
+            next = [...current];
+            next[index] = { ...next[index], ...changedProduct };
+          } else {
+            next = [changedProduct, ...current];
+          }
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+            window.dispatchEvent(new Event('catalog-updated'));
+          } catch (_) {}
+          return next;
+        });
+      },
+      (deletedId) => {
+        if (isInternalUpdate.current) return;
+        setProducts((current) => {
+          const next = current.filter((p) => p.id !== deletedId);
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+            window.dispatchEvent(new Event('catalog-updated'));
+          } catch (_) {}
+          return next;
+        });
       }
-    });
+    );
 
     return () => {
       unsubscribe();
-      window.removeEventListener('firebase-config-updated', checkCloud);
+      window.removeEventListener('supabase-config-updated', checkCloud);
     };
   }, []);
 

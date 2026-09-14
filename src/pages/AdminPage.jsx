@@ -22,15 +22,18 @@ import {
   Database,
   Download,
   RefreshCw,
+  Copy,
+  Check,
 } from 'lucide-react';
 import { CATALOG_CATEGORIES, CATALOG_BRANDS } from '@/data/catalogProducts';
 import { BRANDING, CONTACT } from '@/constants/theme';
 import {
-  saveFirebaseConfig,
-  removeFirebaseConfig,
-  isCloudConfigured,
-  saveCatalogToCloud,
-} from '@/lib/firebase';
+  saveSupabaseConfig,
+  clearSupabaseConfig,
+  isSupabaseConfigured,
+  getSupabaseConfig,
+  saveCatalogToPostgres,
+} from '@/lib/supabase';
 
 export default function AdminPage({
   products = [],
@@ -61,8 +64,11 @@ export default function AdminPage({
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCloudModalOpen, setIsCloudModalOpen] = useState(false);
-  const [firebaseConfigInput, setFirebaseConfigInput] = useState('');
-  const [cloudConnected, setCloudConnected] = useState(() => isCloudConfigured());
+  const [supabaseUrlInput, setSupabaseUrlInput] = useState(() => getSupabaseConfig()?.url || '');
+  const [supabaseKeyInput, setSupabaseKeyInput] = useState(() => getSupabaseConfig()?.anonKey || '');
+  const [cloudConnected, setCloudConnected] = useState(() => isSupabaseConfigured());
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [copiedSchema, setCopiedSchema] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [productToDelete, setProductToDelete] = useState(null);
   const [toastMessage, setToastMessage] = useState('');
@@ -101,78 +107,123 @@ export default function AdminPage({
     sessionStorage.removeItem('gt_admin_auth');
   };
 
-  // Handle saving Firebase Configuration
-  const handleSaveFirebaseConfig = async (e) => {
+  const SQL_SCHEMA_TEXT = `-- 1. Create the products table for Global Trades
+CREATE TABLE IF NOT EXISTS public.products (
+  id INT PRIMARY KEY,
+  name TEXT NOT NULL,
+  brand TEXT,
+  category TEXT,
+  origin TEXT,
+  shelf_life TEXT,
+  pack_size TEXT,
+  description TEXT,
+  features JSONB DEFAULT '[]'::jsonb,
+  is_featured BOOLEAN DEFAULT false,
+  custom_image TEXT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- 2. Performance indexes
+CREATE INDEX IF NOT EXISTS idx_products_featured ON public.products (is_featured);
+CREATE INDEX IF NOT EXISTS idx_products_category ON public.products (category);
+
+-- 3. Row Level Security (RLS)
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+
+-- 4. Policies (Public Read + Full Edit)
+DROP POLICY IF EXISTS "Allow public read access" ON public.products;
+CREATE POLICY "Allow public read access" ON public.products FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Allow write access" ON public.products;
+CREATE POLICY "Allow write access" ON public.products FOR ALL USING (true) WITH CHECK (true);
+
+-- 5. Real-Time Replication (Syncs with mobile phones)
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables 
+    WHERE pubname = 'supabase_realtime' AND tablename = 'products'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.products;
+  END IF;
+END $$;`;
+
+  // Handle saving Supabase (PostgreSQL) Configuration
+  const handleSaveSupabaseConfig = async (e) => {
     e.preventDefault();
+    const url = supabaseUrlInput.trim();
+    const key = supabaseKeyInput.trim();
+
+    if (!url || !key) {
+      alert('Please enter both your Supabase Project URL and Anon Public Key.');
+      return;
+    }
+
+    if (!url.startsWith('https://')) {
+      alert('Project URL should start with https:// (e.g. https://xyzcompany.supabase.co)');
+      return;
+    }
+
+    setIsSyncing(true);
+    const saved = saveSupabaseConfig(url, key);
+    if (!saved) {
+      setIsSyncing(false);
+      alert('Failed to save configuration.');
+      return;
+    }
+
+    setCloudConnected(true);
+    showToast('PostgreSQL connected! Syncing catalog...');
+
     try {
-      let configObj = null;
-      const raw = firebaseConfigInput.trim();
-
-      if (raw.includes('{') && raw.includes('}')) {
-        const jsonMatch = raw.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          const jsonStr = jsonMatch[0]
-            .replace(/([a-zA-Z0-9_]+)\s*:/g, '"$1":')
-            .replace(/'/g, '"')
-            .replace(/,\s*}/g, '}');
-          try {
-            configObj = JSON.parse(jsonStr);
-          } catch (_) {
-            const extract = (key) => {
-              const m = raw.match(new RegExp(`${key}\\s*:\\s*["']([^"']+)["']`));
-              return m ? m[1] : '';
-            };
-            configObj = {
-              apiKey: extract('apiKey'),
-              authDomain: extract('authDomain'),
-              projectId: extract('projectId'),
-              storageBucket: extract('storageBucket'),
-              messagingSenderId: extract('messagingSenderId'),
-              appId: extract('appId'),
-            };
-          }
-        }
+      const ok = await saveCatalogToPostgres(products);
+      if (ok) {
+        showToast('All products synced to PostgreSQL! Mobile phones & pgAdmin 4 ready.');
+        setIsCloudModalOpen(false);
+      } else {
+        showToast('Connected, but initial sync had an issue. Please run the SQL schema in pgAdmin 4 first.');
       }
-
-      if (!configObj || !configObj.apiKey || !configObj.projectId) {
-        alert('Please paste a valid Firebase configuration containing at least apiKey and projectId.');
-        return;
-      }
-
-      saveFirebaseConfig(configObj);
-      setCloudConnected(true);
-      showToast('Firebase connected! Syncing catalog to cloud...');
-
-      await saveCatalogToCloud(products);
-      showToast('Catalog synced to Firebase! Changes are now live across all devices.');
-      setIsCloudModalOpen(false);
     } catch (err) {
-      console.error('Error configuring Firebase:', err);
-      alert('Failed to connect Firebase: ' + err.message);
+      console.error(err);
+      showToast('Error syncing to PostgreSQL. Ensure your table exists.');
+    } finally {
+      setIsSyncing(false);
     }
   };
 
   const handleDisconnectCloud = () => {
-    if (confirm('Disconnect Firebase cloud sync? Changes will only be saved to this local browser.')) {
-      removeFirebaseConfig();
+    if (confirm('Disconnect PostgreSQL database? Changes will only be saved locally in this browser.')) {
+      clearSupabaseConfig();
       setCloudConnected(false);
-      showToast('Disconnected from cloud.');
+      setSupabaseUrlInput('');
+      setSupabaseKeyInput('');
+      showToast('Disconnected from PostgreSQL.');
       setIsCloudModalOpen(false);
     }
   };
 
-  const handleManualCloudPush = async () => {
+  const handleManualPostgresPush = async () => {
     if (!cloudConnected) {
       setIsCloudModalOpen(true);
       return;
     }
-    showToast('Pushing catalog to cloud...');
-    const ok = await saveCatalogToCloud(products);
+    setIsSyncing(true);
+    showToast('Pushing catalog to PostgreSQL database...');
+    const ok = await saveCatalogToPostgres(products);
+    setIsSyncing(false);
     if (ok) {
-      showToast('Catalog updated in Cloud! All mobile phones & visitors will refresh.');
+      showToast('PostgreSQL database updated! All mobile phones & pgAdmin 4 are synchronized.');
     } else {
-      showToast('Failed to push to cloud. Check your Firebase credentials.');
+      showToast('Push failed. Make sure table "products" was created using the SQL schema.');
     }
+  };
+
+  const handleCopySchema = () => {
+    navigator.clipboard.writeText(SQL_SCHEMA_TEXT);
+    setCopiedSchema(true);
+    showToast('PostgreSQL Schema SQL copied to clipboard!');
+    setTimeout(() => setCopiedSchema(false), 3000);
   };
 
   const handleExportCatalog = () => {
@@ -404,7 +455,7 @@ export default function AdminPage({
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            {/* Cloud Sync Status Indicator & Button */}
+            {/* PostgreSQL & pgAdmin 4 Cloud Sync Button */}
             <button
               onClick={() => setIsCloudModalOpen(true)}
               className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
@@ -412,30 +463,31 @@ export default function AdminPage({
                   ? 'border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
                   : 'border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100'
               }`}
-              title="Configure real-time cross-device cloud sync"
+              title="Manage PostgreSQL database & pgAdmin 4 connection"
             >
               {cloudConnected ? (
                 <>
-                  <Cloud size={14} className="text-emerald-600" />
-                  <span>Cloud Synced (All Devices)</span>
+                  <Database size={14} className="text-emerald-600" />
+                  <span>PostgreSQL Connected</span>
                 </>
               ) : (
                 <>
                   <CloudOff size={14} className="text-amber-600" />
-                  <span>Connect Cloud Sync</span>
+                  <span>Connect PostgreSQL / pgAdmin 4</span>
                 </>
               )}
             </button>
 
-            {/* Force Push to Cloud Button */}
+            {/* Force Push to PostgreSQL */}
             {cloudConnected && (
               <button
-                onClick={handleManualCloudPush}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-200 bg-white px-3 py-1.5 text-xs font-bold text-emerald-800 hover:bg-emerald-50 transition-colors cursor-pointer"
-                title="Force push current catalog to cloud immediately"
+                onClick={handleManualPostgresPush}
+                disabled={isSyncing}
+                className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-200 bg-white px-3 py-1.5 text-xs font-bold text-emerald-800 hover:bg-emerald-50 transition-colors cursor-pointer disabled:opacity-50"
+                title="Force push entire catalog to PostgreSQL database"
               >
-                <RefreshCw size={13} />
-                <span>Sync Cloud Now</span>
+                <RefreshCw size={13} className={isSyncing ? 'animate-spin' : ''} />
+                <span>{isSyncing ? 'Pushing...' : 'Push to PostgreSQL'}</span>
               </button>
             )}
 
@@ -1022,10 +1074,10 @@ export default function AdminPage({
         </div>
       )}
 
-      {/* CLOUD DATABASE / FIREBASE SYNC MODAL */}
+      {/* POSTGRESQL & PGADMIN 4 CLOUD SYNC MODAL */}
       {isCloudModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="w-full max-w-xl rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-[#D0DFEF]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+          <div className="w-full max-w-2xl rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-[#D0DFEF] my-8">
             <div className="flex items-center justify-between pb-4 border-b border-[#D0DFEF]">
               <div className="flex items-center gap-2.5">
                 <div className="size-10 rounded-xl bg-[#1A4C98]/10 text-[#1A4C98] flex items-center justify-center">
@@ -1033,10 +1085,10 @@ export default function AdminPage({
                 </div>
                 <div>
                   <h3 className="text-lg font-black text-[#081426] uppercase">
-                    Real-time Cloud Database (Firebase)
+                    PostgreSQL Database &amp; pgAdmin 4 Sync
                   </h3>
                   <p className="text-xs text-[#081426]/70">
-                    Syncs catalog and featured products instantly across phones, laptops & visitors.
+                    Host your catalog on PostgreSQL and manage products directly from pgAdmin 4 on your PC.
                   </p>
                 </div>
               </div>
@@ -1048,7 +1100,7 @@ export default function AdminPage({
               </button>
             </div>
 
-            <div className="my-5 space-y-4">
+            <div className="my-5 space-y-4 max-h-[75vh] overflow-y-auto pr-1">
               {/* Current Status */}
               <div
                 className={`p-4 rounded-2xl border flex items-center justify-between ${
@@ -1059,59 +1111,112 @@ export default function AdminPage({
               >
                 <div className="flex items-center gap-3">
                   {cloudConnected ? (
-                    <Cloud size={24} className="text-emerald-600" />
+                    <Database size={24} className="text-emerald-600 shrink-0" />
                   ) : (
-                    <CloudOff size={24} className="text-amber-600" />
+                    <CloudOff size={24} className="text-amber-600 shrink-0" />
                   )}
                   <div>
                     <span className="text-xs font-black uppercase tracking-wider">
-                      {cloudConnected ? 'Status: Real-Time Cloud Active' : 'Status: Offline (Local Device Only)'}
+                      {cloudConnected ? 'Status: PostgreSQL Active & Syncing' : 'Status: Offline (Local Browser Only)'}
                     </span>
                     <p className="text-xs opacity-80 mt-0.5">
                       {cloudConnected
-                        ? 'Every inventory edit or featured item change is broadcasting to all visitors and phones in real-time.'
-                        : 'Changes are currently saved only to this browser. Connect Firebase to sync with mobile phones.'}
+                        ? 'Edits made in pgAdmin 4 or on this portal broadcast to mobile phones & web visitors in real time.'
+                        : 'Changes are currently saved only to this computer. Connect PostgreSQL to manage from pgAdmin 4 and sync with mobile.'}
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* Step-by-step setup guide */}
-              <div className="p-4 rounded-2xl bg-[#F8FAFC] border border-[#D0DFEF] text-xs space-y-2">
-                <span className="font-bold text-[#1A4C98] uppercase tracking-wider block">
-                  Quick Free Setup (Takes 2 Minutes):
+              {/* Step-by-Step Setup Guide */}
+              <div className="p-4 rounded-2xl bg-[#F8FAFC] border border-[#D0DFEF] text-xs space-y-3">
+                <span className="font-black text-[#1A4C98] uppercase tracking-wider block">
+                  Quick Setup Guide (PostgreSQL + pgAdmin 4):
                 </span>
-                <ol className="list-decimal list-inside space-y-1.5 text-[#081426]/80 font-medium">
-                  <li>
-                    Go to{' '}
-                    <a
-                      href="https://console.firebase.google.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#1A4C98] font-bold underline inline-flex items-center gap-1"
-                    >
-                      console.firebase.google.com <ExternalLink size={11} />
-                    </a>{' '}
-                    and create a free project.
-                  </li>
-                  <li>In Project Settings, click <strong>Add Web App</strong> and copy the <code className="bg-white px-1 py-0.5 rounded border border-gray-200">firebaseConfig</code> snippet.</li>
-                  <li>Under Build, click <strong>Cloud Firestore</strong> &rarr; <strong>Create Database</strong> (start in Test mode).</li>
-                  <li>Paste the configuration snippet below and click <strong>Connect &amp; Sync Now</strong>!</li>
-                </ol>
+
+                <div className="space-y-2 text-[#081426]/80 font-medium">
+                  <div className="flex items-start gap-2">
+                    <span className="size-5 rounded-full bg-[#1A4C98]/10 text-[#1A4C98] font-bold flex items-center justify-center shrink-0 text-[10px]">1</span>
+                    <p>
+                      Create a free cloud PostgreSQL database at{' '}
+                      <a
+                        href="https://supabase.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#1A4C98] font-bold underline inline-flex items-center gap-1"
+                      >
+                        supabase.com <ExternalLink size={11} />
+                      </a>
+                    </p>
+                  </div>
+
+                  <div className="flex items-start gap-2">
+                    <span className="size-5 rounded-full bg-[#1A4C98]/10 text-[#1A4C98] font-bold flex items-center justify-center shrink-0 text-[10px]">2</span>
+                    <div className="w-full">
+                      <p className="mb-1.5">
+                        Run the SQL schema below to create the <code className="bg-white px-1 py-0.5 rounded border border-gray-200 font-mono text-[11px]">products</code> table and enable real-time mobile sync:
+                      </p>
+                      <button
+                        type="button"
+                        onClick={handleCopySchema}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#1A4C98]/30 bg-white text-[#1A4C98] font-bold hover:bg-sky-50 transition-colors cursor-pointer text-xs"
+                      >
+                        {copiedSchema ? <Check size={13} className="text-emerald-600" /> : <Copy size={13} />}
+                        <span>{copiedSchema ? 'SQL Schema Copied!' : 'Copy PostgreSQL SQL Schema'}</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2">
+                    <span className="size-5 rounded-full bg-[#1A4C98]/10 text-[#1A4C98] font-bold flex items-center justify-center shrink-0 text-[10px]">3</span>
+                    <div className="w-full">
+                      <p className="font-bold text-[#081426] mb-1">To connect in pgAdmin 4 on your PC:</p>
+                      <ul className="list-disc list-inside space-y-0.5 text-xs text-[#081426]/70 pl-1 font-mono">
+                        <li>In pgAdmin 4 &rarr; <strong>Servers</strong> &rarr; <strong>Register</strong> &rarr; <strong>Server</strong></li>
+                        <li><strong>General &rarr; Name</strong>: <span className="text-[#1A4C98]">Global Trades DB</span></li>
+                        <li><strong>Connection &rarr; Host</strong>: <span className="text-[#1A4C98]">db.[your-project-ref].supabase.co</span></li>
+                        <li><strong>Port</strong>: <span className="text-[#1A4C98]">5432</span> | <strong>Maintenance DB</strong>: <span className="text-[#1A4C98]">postgres</span></li>
+                        <li><strong>Username</strong>: <span className="text-[#1A4C98]">postgres</span> | <strong>Password</strong>: <span className="text-[#1A4C98]">[Your DB Password]</span></li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2">
+                    <span className="size-5 rounded-full bg-[#1A4C98]/10 text-[#1A4C98] font-bold flex items-center justify-center shrink-0 text-[10px]">4</span>
+                    <p>
+                      In Supabase &rarr; <strong>Project Settings</strong> &rarr; <strong>API</strong>, copy your <strong>Project URL</strong> and <strong>anon public key</strong>, paste them below, and click Connect!
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              {/* Paste Config Area */}
-              <form onSubmit={handleSaveFirebaseConfig} className="space-y-3">
+              {/* PostgreSQL Supabase Credentials Form */}
+              <form onSubmit={handleSaveSupabaseConfig} className="space-y-3">
                 <div>
                   <label className="block text-xs font-bold text-[#081426] mb-1 uppercase tracking-wider">
-                    Firebase Config JSON or Snippet
+                    Supabase Project URL
                   </label>
-                  <textarea
-                    rows={4}
-                    value={firebaseConfigInput}
-                    onChange={(e) => setFirebaseConfigInput(e.target.value)}
-                    placeholder={`const firebaseConfig = {\n  apiKey: "AIzaSy...",\n  projectId: "your-project-id",\n  ...\n};`}
-                    className="w-full rounded-xl border border-[#D0DFEF] p-3 font-mono text-xs focus:border-[#1A4C98] focus:outline-none bg-[#F4F8FC]"
+                  <input
+                    type="url"
+                    value={supabaseUrlInput}
+                    onChange={(e) => setSupabaseUrlInput(e.target.value)}
+                    placeholder="https://xyzabcdefghijklmnop.supabase.co"
+                    className="w-full rounded-xl border border-[#D0DFEF] p-2.5 font-mono text-xs focus:border-[#1A4C98] focus:outline-none bg-[#F4F8FC]"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[#081426] mb-1 uppercase tracking-wider">
+                    Supabase Anon Public API Key
+                  </label>
+                  <input
+                    type="text"
+                    value={supabaseKeyInput}
+                    onChange={(e) => setSupabaseKeyInput(e.target.value)}
+                    placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    className="w-full rounded-xl border border-[#D0DFEF] p-2.5 font-mono text-xs focus:border-[#1A4C98] focus:outline-none bg-[#F4F8FC]"
+                    required
                   />
                 </div>
 
@@ -1122,7 +1227,7 @@ export default function AdminPage({
                       onClick={handleDisconnectCloud}
                       className="text-xs font-bold text-red-600 hover:text-red-800 transition-colors cursor-pointer"
                     >
-                      Disconnect Cloud
+                      Disconnect PostgreSQL
                     </button>
                   ) : (
                     <span />
@@ -1138,9 +1243,11 @@ export default function AdminPage({
                     </button>
                     <button
                       type="submit"
-                      className="rounded-xl bg-[#1A4C98] px-5 py-2 text-xs font-black uppercase tracking-wider text-white shadow-md hover:bg-[#123873] cursor-pointer"
+                      disabled={isSyncing}
+                      className="inline-flex items-center gap-2 rounded-xl bg-[#1A4C98] px-5 py-2 text-xs font-black uppercase tracking-wider text-white shadow-md hover:bg-[#123873] cursor-pointer disabled:opacity-50"
                     >
-                      Connect &amp; Sync Now
+                      {isSyncing && <RefreshCw size={13} className="animate-spin" />}
+                      <span>{isSyncing ? 'Connecting & Syncing...' : 'Connect & Sync to PostgreSQL'}</span>
                     </button>
                   </div>
                 </div>
