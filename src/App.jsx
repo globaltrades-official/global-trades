@@ -191,7 +191,7 @@ export default function App() {
           <Hero onNavigate={navigateTo} />
 
           {/* 2. 3D Product Carousel Showcase */}
-          <Carousel />
+          <Carousel products={products} onNavigate={navigateTo} />
 
           {/* 3. Social Proof & Institutional Strengths (Google Reviews) */}
           <AlternatingText />

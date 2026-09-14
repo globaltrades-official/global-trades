@@ -29,14 +29,42 @@ export function useProductCatalog() {
 
   const [loading, setLoading] = useState(false);
 
-  // Synchronize state changes to localStorage
+  // Synchronize state changes to localStorage and across tabs
   const persist = useCallback((nextProducts) => {
     setProducts(nextProducts);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(nextProducts));
+      window.dispatchEvent(new Event('catalog-updated'));
     } catch (e) {
       console.error('Failed to persist products to localStorage:', e);
     }
+  }, []);
+
+  // Listen to storage events for cross-tab synchronization
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === STORAGE_KEY && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setProducts(
+              parsed.map((p) => ({
+                ...p,
+                isFeatured:
+                  p.isFeatured !== undefined
+                    ? Boolean(p.isFeatured)
+                    : DEFAULT_FEATURED_IDS.includes(p.id),
+              }))
+            );
+          }
+        } catch (err) {
+          console.warn('Failed to parse catalog from storage event:', err);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   // Add new product
@@ -67,7 +95,7 @@ export function useProductCatalog() {
   const updateProduct = useCallback(
     (id, updatedFields) => {
       const updated = products.map((p) => {
-        if (p.id === id) {
+        if (p.id == id) {
           return {
             ...p,
             ...updatedFields,
@@ -85,7 +113,7 @@ export function useProductCatalog() {
   const toggleFeatured = useCallback(
     (id) => {
       const updated = products.map((p) => {
-        if (p.id === id) {
+        if (p.id == id) {
           return {
             ...p,
             isFeatured: !p.isFeatured,
@@ -102,7 +130,7 @@ export function useProductCatalog() {
   // Delete product
   const deleteProduct = useCallback(
     (id) => {
-      const updated = products.filter((p) => p.id !== id);
+      const updated = products.filter((p) => p.id != id);
       persist(updated);
     },
     [products, persist]

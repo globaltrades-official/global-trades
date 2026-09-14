@@ -3,9 +3,9 @@ import { useProgress } from '@react-three/drei';
 import { BRANDING } from '../constants/theme';
 
 export default function CustomLoader() {
-  const { active, progress } = useProgress();
-  const [visible, setVisible] = useState(active);
-  const [opacity, setOpacity] = useState(active ? 1 : 0);
+  const { active } = useProgress();
+  const [visible, setVisible] = useState(false);
+  const [opacity, setOpacity] = useState(0);
 
   useEffect(() => {
     let timer;
@@ -13,24 +13,12 @@ export default function CustomLoader() {
       setVisible(true);
       setOpacity(1);
     } else {
-      // Fade out smoothly
       setOpacity(0);
       timer = setTimeout(() => {
         setVisible(false);
-      }, 400);
+      }, 350);
     }
     return () => clearTimeout(timer);
-  }, [active]);
-
-  // Safety fallback: Never keep loader displayed for more than 3 seconds if not active
-  useEffect(() => {
-    const safety = setTimeout(() => {
-      if (!active) {
-        setOpacity(0);
-        setTimeout(() => setVisible(false), 300);
-      }
-    }, 2500);
-    return () => clearTimeout(safety);
   }, [active]);
 
   if (!visible) return null;

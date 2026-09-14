@@ -1,29 +1,62 @@
-import React, { useMemo } from 'react';
-import { useTexture } from '@react-three/drei';
+import React, { useState, useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
-// Preload company logo and all 5 featured carousel product images for instant, smooth 3D switching
-useTexture.preload([
-  '/company-logo.png',
-  '/products/monin-syrup.jpg',
-  '/products/morton-peaches.jpg',
-  '/products/callebaut-chocolate.jpg',
-  '/products/goldencrown-mushrooms.jpg',
-  '/products/veeba-mayo.jpg',
-]);
+const FALLBACK_TEXTURE_URL = '/company-logo.png';
+const textureCache = new Map();
+const textureLoader = new THREE.TextureLoader();
+
+// Preload the default fallback texture immediately
+let defaultTexture = null;
+textureLoader.load(FALLBACK_TEXTURE_URL, (tex) => {
+  tex.colorSpace = THREE.SRGBColorSpace;
+  defaultTexture = tex;
+  textureCache.set(FALLBACK_TEXTURE_URL, tex);
+});
 
 export function Product3DDisplay({
   scale = 1.8,
   accentColor = '#00A3E0',
-  textureUrl = '/company-logo.png',
+  textureUrl = FALLBACK_TEXTURE_URL,
   ...props
 }) {
-  const displayTexture = useTexture(textureUrl || '/company-logo.png');
+  const url = textureUrl || FALLBACK_TEXTURE_URL;
+  const [texture, setTexture] = useState(() => textureCache.get(url) || defaultTexture);
+  const mountedRef = useRef(true);
 
-  if (displayTexture) {
-    displayTexture.colorSpace = THREE.SRGBColorSpace;
-    displayTexture.needsUpdate = true;
-  }
+  useEffect(() => {
+    mountedRef.current = true;
+
+    if (!url) {
+      setTexture(defaultTexture);
+      return;
+    }
+
+    if (textureCache.has(url)) {
+      setTexture(textureCache.get(url));
+      return;
+    }
+
+    textureLoader.load(
+      url,
+      (loadedTex) => {
+        if (!mountedRef.current) return;
+        loadedTex.colorSpace = THREE.SRGBColorSpace;
+        loadedTex.needsUpdate = true;
+        textureCache.set(url, loadedTex);
+        setTexture(loadedTex);
+      },
+      undefined,
+      (err) => {
+        if (!mountedRef.current) return;
+        console.warn('Failed to load texture for 3D medallion:', url);
+        setTexture(defaultTexture);
+      }
+    );
+
+    return () => {
+      mountedRef.current = false;
+    };
+  }, [url]);
 
   return (
     <group {...props} scale={scale} dispose={null}>
@@ -62,7 +95,11 @@ export function Product3DDisplay({
       {/* Product Packshot / Logo Emblem */}
       <mesh position={[0, 0, 0.054]} renderOrder={4}>
         <circleGeometry args={[0.98, 64]} />
-        <meshBasicMaterial map={displayTexture} transparent />
+        {texture ? (
+          <meshBasicMaterial map={texture} transparent />
+        ) : (
+          <meshBasicMaterial color="#FFFFFF" />
+        )}
       </mesh>
 
       {/* BACK FACE */}
@@ -74,7 +111,11 @@ export function Product3DDisplay({
       {/* Product Packshot / Logo Emblem (mirrored to preserve readability from reverse) */}
       <mesh position={[0, 0, -0.054]} rotation={[0, Math.PI, 0]} renderOrder={4}>
         <circleGeometry args={[0.98, 64]} />
-        <meshBasicMaterial map={displayTexture} transparent />
+        {texture ? (
+          <meshBasicMaterial map={texture} transparent />
+        ) : (
+          <meshBasicMaterial color="#FFFFFF" />
+        )}
       </mesh>
     </group>
   );
