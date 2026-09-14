@@ -2,11 +2,15 @@ import { createClient } from '@supabase/supabase-js';
 
 const CONFIG_KEY = 'gt_supabase_config_v1';
 
+// Global Trades production database credentials (safe for public clients with Row Level Security)
+const DEFAULT_SUPABASE_URL = 'https://osfewvmfxbghayaefkve.supabase.co';
+const DEFAULT_SUPABASE_KEY = 'sb_publishable_34n8tcaN2jF3eJLYtpBlLA_xiriaDf8';
+
 let supabaseInstance = null;
 let currentConfigSig = null;
 
 /**
- * Get active Supabase configuration from localStorage or Vite environment variables.
+ * Get active Supabase configuration from localStorage, Vite env vars, or default project credentials.
  */
 export function getSupabaseConfig() {
   try {
@@ -30,6 +34,14 @@ export function getSupabaseConfig() {
     return {
       url: envUrl.trim(),
       anonKey: envKey.trim(),
+    };
+  }
+
+  // Built-in default so all mobile phones and visitors connect automatically
+  if (DEFAULT_SUPABASE_URL && DEFAULT_SUPABASE_KEY) {
+    return {
+      url: DEFAULT_SUPABASE_URL,
+      anonKey: DEFAULT_SUPABASE_KEY,
     };
   }
 
