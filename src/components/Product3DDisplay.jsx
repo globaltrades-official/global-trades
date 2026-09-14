@@ -3,7 +3,10 @@ import * as THREE from 'three';
 
 const FALLBACK_TEXTURE_URL = '/company-logo.png';
 const textureCache = new Map();
-const textureLoader = new THREE.TextureLoader();
+
+// Dedicated silent LoadingManager so background texture loading never triggers full-screen loaders
+const silentTextureManager = new THREE.LoadingManager();
+const textureLoader = new THREE.TextureLoader(silentTextureManager);
 
 // Preload the default fallback texture immediately
 let defaultTexture = null;

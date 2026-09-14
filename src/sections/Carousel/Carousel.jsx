@@ -25,6 +25,8 @@ const THEME_PALETTES = [
   { color: '#1E293B', accentColor: '#38BDF8' }, // Midnight Slate & Sky
 ];
 
+const preloadedImageUrls = new Set();
+
 function getProductColors(p, index) {
   if (p.color && p.accentColor) {
     return { color: p.color, accentColor: p.accentColor };
@@ -187,7 +189,8 @@ export default function Carousel({ products = [], onNavigate }) {
   // Preload images of active featured products in browser cache for seamless, zero-lag 3D rotations
   useEffect(() => {
     featuredProducts.forEach((p) => {
-      if (p.image) {
+      if (p.image && !preloadedImageUrls.has(p.image)) {
+        preloadedImageUrls.add(p.image);
         const img = new Image();
         img.src = p.image;
       }

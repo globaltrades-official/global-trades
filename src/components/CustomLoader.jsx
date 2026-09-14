@@ -1,27 +1,43 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useProgress } from '@react-three/drei';
 import { BRANDING } from '../constants/theme';
 
 export default function CustomLoader() {
-  const { active } = useProgress();
-  const [visible, setVisible] = useState(false);
-  const [opacity, setOpacity] = useState(0);
+  const { active, progress } = useProgress();
+  const [visible, setVisible] = useState(true);
+  const [opacity, setOpacity] = useState(1);
+  const hasFinishedInitialLoad = useRef(false);
 
   useEffect(() => {
-    let timer;
-    if (active) {
-      setVisible(true);
-      setOpacity(1);
-    } else {
-      setOpacity(0);
-      timer = setTimeout(() => {
-        setVisible(false);
-      }, 350);
-    }
-    return () => clearTimeout(timer);
-  }, [active]);
+    // If the initial page load has completed once, never show the full-screen loader again
+    if (hasFinishedInitialLoad.current) return;
 
-  if (!visible) return null;
+    // Check if initial 3D assets are ready
+    if (!active || progress >= 100) {
+      const timer = setTimeout(() => {
+        setOpacity(0);
+        setTimeout(() => {
+          setVisible(false);
+          hasFinishedInitialLoad.current = true;
+        }, 300);
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+
+    // Safety timeout: dismiss after at most 1.2s so mobile is never blocked
+    const safetyTimer = setTimeout(() => {
+      setOpacity(0);
+      setTimeout(() => {
+        setVisible(false);
+        hasFinishedInitialLoad.current = true;
+      }, 300);
+    }, 1200);
+
+    return () => clearTimeout(safetyTimer);
+  }, [active, progress]);
+
+  // Once dismissed, completely unmount from the DOM
+  if (!visible || hasFinishedInitialLoad.current) return null;
 
   const logoSrc = BRANDING?.LOGO_PATH || '/company-logo.png';
 
