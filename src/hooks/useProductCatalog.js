@@ -1,9 +1,21 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { CATALOG_PRODUCTS } from '@/data/catalogProducts';
+import {
+  subscribeToCloudCatalog,
+  saveCatalogToCloud,
+  isCloudConfigured,
+} from '@/lib/firebase';
 
 const STORAGE_KEY = 'gt_wholesale_catalog_v1';
 
-const DEFAULT_FEATURED_IDS = [211, 212, 188, 221, 20, 161];
+// Default flagship IDs for Global Trades Malabar distribution:
+// 211: Monin Mojito Mint Syrup 1L
+// 105: Morton Peaches Tin 800g
+// 153: Barry Callebaut Belgium Dark Chocolate 2.5kg
+// 81:  Golden Crown Mushroom Tin 800g
+// 102: Veeba Professional Mayonnaise
+// 188: Del Monte Penne Rigate 500g
+const DEFAULT_FEATURED_IDS = [211, 105, 153, 81, 102, 188];
 
 export function useProductCatalog() {
   const [products, setProducts] = useState(() => {
@@ -23,21 +35,70 @@ export function useProductCatalog() {
     // Ensure all items have a valid isFeatured boolean
     return rawProducts.map((p) => ({
       ...p,
-      isFeatured: p.isFeatured !== undefined ? Boolean(p.isFeatured) : DEFAULT_FEATURED_IDS.includes(p.id),
+      isFeatured:
+        p.isFeatured !== undefined
+          ? Boolean(p.isFeatured)
+          : DEFAULT_FEATURED_IDS.includes(p.id),
     }));
   });
 
-  const [loading, setLoading] = useState(false);
+  const [isCloudConnected, setIsCloudConnected] = useState(() => isCloudConfigured());
+  const isInternalUpdate = useRef(false);
 
-  // Synchronize state changes to localStorage and across tabs
+  // Synchronize state changes to localStorage and Cloud (Firebase Firestore)
   const persist = useCallback((nextProducts) => {
+    isInternalUpdate.current = true;
     setProducts(nextProducts);
+
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(nextProducts));
       window.dispatchEvent(new Event('catalog-updated'));
     } catch (e) {
       console.error('Failed to persist products to localStorage:', e);
     }
+
+    // Broadcast to Firebase in the background so all phones & computers update instantly
+    if (isCloudConfigured()) {
+      saveCatalogToCloud(nextProducts).catch((err) => {
+        console.warn('Cloud sync background warning:', err);
+      });
+    }
+
+    setTimeout(() => {
+      isInternalUpdate.current = false;
+    }, 100);
+  }, []);
+
+  // Listen to real-time Cloud updates from Firebase Firestore
+  useEffect(() => {
+    const checkCloud = () => setIsCloudConnected(isCloudConfigured());
+    window.addEventListener('firebase-config-updated', checkCloud);
+
+    const unsubscribe = subscribeToCloudCatalog((cloudProducts) => {
+      // Avoid re-triggering if this device was the origin of the update
+      if (isInternalUpdate.current) return;
+
+      if (Array.isArray(cloudProducts) && cloudProducts.length > 0) {
+        const normalized = cloudProducts.map((p) => ({
+          ...p,
+          isFeatured:
+            p.isFeatured !== undefined
+              ? Boolean(p.isFeatured)
+              : DEFAULT_FEATURED_IDS.includes(p.id),
+        }));
+        setProducts(normalized);
+
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+          window.dispatchEvent(new Event('catalog-updated'));
+        } catch (_) {}
+      }
+    });
+
+    return () => {
+      unsubscribe();
+      window.removeEventListener('firebase-config-updated', checkCloud);
+    };
   }, []);
 
   // Listen to storage events for cross-tab synchronization
@@ -147,7 +208,7 @@ export function useProductCatalog() {
 
   return {
     products,
-    loading,
+    isCloudConnected,
     addProduct,
     updateProduct,
     toggleFeatured,

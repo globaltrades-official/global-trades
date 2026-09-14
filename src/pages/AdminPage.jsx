@@ -16,10 +16,21 @@ import {
   Package,
   SlidersHorizontal,
   ExternalLink,
-  Star
+  Star,
+  Cloud,
+  CloudOff,
+  Database,
+  Download,
+  RefreshCw,
 } from 'lucide-react';
 import { CATALOG_CATEGORIES, CATALOG_BRANDS } from '@/data/catalogProducts';
 import { BRANDING, CONTACT } from '@/constants/theme';
+import {
+  saveFirebaseConfig,
+  removeFirebaseConfig,
+  isCloudConfigured,
+  saveCatalogToCloud,
+} from '@/lib/firebase';
 
 export default function AdminPage({
   products = [],
@@ -49,6 +60,9 @@ export default function AdminPage({
 
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCloudModalOpen, setIsCloudModalOpen] = useState(false);
+  const [firebaseConfigInput, setFirebaseConfigInput] = useState('');
+  const [cloudConnected, setCloudConnected] = useState(() => isCloudConfigured());
   const [editingProduct, setEditingProduct] = useState(null);
   const [productToDelete, setProductToDelete] = useState(null);
   const [toastMessage, setToastMessage] = useState('');
@@ -85,6 +99,98 @@ export default function AdminPage({
   const handleLogout = () => {
     setAuthed(false);
     sessionStorage.removeItem('gt_admin_auth');
+  };
+
+  // Handle saving Firebase Configuration
+  const handleSaveFirebaseConfig = async (e) => {
+    e.preventDefault();
+    try {
+      let configObj = null;
+      const raw = firebaseConfigInput.trim();
+
+      if (raw.includes('{') && raw.includes('}')) {
+        const jsonMatch = raw.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const jsonStr = jsonMatch[0]
+            .replace(/([a-zA-Z0-9_]+)\s*:/g, '"$1":')
+            .replace(/'/g, '"')
+            .replace(/,\s*}/g, '}');
+          try {
+            configObj = JSON.parse(jsonStr);
+          } catch (_) {
+            const extract = (key) => {
+              const m = raw.match(new RegExp(`${key}\\s*:\\s*["']([^"']+)["']`));
+              return m ? m[1] : '';
+            };
+            configObj = {
+              apiKey: extract('apiKey'),
+              authDomain: extract('authDomain'),
+              projectId: extract('projectId'),
+              storageBucket: extract('storageBucket'),
+              messagingSenderId: extract('messagingSenderId'),
+              appId: extract('appId'),
+            };
+          }
+        }
+      }
+
+      if (!configObj || !configObj.apiKey || !configObj.projectId) {
+        alert('Please paste a valid Firebase configuration containing at least apiKey and projectId.');
+        return;
+      }
+
+      saveFirebaseConfig(configObj);
+      setCloudConnected(true);
+      showToast('Firebase connected! Syncing catalog to cloud...');
+
+      await saveCatalogToCloud(products);
+      showToast('Catalog synced to Firebase! Changes are now live across all devices.');
+      setIsCloudModalOpen(false);
+    } catch (err) {
+      console.error('Error configuring Firebase:', err);
+      alert('Failed to connect Firebase: ' + err.message);
+    }
+  };
+
+  const handleDisconnectCloud = () => {
+    if (confirm('Disconnect Firebase cloud sync? Changes will only be saved to this local browser.')) {
+      removeFirebaseConfig();
+      setCloudConnected(false);
+      showToast('Disconnected from cloud.');
+      setIsCloudModalOpen(false);
+    }
+  };
+
+  const handleManualCloudPush = async () => {
+    if (!cloudConnected) {
+      setIsCloudModalOpen(true);
+      return;
+    }
+    showToast('Pushing catalog to cloud...');
+    const ok = await saveCatalogToCloud(products);
+    if (ok) {
+      showToast('Catalog updated in Cloud! All mobile phones & visitors will refresh.');
+    } else {
+      showToast('Failed to push to cloud. Check your Firebase credentials.');
+    }
+  };
+
+  const handleExportCatalog = () => {
+    try {
+      const jsonStr = JSON.stringify(products, null, 2);
+      navigator.clipboard.writeText(jsonStr);
+      showToast('Catalog JSON copied to clipboard!');
+
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `gt_catalog_${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      showToast('Catalog exported.');
+    }
   };
 
   // Open modal for Adding
@@ -297,7 +403,52 @@ export default function AdminPage({
             </span>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Cloud Sync Status Indicator & Button */}
+            <button
+              onClick={() => setIsCloudModalOpen(true)}
+              className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+                cloudConnected
+                  ? 'border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
+                  : 'border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100'
+              }`}
+              title="Configure real-time cross-device cloud sync"
+            >
+              {cloudConnected ? (
+                <>
+                  <Cloud size={14} className="text-emerald-600" />
+                  <span>Cloud Synced (All Devices)</span>
+                </>
+              ) : (
+                <>
+                  <CloudOff size={14} className="text-amber-600" />
+                  <span>Connect Cloud Sync</span>
+                </>
+              )}
+            </button>
+
+            {/* Force Push to Cloud Button */}
+            {cloudConnected && (
+              <button
+                onClick={handleManualCloudPush}
+                className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-200 bg-white px-3 py-1.5 text-xs font-bold text-emerald-800 hover:bg-emerald-50 transition-colors cursor-pointer"
+                title="Force push current catalog to cloud immediately"
+              >
+                <RefreshCw size={13} />
+                <span>Sync Cloud Now</span>
+              </button>
+            )}
+
+            {/* Export Catalog */}
+            <button
+              onClick={handleExportCatalog}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-[#D0DFEF] bg-white px-3 py-1.5 text-xs font-bold text-[#081426]/80 hover:bg-sky-50 hover:text-[#1A4C98] transition-colors cursor-pointer"
+              title="Download or copy catalog JSON"
+            >
+              <Download size={13} />
+              <span>Export Catalog</span>
+            </button>
+
             <button
               onClick={() => {
                 if (confirm('Restore default factory catalog? Any custom edits will be reset.')) {
@@ -866,6 +1017,134 @@ export default function AdminPage({
               >
                 Yes, Delete Product
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CLOUD DATABASE / FIREBASE SYNC MODAL */}
+      {isCloudModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="w-full max-w-xl rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-[#D0DFEF]">
+            <div className="flex items-center justify-between pb-4 border-b border-[#D0DFEF]">
+              <div className="flex items-center gap-2.5">
+                <div className="size-10 rounded-xl bg-[#1A4C98]/10 text-[#1A4C98] flex items-center justify-center">
+                  <Database size={20} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black text-[#081426] uppercase">
+                    Real-time Cloud Database (Firebase)
+                  </h3>
+                  <p className="text-xs text-[#081426]/70">
+                    Syncs catalog and featured products instantly across phones, laptops & visitors.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsCloudModalOpen(false)}
+                className="p-1 text-gray-400 hover:text-gray-600 rounded-lg cursor-pointer"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="my-5 space-y-4">
+              {/* Current Status */}
+              <div
+                className={`p-4 rounded-2xl border flex items-center justify-between ${
+                  cloudConnected
+                    ? 'bg-emerald-50/80 border-emerald-300 text-emerald-950'
+                    : 'bg-amber-50/80 border-amber-300 text-amber-950'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  {cloudConnected ? (
+                    <Cloud size={24} className="text-emerald-600" />
+                  ) : (
+                    <CloudOff size={24} className="text-amber-600" />
+                  )}
+                  <div>
+                    <span className="text-xs font-black uppercase tracking-wider">
+                      {cloudConnected ? 'Status: Real-Time Cloud Active' : 'Status: Offline (Local Device Only)'}
+                    </span>
+                    <p className="text-xs opacity-80 mt-0.5">
+                      {cloudConnected
+                        ? 'Every inventory edit or featured item change is broadcasting to all visitors and phones in real-time.'
+                        : 'Changes are currently saved only to this browser. Connect Firebase to sync with mobile phones.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step-by-step setup guide */}
+              <div className="p-4 rounded-2xl bg-[#F8FAFC] border border-[#D0DFEF] text-xs space-y-2">
+                <span className="font-bold text-[#1A4C98] uppercase tracking-wider block">
+                  Quick Free Setup (Takes 2 Minutes):
+                </span>
+                <ol className="list-decimal list-inside space-y-1.5 text-[#081426]/80 font-medium">
+                  <li>
+                    Go to{' '}
+                    <a
+                      href="https://console.firebase.google.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#1A4C98] font-bold underline inline-flex items-center gap-1"
+                    >
+                      console.firebase.google.com <ExternalLink size={11} />
+                    </a>{' '}
+                    and create a free project.
+                  </li>
+                  <li>In Project Settings, click <strong>Add Web App</strong> and copy the <code className="bg-white px-1 py-0.5 rounded border border-gray-200">firebaseConfig</code> snippet.</li>
+                  <li>Under Build, click <strong>Cloud Firestore</strong> &rarr; <strong>Create Database</strong> (start in Test mode).</li>
+                  <li>Paste the configuration snippet below and click <strong>Connect &amp; Sync Now</strong>!</li>
+                </ol>
+              </div>
+
+              {/* Paste Config Area */}
+              <form onSubmit={handleSaveFirebaseConfig} className="space-y-3">
+                <div>
+                  <label className="block text-xs font-bold text-[#081426] mb-1 uppercase tracking-wider">
+                    Firebase Config JSON or Snippet
+                  </label>
+                  <textarea
+                    rows={4}
+                    value={firebaseConfigInput}
+                    onChange={(e) => setFirebaseConfigInput(e.target.value)}
+                    placeholder={`const firebaseConfig = {\n  apiKey: "AIzaSy...",\n  projectId: "your-project-id",\n  ...\n};`}
+                    className="w-full rounded-xl border border-[#D0DFEF] p-3 font-mono text-xs focus:border-[#1A4C98] focus:outline-none bg-[#F4F8FC]"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between pt-2">
+                  {cloudConnected ? (
+                    <button
+                      type="button"
+                      onClick={handleDisconnectCloud}
+                      className="text-xs font-bold text-red-600 hover:text-red-800 transition-colors cursor-pointer"
+                    >
+                      Disconnect Cloud
+                    </button>
+                  ) : (
+                    <span />
+                  )}
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsCloudModalOpen(false)}
+                      className="rounded-xl border border-[#D0DFEF] bg-white px-4 py-2 text-xs font-bold text-[#081426] hover:bg-[#F4F8FC] cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="rounded-xl bg-[#1A4C98] px-5 py-2 text-xs font-black uppercase tracking-wider text-white shadow-md hover:bg-[#123873] cursor-pointer"
+                    >
+                      Connect &amp; Sync Now
+                    </button>
+                  </div>
+                </div>
+              </form>
             </div>
           </div>
         </div>
