@@ -115,17 +115,22 @@ export function getSupabaseClient() {
  */
 export function transformPostgresRow(row) {
   if (!row) return null;
+  const safeName = (row.name || '').replace(/[^a-zA-Z0-9]/g, '_');
+  const defaultImage = `/catalog_images/${safeName}.jpg`;
+
   return {
     id: Number(row.id),
     name: row.name || '',
     brand: row.brand || '',
     category: row.category || '',
     origin: row.origin || '',
+    size: row.pack_size || '',
     shelfLife: row.shelf_life || '',
     packSize: row.pack_size || '',
     description: row.description || '',
     features: Array.isArray(row.features) ? row.features : [],
     isFeatured: Boolean(row.is_featured),
+    image: row.custom_image || defaultImage,
     customImage: row.custom_image || null,
   };
 }
@@ -134,6 +139,9 @@ export function transformPostgresRow(row) {
  * Transform application product format into a PostgreSQL `products` table row.
  */
 export function transformProductToRow(p) {
+  const safeName = (p.name || '').replace(/[^a-zA-Z0-9]/g, '_');
+  const defaultImage = `/catalog_images/${safeName}.jpg`;
+
   return {
     id: Number(p.id),
     name: p.name || '',
@@ -141,11 +149,11 @@ export function transformProductToRow(p) {
     category: p.category || '',
     origin: p.origin || '',
     shelf_life: p.shelfLife || '',
-    pack_size: p.packSize || '',
+    pack_size: p.size || p.packSize || '',
     description: p.description || '',
     features: Array.isArray(p.features) ? p.features : [],
     is_featured: Boolean(p.isFeatured),
-    custom_image: p.customImage || null,
+    custom_image: p.customImage || (p.image && p.image !== defaultImage ? p.image : null),
     updated_at: new Date().toISOString(),
   };
 }

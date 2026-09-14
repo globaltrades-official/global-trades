@@ -123,6 +123,29 @@ const DEFAULT_PRODUCTS = [
   },
 ];
 
+function resolveProductImage(p) {
+  if (p.customImage) return p.customImage;
+  const nameLower = (p.name || '').toLowerCase();
+  if (nameLower.includes('monin') && (nameLower.includes('syrup') || nameLower.includes('mojito'))) {
+    return '/products/monin-syrup.jpg';
+  }
+  if (nameLower.includes('morton') && nameLower.includes('peach')) {
+    return '/products/morton-peaches.jpg';
+  }
+  if ((nameLower.includes('callebaut') || nameLower.includes('chocolate')) && nameLower.includes('dark')) {
+    return '/products/callebaut-chocolate.jpg';
+  }
+  if (nameLower.includes('golden crown') && nameLower.includes('mushroom')) {
+    return '/products/goldencrown-mushrooms.jpg';
+  }
+  if (nameLower.includes('veeba') && nameLower.includes('mayo')) {
+    return '/products/veeba-mayo.jpg';
+  }
+  if (p.image && p.image !== '/company-logo.png') return p.image;
+  const safeName = (p.name || '').replace(/[^a-zA-Z0-9]/g, '_');
+  return `/catalog_images/${safeName}.jpg`;
+}
+
 export default function Carousel({ products = [], onNavigate }) {
   const [currentProductIndex, setCurrentProductIndex] = useState(0);
   const productRef = useRef(null);
@@ -136,6 +159,7 @@ export default function Carousel({ products = [], onNavigate }) {
 
     return featured.map((p, idx) => {
       const palette = getProductColors(p, idx);
+      const resolvedImg = resolveProductImage(p);
       return {
         ...p,
         key: p.id ? `prod-${p.id}` : `feat-${idx}`,
@@ -143,7 +167,7 @@ export default function Carousel({ products = [], onNavigate }) {
         brand: p.brand || 'Global Trades',
         category: p.category || 'Wholesale Line',
         size: p.size || 'Commercial Pack',
-        image: p.image || '/company-logo.png',
+        image: resolvedImg,
         color: p.color || palette.color,
         accentColor: p.accentColor || palette.accentColor,
         specs:

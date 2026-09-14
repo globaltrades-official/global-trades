@@ -417,6 +417,8 @@ export default function ProductsPage({
 // Individual Product Card Component with Product Image from PDF
 function ProductCatalogCard({ product }) {
   const [imageError, setImageError] = useState(false);
+  const safeName = (product.name || '').replace(/[^a-zA-Z0-9]/g, '_');
+  const imageSrc = product.image || `/catalog_images/${safeName}.jpg`;
 
   const whatsappMessage = encodeURIComponent(
     `Hello Global Trades, I am interested in wholesale pricing for:\n*${product.name}*\nBrand: ${product.brand}\nPack Size: ${product.size}\nCategory: ${product.category}\nPlease provide commercial rates and availability.`
@@ -429,7 +431,7 @@ function ProductCatalogCard({ product }) {
         <div className="relative aspect-square w-full rounded-xl bg-[#F8FAFC] p-4 flex items-center justify-center overflow-hidden border border-[#E9EFF6] mb-4 group-hover:bg-white transition-colors">
           {!imageError ? (
             <img
-              src={product.image}
+              src={imageSrc}
               alt={product.name}
               onError={() => setImageError(true)}
               className="size-full object-contain transition-transform duration-300 group-hover:scale-105"

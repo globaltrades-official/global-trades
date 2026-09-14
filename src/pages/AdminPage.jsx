@@ -267,7 +267,7 @@ END $$;`;
       brand: product.brand || '',
       category: product.category || CATALOG_CATEGORIES[1],
       size: product.size || '',
-      image: product.image || '',
+      image: product.image || `/catalog_images/${(product.name || '').replace(/[^a-zA-Z0-9]/g, '_')}.jpg`,
       inStock: product.inStock !== false,
       isFeatured: Boolean(product.isFeatured),
     });
@@ -743,12 +743,13 @@ END $$;`;
                       <td className="py-3 px-4">
                         <div className="size-12 rounded-xl bg-white border border-[#D0DFEF] p-1 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
                           <img
-                            src={p.image}
+                            src={p.image || `/catalog_images/${(p.name || '').replace(/[^a-zA-Z0-9]/g, '_')}.jpg`}
                             alt={p.name}
                             onError={(e) => {
-                              e.target.style.display = 'none';
+                              e.currentTarget.src = '/company-logo.png';
                             }}
                             className="size-full object-contain"
+                            loading="lazy"
                           />
                         </div>
                       </td>

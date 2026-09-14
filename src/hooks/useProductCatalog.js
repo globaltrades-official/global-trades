@@ -19,6 +19,20 @@ const STORAGE_KEY = 'gt_wholesale_catalog_v1';
 // 188: Del Monte Penne Rigate 500g
 const DEFAULT_FEATURED_IDS = [211, 105, 153, 81, 102, 188];
 
+function normalizeProduct(p) {
+  const safeName = (p.name || '').replace(/[^a-zA-Z0-9]/g, '_');
+  const defaultImage = `/catalog_images/${safeName}.jpg`;
+  return {
+    ...p,
+    size: p.size || p.packSize || '',
+    image: p.image || p.customImage || defaultImage,
+    isFeatured:
+      p.isFeatured !== undefined
+        ? Boolean(p.isFeatured)
+        : DEFAULT_FEATURED_IDS.includes(p.id),
+  };
+}
+
 export function useProductCatalog() {
   const [products, setProducts] = useState(() => {
     let rawProducts = CATALOG_PRODUCTS;
@@ -34,14 +48,7 @@ export function useProductCatalog() {
       console.warn('Failed to parse saved catalog from localStorage:', e);
     }
 
-    // Ensure all items have a valid isFeatured boolean
-    return rawProducts.map((p) => ({
-      ...p,
-      isFeatured:
-        p.isFeatured !== undefined
-          ? Boolean(p.isFeatured)
-          : DEFAULT_FEATURED_IDS.includes(p.id),
-    }));
+    return rawProducts.map(normalizeProduct);
   });
 
   const [isCloudConnected, setIsCloudConnected] = useState(() => isSupabaseConfigured());
@@ -81,14 +88,7 @@ export function useProductCatalog() {
       fetchCatalogFromPostgres().then((dbProducts) => {
         if (Array.isArray(dbProducts) && dbProducts.length > 0) {
           setProducts((current) => {
-            // Merge with local items or replace if db is populated
-            const normalized = dbProducts.map((p) => ({
-              ...p,
-              isFeatured:
-                p.isFeatured !== undefined
-                  ? Boolean(p.isFeatured)
-                  : DEFAULT_FEATURED_IDS.includes(p.id),
-            }));
+            const normalized = dbProducts.map(normalizeProduct);
             try {
               localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
               window.dispatchEvent(new Event('catalog-updated'));
@@ -103,14 +103,15 @@ export function useProductCatalog() {
     const unsubscribe = subscribeToPostgresCatalog(
       (changedProduct) => {
         if (isInternalUpdate.current) return;
+        const normalizedItem = normalizeProduct(changedProduct);
         setProducts((current) => {
-          const index = current.findIndex((p) => p.id === changedProduct.id);
+          const index = current.findIndex((p) => p.id === normalizedItem.id);
           let next;
           if (index !== -1) {
             next = [...current];
-            next[index] = { ...next[index], ...changedProduct };
+            next[index] = { ...next[index], ...normalizedItem };
           } else {
-            next = [changedProduct, ...current];
+            next = [normalizedItem, ...current];
           }
           try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
