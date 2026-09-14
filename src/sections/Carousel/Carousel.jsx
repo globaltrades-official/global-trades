@@ -1,15 +1,10 @@
-import React, { useRef, useState, useMemo, useEffect } from 'react';
-import { Center, Environment, View } from '@react-three/drei';
+import React, { useState, useMemo, useEffect } from 'react';
 import clsx from 'clsx';
 import gsap from 'gsap';
-import { MessageCircle, CheckCircle2, ArrowRight } from 'lucide-react';
+import { MessageCircle, CheckCircle2, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 
-import FloatingCan from '@/components/FloatingCan';
-import { ArrowIcon } from './ArrowIcon';
 import { WavyCircles } from './WavyCircles';
 import { CONTACT } from '@/constants/theme';
-
-const SPINS_ON_CHANGE = 8;
 
 // Curated palettes for dynamic brand/category assignments
 const THEME_PALETTES = [
@@ -100,16 +95,16 @@ const DEFAULT_PRODUCTS = [
     specs: '5kg Master Slab · Belgian Origin Couverture',
   },
   {
-    id: 'goldenCrown',
-    key: 'goldenCrown',
+    id: 'golden-crown',
+    key: 'golden-crown',
     image: '/products/goldencrown-mushrooms.jpg',
     color: '#14532D',
     accentColor: '#22C55E',
-    brand: 'Golden Crown Premium',
-    name: 'Golden Crown Choice Button Mushrooms',
-    size: 'Case of 24 Cans (400g)',
-    description: 'Hand-picked tender whole button mushrooms in brine, ready for high-volume pizza, pasta, and continental curries.',
-    specs: '400g Food Service Tins · Whole Buttons in Brine',
+    brand: 'Golden Crown',
+    name: 'Golden Crown Button Mushrooms in Brine',
+    size: 'Case of 24 Cans (800g)',
+    description: 'Crisp whole button mushrooms sourced for pizza pizzerias, continental pastas, and sizzler kitchens.',
+    specs: '800g Tin · Whole Button Grade · Natural Brine',
   },
   {
     id: 'veeba',
@@ -118,10 +113,10 @@ const DEFAULT_PRODUCTS = [
     color: '#991B1B',
     accentColor: '#E52528',
     brand: 'Veeba Food Services',
-    name: 'Veeba Chef Special Real Mayonnaise 1kg',
-    size: 'Case of 12 Pouches (1kg)',
-    description: 'High-stability rich emulsion crafted for professional burger bars, shawarma counters, and cafe kitchens.',
-    specs: '1kg Professional Pouch · Heat Stable Formula',
+    name: 'Veeba Professional Culinary Mayonnaise',
+    size: 'Box of 12 x 1kg Pouches',
+    description: 'High-yield emulsified gourmet mayonnaise engineered for commercial burger joints and shawarma bars.',
+    specs: 'Professional Grade · Thick Viscosity Emulsion',
   },
 ];
 
@@ -150,9 +145,8 @@ function resolveProductImage(p) {
 
 export default function Carousel({ products = [], onNavigate }) {
   const [currentProductIndex, setCurrentProductIndex] = useState(0);
-  const productRef = useRef(null);
 
-  // Compute active featured list from products prop (updated dynamically via Admin Page)
+  // Compute active featured list from products prop (updated dynamically via Admin Page / PostgreSQL)
   const featuredProducts = useMemo(() => {
     const featured = (products || []).filter((p) => Boolean(p.isFeatured));
     if (featured.length === 0) {
@@ -186,7 +180,7 @@ export default function Carousel({ products = [], onNavigate }) {
     });
   }, [products]);
 
-  // Preload images of active featured products in browser cache for seamless, zero-lag 3D rotations
+  // Preload images of active featured products in browser cache
   useEffect(() => {
     featuredProducts.forEach((p) => {
       if (p.image && !preloadedImageUrls.has(p.image)) {
@@ -218,128 +212,91 @@ export default function Carousel({ products = [], onNavigate }) {
     const nextProduct = featuredProducts[nextIndex];
     const tl = gsap.timeline();
 
-    if (productRef.current) {
-      tl.to(
-        productRef.current.rotation,
-        {
-          y:
-            index > safeIndex
-              ? `-=${Math.PI * 2 * SPINS_ON_CHANGE}`
-              : `+=${Math.PI * 2 * SPINS_ON_CHANGE}`,
-          ease: 'power2.inOut',
-          duration: 1,
-        },
-        0
-      );
-    }
-
     tl.to(
       '.carousel-background, .wavy-circles-outer, .wavy-circles-inner',
       {
         backgroundColor: nextProduct.color,
         fill: nextProduct.color,
         ease: 'power2.inOut',
-        duration: 1,
+        duration: 0.6,
       },
       0
     )
-      .to('.text-wrapper', { duration: 0.2, y: -10, opacity: 0 }, 0)
-      .to({}, { onStart: () => setCurrentProductIndex(nextIndex) }, 0.5)
-      .to('.text-wrapper', { duration: 0.2, y: 0, opacity: 1 }, 0.7);
+      .to('.showcase-card', { duration: 0.2, opacity: 0.6, scale: 0.98 }, 0)
+      .to({}, { onStart: () => setCurrentProductIndex(nextIndex) }, 0.2)
+      .to('.showcase-card', { duration: 0.3, opacity: 1, scale: 1, ease: 'back.out(1.2)' }, 0.25);
   }
 
   return (
     <section
       id="carousel"
-      className="carousel relative min-h-[85vh] overflow-hidden bg-white py-14 md:py-20 text-white w-full"
+      className="carousel relative min-h-[75vh] overflow-hidden bg-white py-12 md:py-18 text-white w-full transition-colors duration-700"
     >
       <div
-        className="carousel-background pointer-events-none absolute inset-0 opacity-85 transition-colors duration-500"
+        className="carousel-background pointer-events-none absolute inset-0 opacity-90 transition-colors duration-700"
         style={{ backgroundColor: activeProduct.color }}
       />
 
       <WavyCircles
-        className="absolute left-1/2 top-1/2 h-[130vmin] -translate-x-1/2 -translate-y-1/2 transition-colors duration-500"
+        className="absolute left-1/2 top-1/2 h-[140vmin] -translate-x-1/2 -translate-y-1/2 transition-colors duration-700 pointer-events-none opacity-40"
         style={{ color: activeProduct.color }}
       />
 
       <div className="mx-auto flex w-full max-w-7xl flex-col items-center px-4 md:px-8 relative z-10">
         {/* Section Header */}
-        <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-6 md:mb-10">
+        <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-6 md:mb-8">
           <span className="inline-block rounded-full bg-white/20 px-4 py-1.5 text-xs font-bold uppercase tracking-wider mb-3 backdrop-blur-sm border border-white/25">
             Wholesale Lines &amp; C&amp;F Distribution
           </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight drop-shadow-md">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight drop-shadow-md">
             Featured Wholesale Lines
           </h2>
           <p className="text-sm sm:text-base md:text-lg font-medium opacity-90 mt-2 max-w-2xl mx-auto leading-relaxed">
-            Spin the 3D product showcase to explore each commercial line supplied directly to Kozhikode cafes and kitchens.
+            Curated commercial food service products distributed directly to Kozhikode kitchens, cafes, and bakeries.
           </p>
         </div>
 
-        {/* 3D Product Showcase Display */}
-        <div className="flex items-center justify-center gap-4 sm:gap-8 my-2 w-full max-w-4xl mx-auto">
-          {/* Left Arrow */}
-          {featuredProducts.length > 1 && (
-            <ArrowButton
-              onClick={() => changeProduct(safeIndex + 1)}
-              direction="left"
-              label="Previous Product"
-            />
-          )}
+        {/* Product Showcase Hero Card */}
+        <div className="showcase-card w-full max-w-5xl transition-transform duration-300">
+          <div className="rounded-3xl bg-white/15 backdrop-blur-md p-6 sm:p-8 md:p-10 border border-white/30 shadow-2xl relative overflow-hidden">
+            {/* Quick Navigation Arrows overlay */}
+            {featuredProducts.length > 1 && (
+              <>
+                <button
+                  onClick={() => changeProduct(safeIndex - 1)}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 z-20 size-11 md:size-13 rounded-full bg-black/25 hover:bg-white hover:text-[#081426] text-white border border-white/30 flex items-center justify-center backdrop-blur-md shadow-lg transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                  aria-label="Previous Product"
+                >
+                  <ChevronLeft size={24} />
+                </button>
+                <button
+                  onClick={() => changeProduct(safeIndex + 1)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 z-20 size-11 md:size-13 rounded-full bg-black/25 hover:bg-white hover:text-[#081426] text-white border border-white/30 flex items-center justify-center backdrop-blur-md shadow-lg transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                  aria-label="Next Product"
+                >
+                  <ChevronRight size={24} />
+                </button>
+              </>
+            )}
 
-          {/* 3D Product Showcase Display */}
-          <View className="aspect-square h-[48vmin] min-h-60 max-h-[400px] w-full max-w-[400px]">
-            <Center position={[0, 0, 0]}>
-              <FloatingCan
-                ref={productRef}
-                textureUrl={activeProduct.image}
-                floatIntensity={0.3}
-                rotationIntensity={1}
-                accentColor={activeProduct.accentColor}
-                scale={1.05}
-              />
-            </Center>
-
-            <Environment
-              files="/hdr/lobby.hdr"
-              environmentIntensity={0.9}
-              environmentRotation={[0, 3, 0]}
-            />
-            <directionalLight intensity={5} position={[0, 1, 1]} />
-          </View>
-
-          {/* Right Arrow */}
-          {featuredProducts.length > 1 && (
-            <ArrowButton
-              onClick={() => changeProduct(safeIndex - 1)}
-              direction="right"
-              label="Next Product"
-            />
-          )}
-        </div>
-
-        {/* Product Information & Studio Packshot Card */}
-        <div className="w-full mt-6">
-          <div className="text-wrapper rounded-3xl bg-white/15 backdrop-blur-md p-6 sm:p-8 md:p-10 border border-white/30 shadow-2xl w-full">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
-              {/* Packshot Studio Display (lg:col-span-3) */}
-              <div className="lg:col-span-3 flex justify-center">
-                <div className="size-44 sm:size-52 md:size-56 rounded-2xl overflow-hidden bg-white p-3 shadow-xl border-2 border-white/80 flex items-center justify-center">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
+              {/* Studio Packshot Photo (lg:col-span-4) */}
+              <div className="lg:col-span-4 flex justify-center">
+                <div className="size-56 sm:size-64 md:size-72 rounded-3xl overflow-hidden bg-white p-4 shadow-2xl border-4 border-white/90 flex items-center justify-center group">
                   <img
                     src={activeProduct.image}
                     alt={activeProduct.name}
                     onError={(e) => {
                       e.currentTarget.src = '/company-logo.png';
                     }}
-                    className="size-full object-contain rounded-xl transition-transform duration-300 hover:scale-105"
+                    className="size-full object-contain rounded-2xl transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
               </div>
 
-              {/* Product Specifications & Details (lg:col-span-6) */}
-              <div className="lg:col-span-6 text-left space-y-2.5">
-                <div className="inline-flex items-center gap-2 rounded-md bg-white/25 px-3 py-1 text-xs font-black uppercase tracking-wider text-white">
+              {/* Product Specifications & Details (lg:col-span-5) */}
+              <div className="lg:col-span-5 text-left space-y-3 px-2">
+                <div className="inline-flex items-center gap-2 rounded-full bg-white/25 px-3.5 py-1 text-xs font-black uppercase tracking-wider text-white">
                   <span>{activeProduct.brand}</span>
                   <span className="opacity-50">·</span>
                   <span className="text-amber-300 font-bold">Authorized Distribution</span>
@@ -349,7 +306,7 @@ export default function Carousel({ products = [], onNavigate }) {
                   {activeProduct.name}
                 </h3>
 
-                <p className="text-xs sm:text-sm md:text-base font-bold text-amber-200">
+                <p className="text-xs sm:text-sm font-bold text-amber-200">
                   {activeProduct.specs}
                 </p>
 
@@ -358,7 +315,7 @@ export default function Carousel({ products = [], onNavigate }) {
                 </p>
 
                 {/* Feature Tags */}
-                <div className="flex flex-wrap gap-2 pt-2">
+                <div className="flex flex-wrap gap-2 pt-1">
                   <span className="inline-flex items-center gap-1 rounded-lg bg-white/15 px-2.5 py-1 text-[11px] font-bold text-white border border-white/20">
                     <CheckCircle2 size={12} className="text-emerald-400" />
                     <span>Authorized C&amp;F Supply</span>
@@ -412,15 +369,15 @@ export default function Carousel({ products = [], onNavigate }) {
             </div>
           </div>
 
-          {/* Thumbnail Selector for Instant Switching */}
+          {/* Thumbnail Selector Strip for Instant Switching */}
           {featuredProducts.length > 1 && (
-            <div className="flex items-center justify-center gap-2.5 sm:gap-4 mt-8 flex-wrap max-w-5xl mx-auto px-2">
+            <div className="flex items-center justify-center gap-2.5 sm:gap-3.5 mt-6 flex-wrap max-w-5xl mx-auto px-2">
               {featuredProducts.map((prod, idx) => (
                 <button
                   key={prod.key}
                   onClick={() => changeProduct(idx)}
                   className={clsx(
-                    'size-14 sm:size-16 md:size-20 rounded-2xl p-1.5 transition-all duration-200 border-2 overflow-hidden bg-white shadow-lg cursor-pointer shrink-0',
+                    'size-14 sm:size-16 rounded-2xl p-1.5 transition-all duration-200 border-2 overflow-hidden bg-white shadow-md cursor-pointer shrink-0',
                     idx === safeIndex
                       ? 'scale-110 border-amber-300 ring-4 ring-white/50'
                       : 'opacity-65 hover:opacity-100 hover:scale-105 border-white/40'
@@ -442,18 +399,5 @@ export default function Carousel({ products = [], onNavigate }) {
         </div>
       </div>
     </section>
-  );
-}
-
-function ArrowButton({ label, onClick, direction = 'right' }) {
-  return (
-    <button
-      onClick={onClick}
-      className="size-12 rounded-full border-2 border-white bg-white/15 p-3 opacity-85 ring-white transition-all hover:opacity-100 hover:scale-110 active:scale-95 focus:outline-none focus-visible:opacity-100 focus-visible:ring-4 md:size-16 lg:size-20 cursor-pointer flex items-center justify-center backdrop-blur-sm shrink-0"
-      aria-label={label}
-    >
-      <ArrowIcon className={clsx(direction === 'right' && '-scale-x-100', 'w-full h-full')} />
-      <span className="sr-only">{label}</span>
-    </button>
   );
 }
