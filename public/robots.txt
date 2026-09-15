@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://globaltrades-calicut.vercel.app/sitemap.xml
