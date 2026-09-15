@@ -174,7 +174,7 @@ export default function Carousel({ products = [], onNavigate }) {
         description:
           p.description ||
           (p.category
-            ? `Authorized wholesale supply of ${p.name} for cafes, bakeries, hotels, and restaurant kitchens across Malabar.`
+            ? `Authorized wholesale supply of ${p.name} for cafes, bakeries, hotels, and restaurant kitchens in Kozhikode.`
             : 'Flagship commercial line distributed directly by Global Trades Kozhikode.'),
       };
     });
@@ -326,7 +326,7 @@ export default function Carousel({ products = [], onNavigate }) {
                   </span>
                   <span className="inline-flex items-center gap-1 rounded-lg bg-white/15 px-2.5 py-1 text-[11px] font-bold text-white border border-white/20">
                     <CheckCircle2 size={12} className="text-emerald-400" />
-                    <span>Direct Malabar Distribution</span>
+                    <span>Direct Kozhikode Delivery</span>
                   </span>
                 </div>
               </div>
@@ -349,7 +349,7 @@ export default function Carousel({ products = [], onNavigate }) {
                   className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3.5 text-sm font-black text-[#1A4C98] shadow-xl transition-all duration-200 hover:bg-amber-300 hover:text-[#081426] hover:scale-105 active:scale-95 cursor-pointer uppercase tracking-wider"
                 >
                   <MessageCircle size={16} className="text-emerald-600 shrink-0" />
-                  <span>Inquire on WhatsApp</span>
+                  <span>Request Wholesale Price</span>
                 </a>
 
                 {onNavigate && (

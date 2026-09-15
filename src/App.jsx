@@ -5,8 +5,10 @@ import ViewCanvas from './components/ViewCanvas';
 import Hero from './sections/Hero/Hero';
 import Carousel from './sections/Carousel/Carousel';
 import AlternatingText from './sections/AlternatingText/AlternatingText';
+import HowWeServe from './sections/HowWeServe/HowWeServe';
 import BigText from './sections/BigText/BigText';
 import ProductsPage from './pages/ProductsPage';
+import ContactPage from './pages/ContactPage';
 import AdminPage from './pages/AdminPage';
 import { useProductCatalog } from './hooks/useProductCatalog';
 
@@ -26,6 +28,7 @@ export default function App() {
 
     if (hash.includes('admin') || path.includes('/admin')) return 'admin';
     if (hash.includes('products') || path.includes('/products')) return 'products';
+    if (hash.includes('contact') || path.includes('/contact')) return 'contact';
     return 'home';
   }, []);
 
@@ -38,6 +41,8 @@ export default function App() {
       targetHash = '#admin';
     } else if (page === 'products') {
       targetHash = '#products';
+    } else if (page === 'contact') {
+      targetHash = '#contact';
     } else if (anchor && anchor !== '#') {
       targetHash = anchor;
     }
@@ -106,6 +111,9 @@ export default function App() {
       } else if (href === '#admin' || href === '/admin') {
         e.preventDefault();
         navigateTo('admin');
+      } else if (href === '#contact' || href === '/contact' || href === '#contact-us') {
+        e.preventDefault();
+        navigateTo('contact');
       } else if (href === '#' || href === '#hero' || href === '/' || href === '/home') {
         e.preventDefault();
         navigateTo('home', '#hero');
@@ -133,10 +141,13 @@ export default function App() {
       const heroEl = document.getElementById('hero');
       const carouselEl = document.getElementById('carousel');
       const benefitsEl = document.getElementById('benefits');
+      const howWeServeEl = document.getElementById('how-we-serve');
       const contactEl = document.getElementById('contact');
 
       if (contactEl && scrollPos >= contactEl.offsetTop) {
         setActiveSection('contact');
+      } else if (howWeServeEl && scrollPos >= howWeServeEl.offsetTop) {
+        setActiveSection('how-we-serve');
       } else if (benefitsEl && scrollPos >= benefitsEl.offsetTop) {
         setActiveSection('benefits');
       } else if (carouselEl && scrollPos >= carouselEl.offsetTop) {
@@ -182,6 +193,13 @@ export default function App() {
             onNavigateAdmin={() => navigateTo('admin')}
           />
         </main>
+      ) : currentPage === 'contact' ? (
+        <main className="relative z-10">
+          <ContactPage
+            onNavigateHome={() => navigateTo('home')}
+            onNavigateProducts={() => navigateTo('products')}
+          />
+        </main>
       ) : (
         <main className="relative">
           {/* 3D Animated Background Logo Canvas */}
@@ -196,7 +214,10 @@ export default function App() {
           {/* 3. Social Proof & Institutional Strengths (Google Reviews) */}
           <AlternatingText />
 
-          {/* 4. Brand Statement */}
+          {/* 4. How We Serve Businesses */}
+          <HowWeServe onNavigate={navigateTo} />
+
+          {/* 5. Brand Statement */}
           <BigText />
         </main>
       )}

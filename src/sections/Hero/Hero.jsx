@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { View } from '@react-three/drei';
+import { ShieldCheck, FileText, Tag, Truck, Store, MessageCircle, HelpCircle } from 'lucide-react';
 
 import Button from '@/components/Button';
 import { TextSplitter } from '@/components/TextSplitter';
@@ -46,14 +47,15 @@ export default function Hero({ onNavigate }) {
           },
           '+=.3'
         )
-        .from('.hero-body', {
-          opacity: 0,
-          y: 10,
-        })
         .from('.hero-buttons', {
           opacity: 0,
           y: 10,
           duration: 0.6,
+        })
+        .from('.hero-trust-strip', {
+          opacity: 0,
+          y: 10,
+          duration: 0.5,
         });
 
       const scrollTl = gsap.timeline({
@@ -99,24 +101,24 @@ export default function Hero({ onNavigate }) {
       id="hero"
       className="hero relative w-full overflow-hidden bg-gradient-to-b from-[#EBF3FC] via-[#F4F8FC] to-[#DDEAF8]"
     >
-      {/* 3D Animated Background Logo Scene (Desktop & Mobile) */}
-      <View className="hero-scene pointer-events-none sticky top-0 z-0 -mt-[100vh] block h-screen w-full opacity-40 md:opacity-50">
+      {/* 3D Animated Background Logo Scene (Desktop & Mobile) - Kept Subtle As Ambient Watermark */}
+      <View className="hero-scene pointer-events-none sticky top-0 z-0 -mt-[100vh] block h-screen w-full opacity-20 md:opacity-25">
         <HeroScene />
-        <Bubbles count={isDesktop ? 200 : 70} speed={isDesktop ? 2 : 1.2} repeat={true} />
+        <Bubbles count={isDesktop ? 120 : 45} speed={isDesktop ? 1.5 : 1} repeat={true} />
       </View>
 
       <div className="mx-auto flex w-full max-w-7xl flex-col items-center px-4 md:px-8 relative z-10">
-        {/* First Fold: Hero Banner */}
-        <div className="grid min-h-[calc(100vh-7rem)] place-items-center py-4 md:py-6 w-full">
+        {/* First Fold: Hero Banner with Clean Hierarchy */}
+        <div className="grid min-h-[calc(100vh-7rem)] place-items-center py-6 md:py-10 w-full">
           <div className="grid auto-rows-min place-items-center text-center max-w-5xl w-full px-2 sm:px-4">
-            {/* Top Badge */}
+            {/* 1. Business Type */}
             <div className="hero-badge mb-3 md:mb-4 flex items-center justify-center">
-              <span className="rounded-full bg-[#1A4C98]/10 px-4 py-1.5 text-xs md:text-sm font-extrabold uppercase tracking-wider text-[#1A4C98] border border-[#1A4C98]/20 backdrop-blur-sm shadow-sm bg-white/60">
-                Wholesale Food Service · Kozhikode
+              <span className="rounded-full bg-white/85 px-4 py-1.5 text-xs md:text-sm font-extrabold uppercase tracking-wider text-[#1A4C98] border border-[#1A4C98]/20 backdrop-blur-md shadow-sm">
+                Wholesale Food Service &amp; Institutional Distribution · Kozhikode
               </span>
             </div>
 
-            {/* Hero Headline - Balanced Wide Single-Line Desktop Spread with White Drop Shadow */}
+            {/* 2. Main Headline */}
             <h1 className="hero-header text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.5rem] 2xl:text-[6.25rem] font-black uppercase leading-[1.05] text-[#1A4C98] tracking-tight drop-shadow-[0_2px_16px_rgba(255,255,255,0.95)] w-full select-none">
               <TextSplitter
                 text="Global Trades"
@@ -125,24 +127,30 @@ export default function Hero({ onNavigate }) {
               />
             </h1>
 
-            {/* Subheading */}
-            <div className="hero-subheading mt-3 md:mt-4 text-lg sm:text-xl md:text-2xl lg:text-3xl font-extrabold text-[#081426] tracking-tight max-w-4xl drop-shadow-[0_1px_8px_rgba(255,255,255,0.9)]">
-              <p>Your Trusted Partner for Quality Goods and Wholesale Trading.</p>
-            </div>
-
-            {/* Body Description */}
-            <div className="hero-body text-sm sm:text-base md:text-lg font-medium text-[#081426]/85 mt-2.5 md:mt-3 max-w-3xl drop-shadow-[0_1px_6px_rgba(255,255,255,0.85)]">
+            {/* 3. Short Value Proposition with Accurate Service Area */}
+            <div className="hero-subheading mt-3 md:mt-4 text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-[#081426] tracking-tight max-w-3xl drop-shadow-[0_1px_8px_rgba(255,255,255,0.9)] leading-snug">
               <p>
-                Authorized distributors, dealers &amp; C&amp;F agents of Indian &amp; imported processed foods,
-                gourmet syrups, sauces, and cafe essentials based in Vellayil, Kozhikode.
+                Authorized B2B supply of gourmet syrups, cafe essentials, bakery ingredients, and imported culinary foods. Delivery available across Kozhikode. Customers are welcome to visit our store for direct purchase.
               </p>
             </div>
 
-            {/* Action Buttons */}
-            <div className="hero-buttons mt-5 md:mt-6 flex flex-wrap items-center justify-center gap-4">
+            {/* 4. Action CTAs */}
+            <div className="hero-buttons mt-6 md:mt-7 flex flex-wrap items-center justify-center gap-3.5 sm:gap-4">
+              {/* Primary CTA */}
+              <a
+                href={`https://wa.me/${CONTACT.WHATSAPP_NUMBER}?text=Hi%20Global%20Trades,%20I%20would%20like%20to%20place%20a%20bulk%20order.`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-xl bg-emerald-800 px-6 py-3.5 text-center text-sm sm:text-base md:text-lg font-bold uppercase tracking-wider text-white transition-all duration-200 hover:bg-emerald-900 hover:scale-105 active:scale-95 shadow-lg shadow-emerald-900/30 cursor-pointer inline-flex items-center gap-2.5"
+              >
+                <MessageCircle size={20} className="shrink-0" />
+                <span>Get Wholesale Quote</span>
+              </a>
+
+              {/* Secondary CTA */}
               <Button
                 buttonLink="#products"
-                buttonText="Products"
+                buttonText="Explore Products"
                 onClick={(e) => {
                   e.preventDefault();
                   if (onNavigate) {
@@ -151,13 +159,42 @@ export default function Hero({ onNavigate }) {
                 }}
                 className="shadow-[#1A4C98]/30 bg-[#1A4C98] hover:bg-[#123873]"
               />
+            </div>
+
+            {/* Compact 5-Item Trust-Benefit Strip Directly Below Hero CTA Buttons */}
+            <div className="hero-trust-strip mt-6 md:mt-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3 max-w-4xl">
+              <div className="flex items-center gap-1.5 rounded-full bg-white/85 border border-[#1A4C98]/15 px-3.5 py-1.5 text-xs font-bold text-[#081426] shadow-sm backdrop-blur-sm">
+                <ShieldCheck size={15} className="text-emerald-700 shrink-0" />
+                <span>Authorized Supply</span>
+              </div>
+              <div className="flex items-center gap-1.5 rounded-full bg-white/85 border border-[#1A4C98]/15 px-3.5 py-1.5 text-xs font-bold text-[#081426] shadow-sm backdrop-blur-sm">
+                <FileText size={15} className="text-[#1A4C98] shrink-0" />
+                <span>GST Billing</span>
+              </div>
+              <div className="flex items-center gap-1.5 rounded-full bg-white/85 border border-[#1A4C98]/15 px-3.5 py-1.5 text-xs font-bold text-[#081426] shadow-sm backdrop-blur-sm">
+                <Tag size={15} className="text-emerald-700 shrink-0" />
+                <span>Bulk Food-Service Rates</span>
+              </div>
+              <div className="flex items-center gap-1.5 rounded-full bg-white/85 border border-[#1A4C98]/15 px-3.5 py-1.5 text-xs font-bold text-[#081426] shadow-sm backdrop-blur-sm">
+                <Truck size={15} className="text-[#1A4C98] shrink-0" />
+                <span>Kozhikode Delivery</span>
+              </div>
+              <div className="flex items-center gap-1.5 rounded-full bg-white/85 border border-[#1A4C98]/15 px-3.5 py-1.5 text-xs font-bold text-[#081426] shadow-sm backdrop-blur-sm">
+                <Store size={15} className="text-emerald-700 shrink-0" />
+                <span>Store Pickup Available</span>
+              </div>
+            </div>
+
+            {/* Small 'Need help choosing products?' consultation CTA */}
+            <div className="mt-4 flex items-center justify-center">
               <a
-                href={`https://wa.me/${CONTACT.WHATSAPP_NUMBER}?text=Hi%20Global%20Trades,%20I%20would%20like%20to%20place%20a%20bulk%20order.`}
+                href={CONTACT.WHATSAPP_HELP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-xl bg-emerald-800 px-6 py-3.5 text-center text-base md:text-lg font-bold uppercase tracking-wide text-white transition-all duration-200 hover:bg-emerald-900 hover:scale-105 active:scale-95 shadow-lg shadow-emerald-900/30 cursor-pointer inline-flex items-center gap-2"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1A4C98] hover:text-[#00A3E0] transition-colors underline underline-offset-4"
               >
-                <span>WhatsApp Order</span>
+                <HelpCircle size={14} />
+                <span>Need help choosing products? Order on WhatsApp: 0495 2765320</span>
               </a>
             </div>
           </div>
@@ -174,8 +211,8 @@ export default function Hero({ onNavigate }) {
           <div className="text-side-body mt-4 md:mt-6 max-w-3xl text-balance text-base md:text-lg font-medium text-sky-950/90 leading-relaxed mx-auto">
             <p>
               From Monin syrups, gourmet crushes, pasta, and imported culinary sauces to bulk cafe
-              condiments. We ensure cold-chain freshness and prompt bulk delivery across Kozhikode
-              and North Kerala directly from our PT Usha Road distribution center.
+              condiments. Delivery available across Kozhikode, and customers from anywhere are welcome
+              to visit our PT Usha Road distribution center for direct purchase and product collection.
             </p>
           </div>
 
@@ -195,7 +232,7 @@ export default function Hero({ onNavigate }) {
             </div>
             <div className="flex items-center justify-center gap-2 text-xs md:text-sm font-bold text-sky-950 bg-white/80 backdrop-blur-sm py-4 px-4 rounded-2xl border border-white/80 shadow-sm">
               <span className="size-2 rounded-full bg-emerald-600 shrink-0"></span>
-              <span>Daily Malabar Dispatches</span>
+              <span>Kozhikode Delivery &amp; Store Pickup</span>
             </div>
           </div>
         </div>

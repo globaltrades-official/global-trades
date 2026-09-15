@@ -23,8 +23,8 @@ export default function HeroScene() {
     isReady();
 
     // Position the main logo as an ambient background medallion with deep z-depth
-    const initialY = isDesktop ? -0.1 : -0.5;
-    const initialZ = isDesktop ? -5.2 : -5.8;
+    const initialY = isDesktop ? 0.0 : -0.3;
+    const initialZ = isDesktop ? -5.8 : -6.2;
     gsap.set(mainLogoRef.current.position, { x: 0, y: initialY, z: initialZ });
     gsap.set(mainLogoRef.current.rotation, { x: 0.08, y: 0, z: 0 });
 
@@ -89,10 +89,10 @@ export default function HeroScene() {
       <FloatingCan
         ref={mainLogoRef}
         accentColor="#00A3E0"
-        scale={isDesktop ? 0.85 : 0.6}
-        floatIntensity={isDesktop ? 0.25 : 0.15}
-        rotationIntensity={isDesktop ? 0.12 : 0.08}
-        floatSpeed={0.9}
+        scale={isDesktop ? 0.68 : 0.48}
+        floatIntensity={isDesktop ? 0.2 : 0.12}
+        rotationIntensity={isDesktop ? 0.1 : 0.06}
+        floatSpeed={0.85}
       />
 
       <Environment files="/hdr/field.hdr" environmentIntensity={1.2} />

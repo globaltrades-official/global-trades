@@ -1,10 +1,59 @@
 import React from 'react';
 import { BRANDING, CONTACT } from '@/constants/theme';
+import { Phone, MessageCircle, ArrowRight, MapPin, Mail, Clock } from 'lucide-react';
 
 export default function Footer({ onNavigate }) {
   return (
-    <footer id="contact" className="bg-gradient-to-b from-[#E8F1FB] via-[#E2EEF9] to-[#D7E8F7] text-[#081426] relative z-20 border-t border-[#1A4C98]/15 pt-16 pb-12">
+    <footer id="contact-footer" className="bg-gradient-to-b from-[#E8F1FB] via-[#E2EEF9] to-[#D7E8F7] text-[#081426] relative z-20 border-t border-[#1A4C98]/15 pt-14 pb-12">
       <div className="mx-auto w-full max-w-7xl px-4 md:px-8 relative">
+        {/* Top Standout Wholesale CTA Banner */}
+        <div className="mb-12 relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1A4C98] via-[#123670] to-[#0A1D3D] text-white p-6 sm:p-8 lg:p-10 shadow-2xl shadow-[#1A4C98]/20 border border-white/10">
+          <div
+            className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-[#00A3E0]/15 blur-3xl"
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute -left-20 -bottom-20 h-72 w-72 rounded-full bg-emerald-500/15 blur-3xl"
+            aria-hidden="true"
+          />
+
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div className="space-y-3 max-w-2xl">
+              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/20 px-3.5 py-1 text-xs font-bold text-emerald-300 border border-emerald-400/30">
+                <span className="inline-block size-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Kozhikode Delivery &amp; Direct Store Pickup</span>
+              </div>
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white leading-tight">
+                Need wholesale supply? Contact Global Trades.
+              </h3>
+              <p className="text-sm sm:text-base font-medium text-white/80 leading-relaxed">
+                Visit our store for direct purchase or contact us for delivery within Kozhikode. Get institutional GST billing, bulk trade rates, and authorized brand freshness for your business.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row items-stretch sm:items-center gap-3 shrink-0">
+              <a
+                href={CONTACT.WHATSAPP_ORDER_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-[#081426] font-black px-5 py-3.5 text-xs sm:text-sm uppercase tracking-wider shadow-lg shadow-emerald-950/30 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              >
+                <MessageCircle size={16} />
+                <span>WhatsApp Orders: 0495 2765320</span>
+              </a>
+
+              <button
+                type="button"
+                onClick={() => onNavigate && onNavigate('contact')}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-black px-5 py-3.5 text-xs sm:text-sm uppercase tracking-wider border border-white/20 backdrop-blur-sm transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              >
+                <span>Contact Us</span>
+                <ArrowRight size={15} />
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* 3 Balanced, Left-Aligned Columns */}
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-12 items-start pb-12 border-b border-[#1A4C98]/15">
           {/* Column 1: Brand & Ratings */}
@@ -38,10 +87,10 @@ export default function Footer({ onNavigate }) {
             </div>
           </div>
 
-          {/* Column 2: Exact Location */}
+          {/* Column 2: Exact Location & Store Pickup */}
           <div className="lg:col-span-4 space-y-3 text-left">
             <h4 className="text-xs font-black uppercase tracking-wider text-[#1A4C98]">
-              Distribution Hub &amp; Office
+              Distribution Hub &amp; Store
             </h4>
             
             <div className="font-semibold text-[#081426] leading-relaxed text-sm max-w-sm space-y-0.5">
@@ -50,15 +99,28 @@ export default function Footer({ onNavigate }) {
               ))}
             </div>
 
-            <div className="pt-1">
+            <p className="text-xs font-semibold text-emerald-900 bg-emerald-50 border border-emerald-200/80 rounded-lg p-2.5 max-w-sm">
+              🏬 <strong className="font-bold">Store Pickup:</strong> Customers are welcome to visit our PT Usha Road, Vellayil store for direct purchase. Delivery available across Kozhikode.
+            </p>
+
+            <div className="pt-1 flex flex-wrap items-center gap-3">
               <a
                 href={CONTACT.MAPS_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-[#1A4C98] hover:text-[#00A3E0] transition-colors underline underline-offset-4"
               >
+                <MapPin size={13} />
                 <span>View on Google Maps ↗</span>
               </a>
+              <span className="text-gray-300">·</span>
+              <button
+                type="button"
+                onClick={() => onNavigate && onNavigate('contact')}
+                className="text-xs font-extrabold uppercase tracking-wider text-[#1A4C98] hover:text-[#00A3E0] transition-colors underline underline-offset-4 cursor-pointer"
+              >
+                Directions &amp; Hours
+              </button>
             </div>
           </div>
 
@@ -68,55 +130,80 @@ export default function Footer({ onNavigate }) {
               Direct Orders &amp; Support
             </h4>
 
-            <div className="space-y-2 text-sm text-[#081426]/85">
-              <p>
-                <span className="font-bold text-[#081426]">Mobile:</span>{' '}
-                <a href={`tel:${CONTACT.PHONE.replace(/\s+/g, '')}`} className="hover:text-[#1A4C98] transition-colors font-bold text-[#1A4C98]">
-                  {CONTACT.PHONE}
-                </a>
-              </p>
-              <p>
-                <span className="font-bold text-[#081426]">Office:</span>{' '}
-                <a href={`tel:${CONTACT.OFFICE_PHONE_RAW}`} className="hover:text-[#1A4C98] transition-colors font-bold text-[#1A4C98]">
-                  {CONTACT.OFFICE_PHONE}
-                </a>
-              </p>
-              <p>
-                <span className="font-bold text-[#081426]">WhatsApp:</span>{' '}
+            <div className="space-y-2.5 text-sm text-[#081426]/85">
+              <div>
+                <span className="block text-[11px] font-bold text-[#081426]/60 uppercase tracking-wider">
+                  Phone Enquiries
+                </span>
                 <a
-                  href={`https://wa.me/${CONTACT.WHATSAPP_NUMBER}`}
+                  href={`tel:${CONTACT.ENQUIRY_PHONE_RAW}`}
+                  className="hover:text-[#00A3E0] transition-colors font-black text-[#1A4C98] inline-flex items-center gap-1.5"
+                >
+                  <Phone size={13} />
+                  <span>Call for Enquiries: {CONTACT.ENQUIRY_PHONE}</span>
+                </a>
+              </div>
+
+              <div>
+                <span className="block text-[11px] font-bold text-[#081426]/60 uppercase tracking-wider">
+                  WhatsApp Orders Desk
+                </span>
+                <a
+                  href={CONTACT.WHATSAPP_ORDER_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-emerald-800 transition-colors font-bold text-emerald-800"
+                  className="hover:text-emerald-700 transition-colors font-black text-emerald-800 inline-flex items-center gap-1.5"
                 >
-                  {CONTACT.OFFICE_PHONE}
+                  <MessageCircle size={13} />
+                  <span>WhatsApp Orders: {CONTACT.WHATSAPP_DISPLAY}</span>
                 </a>
-              </p>
-              <p>
-                <span className="font-bold text-[#081426]">Email:</span>{' '}
+              </div>
+
+              <div>
+                <span className="block text-[11px] font-bold text-[#081426]/60 uppercase tracking-wider">
+                  Office Desk
+                </span>
+                <a
+                  href={`tel:${CONTACT.OFFICE_PHONE_RAW}`}
+                  className="hover:text-[#1A4C98] transition-colors font-bold text-[#081426]/80 text-xs inline-flex items-center gap-1.5"
+                >
+                  <Phone size={12} />
+                  <span>Office: {CONTACT.OFFICE_PHONE}</span>
+                </a>
+              </div>
+
+              <div>
+                <span className="block text-[11px] font-bold text-[#081426]/60 uppercase tracking-wider">
+                  Official Email
+                </span>
                 <a
                   href={`mailto:${CONTACT.EMAIL}`}
-                  className="hover:text-[#1A4C98] transition-colors font-bold text-[#1A4C98]"
+                  className="hover:text-[#1A4C98] transition-colors font-semibold text-[#081426]/80 text-xs inline-flex items-center gap-1.5"
                 >
-                  {CONTACT.EMAIL}
+                  <Mail size={12} />
+                  <span>{CONTACT.EMAIL}</span>
                 </a>
-              </p>
+              </div>
 
               {/* Operating Hours Card */}
               <div className="rounded-xl bg-white/80 border border-emerald-700/20 p-2.5 text-xs font-bold text-emerald-950 shadow-sm">
                 <span className="block text-[10px] uppercase tracking-wider text-emerald-800">Operating Schedule</span>
-                <span>Open: {CONTACT.HOURS}</span>
+                <span className="flex items-center gap-1 text-[11px] text-[#081426]/80 mt-0.5">
+                  <Clock size={11} className="text-emerald-700" />
+                  <span>Open: {CONTACT.HOURS}</span>
+                </span>
               </div>
             </div>
 
             <div className="pt-2">
               <a
-                href={`https://wa.me/${CONTACT.WHATSAPP_NUMBER}?text=Hi%20Global%20Trades,%20I%20would%20like%20to%20place%20an%20order.`}
+                href={CONTACT.WHATSAPP_ORDER_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-800 hover:bg-emerald-900 px-4 py-3 text-xs font-extrabold uppercase tracking-wider text-white shadow-lg shadow-emerald-900/25 transition-all hover:scale-105 active:scale-95 cursor-pointer"
               >
-                <span>Order via WhatsApp</span>
+                <MessageCircle size={15} />
+                <span>WhatsApp Orders: 0495 2765320</span>
               </a>
             </div>
           </div>
@@ -125,7 +212,17 @@ export default function Footer({ onNavigate }) {
         {/* Bottom Bar with perfect horizontal alignment */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 text-xs font-semibold text-[#081426]/65">
           <p>© {new Date().getFullYear()} Global Trades. All rights reserved.</p>
-          <p>PT Usha Road · Vellayil · Kozhikode</p>
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={() => onNavigate && onNavigate('contact')}
+              className="hover:text-[#1A4C98] transition-colors"
+            >
+              Contact Page
+            </button>
+            <span>·</span>
+            <span>PT Usha Road · Vellayil · Kozhikode</span>
+          </div>
         </div>
       </div>
     </footer>

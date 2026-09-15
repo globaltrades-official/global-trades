@@ -7,7 +7,9 @@ import {
   MessageCircle,
   Package,
   RotateCcw,
-  ArrowLeft
+  ArrowLeft,
+  Info,
+  HelpCircle,
 } from 'lucide-react';
 import { CATALOG_CATEGORIES, CATALOG_PRODUCTS, CATALOG_BRANDS } from '@/data/catalogProducts';
 import { BRANDING, CONTACT } from '@/constants/theme';
@@ -145,7 +147,7 @@ export default function ProductsPage({
                 ★ 4.6 Google Rating (36 Verified Reviews)
               </span>
               <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-lg border border-white/15">
-                🚚 Daily Local Dispatch Across Malabar
+                🚚 Delivery Available Across Kozhikode · Store Pickup Welcome
               </span>
               <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-lg border border-white/15">
                 💼 Commercial B2B & GST Billing
@@ -289,6 +291,26 @@ export default function ProductsPage({
               </button>
             </div>
           )}
+
+          {/* Wholesale Pricing Notice & Product Help Callout */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl bg-[#1A4C98]/5 border border-[#1A4C98]/15 px-4 py-3 text-xs text-[#081426] font-medium">
+            <div className="flex items-center gap-2">
+              <Info size={16} className="text-[#1A4C98] shrink-0" />
+              <span>
+                <strong className="text-[#1A4C98] font-bold">Catalogue Note:</strong> Wholesale prices and stock availability are shared on request.
+              </span>
+            </div>
+
+            <a
+              href={CONTACT.WHATSAPP_HELP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1A4C98] hover:text-[#00A3E0] transition-colors self-start sm:self-auto shrink-0 underline underline-offset-2"
+            >
+              <HelpCircle size={14} />
+              <span>Need help choosing products?</span>
+            </a>
+          </div>
         </div>
 
         {/* Results Bar */}
@@ -392,19 +414,28 @@ export default function ProductsPage({
                 Need Bulk Crates, Pallets, or Scheduled Deliveries?
               </h3>
               <p className="text-sm text-[#081426]/75 font-medium max-w-2xl">
-                Global Trades supplies leading cafes, bakeries, cloud kitchens, and institutional caterers across Kerala. We provide spot volume rates, GST tax invoices, and C&F logistics support.
+                Visit our store for direct purchase or contact us for delivery within Kozhikode. Bulk orders, product availability, and Kozhikode delivery can be confirmed on WhatsApp.
               </p>
             </div>
 
             <div className="flex flex-wrap items-center gap-3 shrink-0">
               <a
-                href={`https://wa.me/${CONTACT.WHATSAPP_NUMBER}?text=Hello%20Global%20Trades,%20I%20would%20like%20to%20request%20a%20B2B%20wholesale%20quote%20for%20our%20commercial%20kitchen.`}
+                href={CONTACT.WHATSAPP_ORDER_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl bg-emerald-800 px-6 py-3 text-xs font-bold uppercase tracking-wider text-white hover:bg-emerald-900 shadow-md shadow-emerald-900/20 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                className="inline-flex items-center gap-2 rounded-xl bg-emerald-800 px-6 py-3 text-xs font-black uppercase tracking-wider text-white hover:bg-emerald-900 shadow-md shadow-emerald-900/20 transition-all hover:scale-105 active:scale-95 cursor-pointer"
               >
                 <MessageCircle size={16} />
-                <span>WhatsApp Procurement</span>
+                <span>WhatsApp Orders: 0495 2765320</span>
+              </a>
+              <a
+                href={CONTACT.WHATSAPP_HELP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl border border-[#1A4C98]/30 bg-[#F4F8FC] px-5 py-3 text-xs font-bold uppercase tracking-wider text-[#1A4C98] hover:bg-[#1A4C98] hover:text-white transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              >
+                <HelpCircle size={15} />
+                <span>Need Help Choosing Products?</span>
               </a>
             </div>
           </div>
@@ -480,11 +511,11 @@ function ProductCatalogCard({ product }) {
           href={`https://wa.me/${CONTACT.WHATSAPP_NUMBER}?text=${whatsappMessage}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-800 hover:bg-emerald-900 px-3.5 py-2 text-xs font-bold text-white transition-all hover:scale-[1.02] active:scale-95 cursor-pointer shadow-sm shadow-emerald-900/20"
+          className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-800 hover:bg-emerald-900 px-3.5 py-2.5 text-xs font-bold text-white transition-all hover:scale-[1.02] active:scale-95 cursor-pointer shadow-sm shadow-emerald-900/20"
           title={`Order ${product.name} on WhatsApp`}
         >
           <MessageCircle size={14} />
-          <span>Inquire on WhatsApp</span>
+          <span>Request Today's Wholesale Price</span>
         </a>
       </div>
     </div>
