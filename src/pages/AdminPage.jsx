@@ -445,7 +445,7 @@ END $$;`;
               className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1A4C98] hover:text-[#123873] cursor-pointer"
             >
               <ArrowLeft size={14} />
-              <span>View Public Catalog</span>
+              <span>View Public Products</span>
             </button>
             <span className="text-xs font-bold text-[#081426]/40">|</span>
             <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800">
@@ -498,7 +498,7 @@ END $$;`;
               title="Download or copy catalog JSON"
             >
               <Download size={13} />
-              <span>Export Catalog</span>
+              <span>Export Products</span>
             </button>
 
             <button
@@ -511,7 +511,7 @@ END $$;`;
               className="inline-flex items-center gap-1.5 rounded-xl border border-[#D0DFEF] bg-white px-3 py-1.5 text-xs font-bold text-[#081426]/80 hover:bg-red-50 hover:text-red-700 hover:border-red-200 transition-colors cursor-pointer"
             >
               <RotateCcw size={13} />
-              <span>Reset Catalog</span>
+              <span>Reset Products</span>
             </button>
 
             <button
@@ -1035,7 +1035,7 @@ END $$;`;
                   type="submit"
                   className="rounded-xl bg-[#1A4C98] px-6 py-2.5 text-xs font-black uppercase tracking-wider text-white shadow-md hover:bg-[#123873] cursor-pointer"
                 >
-                  {editingProduct ? 'Save Changes' : 'Add to Catalog'}
+                  {editingProduct ? 'Save Changes' : 'Add to Products'}
                 </button>
               </div>
             </form>

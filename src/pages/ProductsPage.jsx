@@ -139,7 +139,7 @@ export default function ProductsPage({
             </h1>
 
             <p className="mt-4 text-base md:text-lg text-white/85 font-medium leading-relaxed">
-              Complete inventory of imported syrups, cafe sachets, Belgian chocolates, gourmet purees, sauces, canned fruits, and frozen foods. Every item includes genuine product imagery extracted directly from our official commercial catalog.
+              Complete inventory of imported syrups, cafe sachets, Belgian chocolates, gourmet purees, sauces, canned fruits, and frozen foods. Every item includes genuine product imagery extracted directly from our official commercial products directory.
             </p>
 
             <div className="mt-6 flex flex-wrap items-center gap-4 text-xs md:text-sm font-semibold text-white/90">
@@ -297,7 +297,7 @@ export default function ProductsPage({
             <div className="flex items-center gap-2">
               <Info size={16} className="text-[#1A4C98] shrink-0" />
               <span>
-                <strong className="text-[#1A4C98] font-bold">Catalogue Note:</strong> Wholesale prices and stock availability are shared on request.
+                <strong className="text-[#1A4C98] font-bold">Products Note:</strong> Wholesale prices and stock availability are shared on request.
               </span>
             </div>
 
@@ -329,7 +329,7 @@ export default function ProductsPage({
             <Package size={48} className="mx-auto text-[#1A4C98]/40 mb-4" />
             <h3 className="text-xl font-bold text-[#081426]">No products matched your criteria</h3>
             <p className="mt-2 text-sm text-[#081426]/65 max-w-md mx-auto">
-              We distribute a comprehensive wholesale catalog. Try clearing filters or contacting our Kozhikode wholesale procurement desk directly for custom inquiries.
+              We distribute a comprehensive wholesale products range. Try clearing filters or contacting our Kozhikode wholesale procurement desk directly for custom inquiries.
             </p>
             <button
               onClick={resetFilters}

@@ -62,7 +62,7 @@ export default function Header({ currentPage = 'home', activeSection = 'hero', o
             }`}
           >
             <Package size={14} />
-            <span>Catalogue</span>
+            <span>Products</span>
           </button>
 
           <button
@@ -172,7 +172,7 @@ export default function Header({ currentPage = 'home', activeSection = 'hero', o
             }`}
           >
             <Package size={16} />
-            <span>Product Catalogue</span>
+            <span>Products</span>
           </button>
 
           <button
