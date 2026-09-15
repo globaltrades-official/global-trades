@@ -1,7 +1,6 @@
 import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { View } from '@react-three/drei';
-import CustomLoader from './CustomLoader';
 
 export default function ViewCanvas() {
   return (
