@@ -64,7 +64,7 @@ export default function AlternatingText() {
         });
       });
 
-      // Scroll-driven 3D transition across all review rows
+      // Scroll-driven continuous transition across all review rows with one shared logo
       if (sharedLogoRef.current && containerRef.current && sections.length > 0) {
         const mm = gsap.matchMedia(containerRef);
 
@@ -77,74 +77,49 @@ export default function AlternatingText() {
           (context) => {
             const { isDesktop, reduceMotion } = context.conditions;
 
-            // Dynamic horizontal target based on viewport width:
-            // On desktop: center of opposite column (~28% of screen, capped at 380px)
-            // On mobile: subtle travel (~10% of screen, capped at 40px)
-            const desktopDistance = Math.min(window.innerWidth * 0.28, 380);
+            // Horizontal position:
+            // Desktop: aligned with opposite review column center (~25% viewport width, max 340px)
+            // Mobile: subtle travel (~10% viewport width, max 40px)
+            const desktopDistance = Math.min(window.innerWidth * 0.25, 340);
             const mobileDistance = Math.min(window.innerWidth * 0.10, 40);
             const xTarget = isDesktop ? desktopDistance : mobileDistance;
-
-            const depthScale = isDesktop ? 0.88 : 0.95;
-            const depthZ = isDesktop ? -75 : -20;
 
             // Position 1: Start beside Review 1 (on the right side)
             gsap.set(sharedLogoRef.current, {
               x: xTarget,
               y: 0,
-              z: 0,
               scale: 1,
-              transformPerspective: 1200,
             });
 
             if (!reduceMotion && logoPinRef.current) {
-              // Pin the logo viewport container over the Reviews section
-              ScrollTrigger.create({
-                trigger: containerRef.current,
-                pin: logoPinRef.current,
-                start: 'top top',
-                end: 'bottom bottom',
-                pinSpacing: false,
+              // Unified ScrollTrigger timeline: pins the shared logo viewport container
+              // and continuously animates the logo across rows without disappearing
+              const scrollTl = gsap.timeline({
+                scrollTrigger: {
+                  trigger: containerRef.current,
+                  pin: logoPinRef.current,
+                  start: 'top top',
+                  end: 'bottom bottom',
+                  scrub: 0.8,
+                  pinSpacing: false,
+                  invalidateOnRefresh: true,
+                },
               });
 
-              // Build dynamic transitions between each review row
-              // Starts when Review 1 centers, finishes precisely as the final review centers
-              if (sections.length >= 2) {
-                const scrollTl = gsap.timeline({
-                  scrollTrigger: {
-                    trigger: sections[0],
-                    endTrigger: sections[sections.length - 1],
-                    start: 'center center',
-                    end: 'center center',
-                    scrub: 1.0,
-                    invalidateOnRefresh: true,
-                  },
+              // Continuous animation:
+              // Review 1 (right) -> Review 2 (left) -> Review 3 (right)
+              // Logo remains continuously visible and smoothly glides across the screen
+              scrollTl
+                .to(sharedLogoRef.current, {
+                  x: -xTarget,
+                  ease: 'sine.inOut',
+                  duration: 1,
+                })
+                .to(sharedLogoRef.current, {
+                  x: xTarget,
+                  ease: 'sine.inOut',
+                  duration: 1,
                 });
-
-                for (let i = 0; i < sections.length - 1; i++) {
-                  const isTargetEven = (i + 1) % 2 === 0;
-                  // Even target (Review 1, Review 3, ...): card is on left -> logo on right (+xTarget)
-                  // Odd target (Review 2, ...): card is on right -> logo on left (-xTarget)
-                  const nextX = isTargetEven ? xTarget : -xTarget;
-
-                  // Phase A: Dip back in 3D perspective across center
-                  scrollTl.to(sharedLogoRef.current, {
-                    x: 0,
-                    scale: depthScale,
-                    z: depthZ,
-                    ease: 'power1.in',
-                    duration: 1,
-                  });
-
-                  // Phase B: Emerge beside next review at full scale
-                  scrollTl.to(sharedLogoRef.current, {
-                    x: nextX,
-                    scale: 1,
-                    z: 0,
-                    ease: 'power1.out',
-                    duration: 1,
-                  });
-                }
-              }
             }
           }
         );
@@ -157,9 +132,9 @@ export default function AlternatingText() {
     <section
       ref={containerRef}
       id="benefits"
-      className="alternating-text-container relative w-full overflow-hidden bg-[#E2ECF8] text-[#081426] transition-colors duration-700"
+      className="alternating-text-container relative w-full bg-[#E2ECF8] text-[#081426] transition-colors duration-700"
     >
-      {/* Pinned Shared Scroll-Driven 3D Decorative Logo */}
+      {/* Pinned Shared Scroll-Driven Decorative Logo */}
       <div
         ref={logoPinRef}
         className="pointer-events-none select-none absolute top-0 left-0 w-full h-screen z-0 flex items-center justify-center overflow-hidden"
