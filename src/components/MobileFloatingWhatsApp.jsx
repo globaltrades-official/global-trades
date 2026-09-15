@@ -1,5 +1,5 @@
 import React from 'react';
-import { MessageCircle } from 'lucide-react';
+import WhatsAppIcon from './WhatsAppIcon';
 import { CONTACT } from '@/constants/theme';
 
 export default function MobileFloatingWhatsApp() {
@@ -16,7 +16,7 @@ export default function MobileFloatingWhatsApp() {
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75" />
           <span className="relative inline-flex rounded-full size-2.5 bg-white" />
         </span>
-        <MessageCircle size={18} className="fill-white" />
+        <WhatsAppIcon size={19} className="shrink-0" />
         <span className="text-xs uppercase tracking-wider font-extrabold">WhatsApp Orders</span>
       </a>
     </aside>

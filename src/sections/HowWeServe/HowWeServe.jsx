@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   Utensils,
-  MessageCircle,
   Receipt,
   MapPin,
   Truck,
@@ -9,6 +8,7 @@ import {
   ArrowRight,
   CheckCircle2,
 } from 'lucide-react';
+import WhatsAppIcon from '@/components/WhatsAppIcon';
 import { CONTACT } from '@/constants/theme';
 
 export default function HowWeServe({ onNavigate }) {
@@ -22,7 +22,7 @@ export default function HowWeServe({ onNavigate }) {
       highlight: 'Cafes · Bakeries · Cloud Kitchens · Hotels',
     },
     {
-      icon: MessageCircle,
+      icon: WhatsAppIcon,
       title: 'Bulk Quotation on WhatsApp',
       subtitle: 'Instant Spot Volume Pricing',
       description:
@@ -145,7 +145,7 @@ export default function HowWeServe({ onNavigate }) {
                 rel="noopener noreferrer"
                 className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-800 hover:bg-emerald-900 px-4 py-3 text-xs font-black uppercase tracking-wider text-white shadow-md transition-transform hover:scale-105 active:scale-95"
               >
-                <MessageCircle size={16} />
+                <WhatsAppIcon size={16} />
                 <span>WhatsApp Orders: 0495 2765320</span>
               </a>
 
@@ -184,7 +184,7 @@ export default function HowWeServe({ onNavigate }) {
             rel="noopener noreferrer"
             className="shrink-0 inline-flex items-center gap-2 rounded-xl bg-emerald-800 hover:bg-emerald-900 px-4 py-2.5 text-xs font-extrabold uppercase tracking-wider text-white shadow-sm transition-all hover:scale-105 active:scale-95 whitespace-nowrap"
           >
-            <MessageCircle size={15} />
+            <WhatsAppIcon size={15} />
             <span>Consult on WhatsApp</span>
           </a>
         </div>

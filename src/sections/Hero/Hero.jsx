@@ -2,7 +2,8 @@ import React, { lazy, Suspense } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ShieldCheck, FileText, Tag, Truck, Store, MessageCircle, HelpCircle } from 'lucide-react';
+import { ShieldCheck, FileText, Tag, Truck, Store, HelpCircle } from 'lucide-react';
+import WhatsAppIcon from '@/components/WhatsAppIcon';
 
 import Button from '@/components/Button';
 import { TextSplitter } from '@/components/TextSplitter';
@@ -143,7 +144,7 @@ export default function Hero({ onNavigate }) {
                 rel="noopener noreferrer"
                 className="rounded-xl bg-emerald-800 px-6 py-3.5 text-center text-sm sm:text-base md:text-lg font-bold uppercase tracking-wider text-white transition-all duration-200 hover:bg-emerald-900 hover:scale-105 active:scale-95 shadow-lg shadow-emerald-900/30 cursor-pointer inline-flex items-center gap-2.5"
               >
-                <MessageCircle size={20} className="shrink-0" />
+                <WhatsAppIcon size={20} className="shrink-0" />
                 <span>Get Wholesale Quote</span>
               </a>
 
@@ -193,7 +194,7 @@ export default function Hero({ onNavigate }) {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1A4C98] hover:text-[#00A3E0] transition-colors underline underline-offset-4"
               >
-                <HelpCircle size={14} />
+                <WhatsAppIcon size={15} className="shrink-0 text-emerald-600" />
                 <span>Need help choosing products? Order on WhatsApp: 0495 2765320</span>
               </a>
             </div>

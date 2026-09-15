@@ -4,7 +4,6 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  MessageCircle,
   Package,
   RotateCcw,
   ArrowLeft,
@@ -12,6 +11,7 @@ import {
   Info,
   HelpCircle,
 } from 'lucide-react';
+import WhatsAppIcon from '@/components/WhatsAppIcon';
 import { CATALOG_CATEGORIES, CATALOG_PRODUCTS, CATALOG_BRANDS } from '@/data/catalogProducts';
 import { BRANDING, CONTACT } from '@/constants/theme';
 
@@ -164,7 +164,7 @@ export default function ProductsPage({
         <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-blue-50 border border-emerald-200/80 p-4 sm:px-6 sm:py-3.5 shadow-sm text-xs sm:text-sm text-[#081426]">
           <div className="flex items-center gap-3">
             <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-xs">
-              <MessageCircle size={16} />
+              <WhatsAppIcon size={18} />
             </span>
             <div>
               <p className="font-bold text-[#081426] leading-tight">
@@ -452,7 +452,7 @@ export default function ProductsPage({
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-xl bg-emerald-800 px-6 py-3 text-xs font-black uppercase tracking-wider text-white hover:bg-emerald-900 shadow-md shadow-emerald-900/20 transition-all hover:scale-105 active:scale-95 cursor-pointer"
               >
-                <MessageCircle size={16} />
+                <WhatsAppIcon size={16} />
                 <span>WhatsApp Orders: 0495 2765320</span>
               </a>
               <a
@@ -541,7 +541,7 @@ function ProductCatalogCard({ product }) {
           className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-800 hover:bg-emerald-900 px-3.5 py-2.5 text-xs font-bold text-white transition-all hover:scale-[1.02] active:scale-95 cursor-pointer shadow-sm shadow-emerald-900/20"
           title={`Order ${product.name} on WhatsApp`}
         >
-          <MessageCircle size={14} />
+          <WhatsAppIcon size={14} />
           <span>Request Today's Wholesale Price</span>
         </a>
       </div>

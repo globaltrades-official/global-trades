@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import clsx from 'clsx';
-import gsap from 'gsap';
-import { MessageCircle, CheckCircle2, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { CheckCircle2, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import WhatsAppIcon from '@/components/WhatsAppIcon';
 
 import { WavyCircles } from './WavyCircles';
 import { CONTACT } from '@/constants/theme';
@@ -362,7 +362,7 @@ export default function Carousel({ products = [], onNavigate }) {
                   rel="noopener noreferrer"
                   className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3.5 text-sm font-black text-[#1A4C98] shadow-xl transition-all duration-200 hover:bg-amber-300 hover:text-[#081426] hover:scale-105 active:scale-95 cursor-pointer uppercase tracking-wider"
                 >
-                  <MessageCircle size={16} className="text-emerald-600 shrink-0" />
+                  <WhatsAppIcon size={17} className="text-emerald-600 shrink-0" />
                   <span>Request Wholesale Price</span>
                 </a>
 

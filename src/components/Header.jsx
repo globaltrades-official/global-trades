@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BRANDING, CONTACT } from '@/constants/theme';
-import { Menu, X, Package, Phone, MessageCircle } from 'lucide-react';
+import { Menu, X, Package, Phone } from 'lucide-react';
+import WhatsAppIcon from './WhatsAppIcon';
 
 export default function Header({ currentPage = 'home', activeSection = 'hero', onNavigate }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -130,7 +131,7 @@ export default function Header({ currentPage = 'home', activeSection = 'hero', o
             title="WhatsApp Orders: 0495 2765320"
           >
             <div className="size-6 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
-              <MessageCircle size={13} className="text-white" />
+              <WhatsAppIcon size={14} className="text-white" />
             </div>
             <div className="flex flex-col text-left leading-tight">
               <span className="text-[9px] uppercase font-extrabold text-emerald-200 tracking-wider">
@@ -223,7 +224,7 @@ export default function Header({ currentPage = 'home', activeSection = 'hero', o
                 className="flex items-center justify-between p-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs shadow-sm transition-colors"
               >
                 <div className="flex items-center gap-2">
-                  <MessageCircle size={15} />
+                  <WhatsAppIcon size={16} />
                   <span>WhatsApp Orders:</span>
                 </div>
                 <span className="font-black text-sm">{CONTACT.WHATSAPP_DISPLAY}</span>

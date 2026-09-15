@@ -1,6 +1,7 @@
 import React from 'react';
 import { BRANDING, CONTACT } from '@/constants/theme';
-import { Phone, MessageCircle, ArrowRight, MapPin, Mail, Clock } from 'lucide-react';
+import { Phone, ArrowRight, MapPin, Mail, Clock } from 'lucide-react';
+import WhatsAppIcon from './WhatsAppIcon';
 
 export default function Footer({ onNavigate }) {
   return (
@@ -38,7 +39,7 @@ export default function Footer({ onNavigate }) {
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-[#081426] font-black px-5 py-3.5 text-xs sm:text-sm uppercase tracking-wider shadow-lg shadow-emerald-950/30 transition-all hover:scale-105 active:scale-95 cursor-pointer"
               >
-                <MessageCircle size={16} />
+                <WhatsAppIcon size={16} />
                 <span>WhatsApp Orders: 0495 2765320</span>
               </a>
 
@@ -154,7 +155,7 @@ export default function Footer({ onNavigate }) {
                   rel="noopener noreferrer"
                   className="hover:text-emerald-700 transition-colors font-black text-emerald-800 inline-flex items-center gap-1.5"
                 >
-                  <MessageCircle size={13} />
+                  <WhatsAppIcon size={14} />
                   <span>WhatsApp Orders: {CONTACT.WHATSAPP_DISPLAY}</span>
                 </a>
               </div>
@@ -202,7 +203,7 @@ export default function Footer({ onNavigate }) {
                 rel="noopener noreferrer"
                 className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-800 hover:bg-emerald-900 px-4 py-3 text-xs font-extrabold uppercase tracking-wider text-white shadow-lg shadow-emerald-900/25 transition-all hover:scale-105 active:scale-95 cursor-pointer"
               >
-                <MessageCircle size={15} />
+                <WhatsAppIcon size={16} />
                 <span>WhatsApp Orders: 0495 2765320</span>
               </a>
             </div>

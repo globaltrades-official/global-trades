@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   Phone,
-  MessageCircle,
   Mail,
   MapPin,
   Clock,
@@ -14,6 +13,7 @@ import {
   Truck,
   ShieldCheck,
 } from 'lucide-react';
+import WhatsAppIcon from '@/components/WhatsAppIcon';
 import { BRANDING, CONTACT } from '@/constants/theme';
 
 export default function ContactPage({ onNavigateHome, onNavigateProducts }) {
@@ -138,7 +138,7 @@ export default function ContactPage({ onNavigateHome, onNavigateProducts }) {
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <div className="size-11 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
-                      <MessageCircle size={22} />
+                      <WhatsAppIcon size={24} />
                     </div>
                     <span className="rounded-full bg-emerald-800 text-white text-[10px] font-black uppercase px-2.5 py-0.5 tracking-wider">
                       Primary Orders
@@ -161,7 +161,7 @@ export default function ContactPage({ onNavigateHome, onNavigateProducts }) {
                     rel="noopener noreferrer"
                     className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-800 hover:bg-emerald-900 px-4 py-3 text-xs font-black uppercase tracking-wider text-white shadow-md transition-all hover:scale-[1.02] active:scale-95"
                   >
-                    <MessageCircle size={16} />
+                    <WhatsAppIcon size={16} />
                     <span>Order on WhatsApp: 0495 2765320</span>
                   </a>
                 </div>
@@ -360,7 +360,7 @@ export default function ContactPage({ onNavigateHome, onNavigateProducts }) {
                       onClick={handleFormSubmit}
                       className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-800 hover:bg-emerald-900 px-4 py-3 text-xs font-black uppercase tracking-wider text-white shadow-md cursor-pointer"
                     >
-                      <MessageCircle size={16} />
+                      <WhatsAppIcon size={16} />
                       <span>Open WhatsApp Enquiry</span>
                     </button>
                     <button
@@ -491,7 +491,7 @@ export default function ContactPage({ onNavigateHome, onNavigateProducts }) {
                     type="submit"
                     className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-800 hover:bg-emerald-900 px-6 py-3.5 text-sm font-black uppercase tracking-wider text-white shadow-lg shadow-emerald-900/25 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
                   >
-                    <Send size={16} />
+                    <WhatsAppIcon size={18} />
                     <span>Send Wholesale Enquiry on WhatsApp</span>
                   </button>
 
