@@ -114,7 +114,7 @@ export default function Hero({ onNavigate }) {
             {/* 1. Business Type */}
             <div className="hero-badge mb-3 md:mb-4 flex items-center justify-center">
               <span className="rounded-full bg-white/85 px-4 py-1.5 text-xs md:text-sm font-extrabold uppercase tracking-wider text-[#1A4C98] border border-[#1A4C98]/20 backdrop-blur-md shadow-sm">
-                Wholesale Food Service &amp; Institutional Distribution · Calicut / Kozhikode
+                Wholesale Food Service &amp; Institutional Distribution · Kozhikode
               </span>
             </div>
 
@@ -130,7 +130,7 @@ export default function Hero({ onNavigate }) {
             {/* 3. Short Value Proposition with Accurate Service Area */}
             <div className="hero-subheading mt-3 md:mt-4 text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-[#081426] tracking-tight max-w-3xl drop-shadow-[0_1px_8px_rgba(255,255,255,0.9)] leading-snug">
               <p>
-                Authorized B2B supply of gourmet syrups, cafe essentials, bakery ingredients, and imported culinary foods. Delivery available across Calicut &amp; Kozhikode. Customers are welcome to visit our store for direct purchase.
+                Authorized B2B supply of gourmet syrups, cafe essentials, bakery ingredients, and imported culinary foods. Delivery across Kozhikode. Customers are welcome to visit our store for direct purchase.
               </p>
             </div>
 

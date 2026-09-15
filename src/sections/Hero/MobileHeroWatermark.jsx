@@ -13,7 +13,7 @@ export default function MobileHeroWatermark() {
       <div className="absolute top-1/4 size-72 rounded-full bg-gradient-to-tr from-[#00A3E0]/15 via-[#1A4C98]/10 to-transparent blur-3xl animate-pulse" />
 
       {/* Floating Medallion with CSS 3D Depth */}
-      <div className="relative flex flex-col items-center justify-center opacity-20 transform-gpu animate-[gt-float_6s_ease-in-out_infinite]">
+      <div className="relative flex flex-col items-center justify-center opacity-10 translate-y-12 transform-gpu animate-[gt-float_6s_ease-in-out_infinite]">
         {/* Outer Accent Ring */}
         <div className="relative size-44 rounded-full border-2 border-dashed border-[#1A4C98]/30 flex items-center justify-center p-3 animate-[gt-spin_28s_linear_infinite]">
           {/* Inner Accent Ring */}

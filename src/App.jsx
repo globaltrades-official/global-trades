@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import MobileFloatingWhatsApp from './components/MobileFloatingWhatsApp';
 import Hero from './sections/Hero/Hero';
 import Carousel from './sections/Carousel/Carousel';
 import AlternatingText from './sections/AlternatingText/AlternatingText';
@@ -247,6 +248,7 @@ export default function App() {
       )}
 
       <Footer onNavigate={navigateTo} />
+      <MobileFloatingWhatsApp />
     </div>
   );
 }

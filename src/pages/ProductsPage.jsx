@@ -8,6 +8,7 @@ import {
   Package,
   RotateCcw,
   ArrowLeft,
+  ArrowRight,
   Info,
   HelpCircle,
 } from 'lucide-react';
@@ -142,15 +143,15 @@ export default function ProductsPage({
               Complete inventory of imported syrups, cafe sachets, Belgian chocolates, gourmet purees, sauces, canned fruits, and frozen foods. Every item includes genuine product imagery extracted directly from our official commercial products directory.
             </p>
 
-            <div className="mt-6 flex flex-wrap items-center gap-4 text-xs md:text-sm font-semibold text-white/90">
+            <div className="mt-6 flex flex-wrap items-center gap-3 text-xs md:text-sm font-semibold text-white/90">
               <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-lg border border-white/15">
                 ★ 4.6 Google Rating (36 Verified Reviews)
               </span>
               <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-lg border border-white/15">
-                🚚 Delivery Available Across Kozhikode · Store Pickup Welcome
+                🚚 Delivery Across Kozhikode · Store Pickup Welcome
               </span>
-              <span className="flex items-center gap-1.5 bg-white/10 px-3 py-1.5 rounded-lg border border-white/15">
-                💼 Commercial B2B & GST Billing
+              <span className="flex items-center gap-1.5 bg-emerald-400/20 text-emerald-200 px-3 py-1.5 rounded-lg border border-emerald-400/30">
+                💬 Wholesale pricing &amp; live stock availability are shared on WhatsApp
               </span>
             </div>
           </div>
@@ -159,6 +160,32 @@ export default function ProductsPage({
 
       {/* Main Catalog Content */}
       <div className="mx-auto max-w-7xl px-4 md:px-8">
+        {/* Wholesale Price & Live Stock Notice */}
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-blue-50 border border-emerald-200/80 p-4 sm:px-6 sm:py-3.5 shadow-sm text-xs sm:text-sm text-[#081426]">
+          <div className="flex items-center gap-3">
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-xs">
+              <MessageCircle size={16} />
+            </span>
+            <div>
+              <p className="font-bold text-[#081426] leading-tight">
+                Wholesale pricing and live stock availability are shared on WhatsApp.
+              </p>
+              <p className="text-xs text-[#081426]/70 mt-0.5">
+                Institutional billing, crate trade discounts &amp; delivery status sent directly by our sales desk.
+              </p>
+            </div>
+          </div>
+          <a
+            href={CONTACT.WHATSAPP_ORDER_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold px-4 py-2 text-xs uppercase tracking-wider transition-all shadow-sm shadow-emerald-950/20 shrink-0 self-start sm:self-auto cursor-pointer"
+          >
+            <span>Ask for Pricing</span>
+            <ArrowRight size={13} />
+          </a>
+        </div>
+
         {/* Controls Container */}
         <div className="rounded-2xl bg-white p-6 shadow-sm border border-[#D0DFEF] mb-8 space-y-6">
           {/* Search and Brand Dropdown */}
