@@ -223,12 +223,10 @@ export default function App() {
         </main>
       ) : (
         <main className="relative">
-          {/* 3D Animated Background Logo Canvas: Desktop only, asynchronously loaded */}
-          {isDesktop && (
-            <Suspense fallback={null}>
-              <ViewCanvas />
-            </Suspense>
-          )}
+          {/* 3D Animated Background Logo Canvas: Asynchronously loaded */}
+          <Suspense fallback={null}>
+            <ViewCanvas />
+          </Suspense>
 
           {/* 1. Hero Section */}
           <Hero onNavigate={navigateTo} />

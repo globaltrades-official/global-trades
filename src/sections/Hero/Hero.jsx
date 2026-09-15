@@ -99,14 +99,10 @@ export default function Hero({ onNavigate }) {
       id="hero"
       className="hero relative w-full overflow-hidden bg-gradient-to-b from-[#EBF3FC] via-[#F4F8FC] to-[#DDEAF8]"
     >
-      {/* Background Medallion: Ultra-fast CSS 3D on mobile, Three.js WebGL on desktop */}
-      {isDesktop ? (
-        <Suspense fallback={<MobileHeroWatermark />}>
-          <Desktop3DHero isDesktop={isDesktop} />
-        </Suspense>
-      ) : (
-        <MobileHeroWatermark />
-      )}
+      {/* Background Medallion: 3D WebGL on all devices with seamless fallback */}
+      <Suspense fallback={<MobileHeroWatermark />}>
+        <Desktop3DHero isDesktop={isDesktop} />
+      </Suspense>
 
       <div className="mx-auto flex w-full max-w-7xl flex-col items-center px-4 md:px-8 relative z-10">
         {/* First Fold: Hero Banner with Clean Hierarchy */}
