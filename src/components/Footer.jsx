@@ -21,13 +21,13 @@ export default function Footer({ onNavigate }) {
             <div className="space-y-3 max-w-2xl">
               <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/20 px-3.5 py-1 text-xs font-bold text-emerald-300 border border-emerald-400/30">
                 <span className="inline-block size-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Kozhikode Delivery &amp; Direct Store Pickup</span>
+                <span>Calicut &amp; Kozhikode Delivery &amp; Direct Store Pickup</span>
               </div>
               <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white leading-tight">
                 Need wholesale supply? Contact Global Trades.
               </h3>
               <p className="text-sm sm:text-base font-medium text-white/80 leading-relaxed">
-                Visit our store for direct purchase or contact us for delivery within Kozhikode. Get institutional GST billing, bulk trade rates, and authorized brand freshness for your business.
+                Visit our store for direct purchase or contact us for delivery within Calicut &amp; Kozhikode. Get institutional GST billing, bulk trade rates, and authorized brand freshness for your business.
               </p>
             </div>
 
