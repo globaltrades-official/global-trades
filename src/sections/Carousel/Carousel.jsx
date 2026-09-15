@@ -180,15 +180,29 @@ export default function Carousel({ products = [], onNavigate }) {
     });
   }, [products]);
 
-  // Preload images of active featured products in browser cache
+  // Preload non-active carousel images lazily during browser idle time so initial mobile load is instantaneous
   useEffect(() => {
-    featuredProducts.forEach((p) => {
-      if (p.image && !preloadedImageUrls.has(p.image)) {
-        preloadedImageUrls.add(p.image);
-        const img = new Image();
-        img.src = p.image;
-      }
-    });
+    if (typeof window === 'undefined') return;
+
+    const preloadRemaining = () => {
+      featuredProducts.slice(1).forEach((p, idx) => {
+        if (p.image && !preloadedImageUrls.has(p.image)) {
+          setTimeout(() => {
+            preloadedImageUrls.add(p.image);
+            const img = new Image();
+            img.src = p.image;
+          }, idx * 300);
+        }
+      });
+    };
+
+    if ('requestIdleCallback' in window) {
+      const handle = window.requestIdleCallback(preloadRemaining, { timeout: 3000 });
+      return () => window.cancelIdleCallback(handle);
+    } else {
+      const timer = setTimeout(preloadRemaining, 1500);
+      return () => clearTimeout(timer);
+    }
   }, [featuredProducts]);
 
   // Safe active product resolution
@@ -387,6 +401,8 @@ export default function Carousel({ products = [], onNavigate }) {
                   <img
                     src={prod.image}
                     alt={prod.name}
+                    loading="lazy"
+                    decoding="async"
                     onError={(e) => {
                       e.currentTarget.src = '/company-logo.png';
                     }}

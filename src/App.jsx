@@ -1,16 +1,29 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import ViewCanvas from './components/ViewCanvas';
 import Hero from './sections/Hero/Hero';
 import Carousel from './sections/Carousel/Carousel';
 import AlternatingText from './sections/AlternatingText/AlternatingText';
 import HowWeServe from './sections/HowWeServe/HowWeServe';
 import BigText from './sections/BigText/BigText';
-import ProductsPage from './pages/ProductsPage';
-import ContactPage from './pages/ContactPage';
-import AdminPage from './pages/AdminPage';
 import { useProductCatalog } from './hooks/useProductCatalog';
+import { useMediaQuery } from './hooks/useMediaQuery';
+
+// Code-split pages so initial load is feather-light (< 200KB)
+const ProductsPage = lazy(() => import('./pages/ProductsPage'));
+const ContactPage = lazy(() => import('./pages/ContactPage'));
+const AdminPage = lazy(() => import('./pages/AdminPage'));
+
+// Lazy load 3D canvas only for desktop viewports
+const ViewCanvas = lazy(() => import('./components/ViewCanvas'));
+
+function PageFallback() {
+  return (
+    <div className="min-h-[70vh] flex flex-col items-center justify-center bg-[#F4F8FC]">
+      <div className="size-10 rounded-full border-3 border-[#1A4C98]/20 border-t-[#1A4C98] animate-spin" />
+    </div>
+  );
+}
 
 export default function App() {
   const {
@@ -32,6 +45,7 @@ export default function App() {
     return 'home';
   }, []);
 
+  const isDesktop = useMediaQuery('(min-width: 768px)', true);
   const [currentPage, setCurrentPage] = useState(getPageFromLocation);
   const [activeSection, setActiveSection] = useState('hero');
 
@@ -173,37 +187,47 @@ export default function App() {
 
       {currentPage === 'admin' ? (
         <main className="relative z-10">
-          <AdminPage
-            products={products}
-            addProduct={addProduct}
-            updateProduct={updateProduct}
-            toggleFeatured={toggleFeatured}
-            deleteProduct={deleteProduct}
-            resetCatalog={resetToDefaultCatalog}
-            onNavigateHome={() => navigateTo('home')}
-            onNavigateProducts={() => navigateTo('products')}
-          />
+          <Suspense fallback={<PageFallback />}>
+            <AdminPage
+              products={products}
+              addProduct={addProduct}
+              updateProduct={updateProduct}
+              toggleFeatured={toggleFeatured}
+              deleteProduct={deleteProduct}
+              resetCatalog={resetToDefaultCatalog}
+              onNavigateHome={() => navigateTo('home')}
+              onNavigateProducts={() => navigateTo('products')}
+            />
+          </Suspense>
         </main>
       ) : currentPage === 'products' ? (
         <main className="relative z-10">
-          <ProductsPage
-            products={products}
-            isEmbedded={false}
-            onNavigateHome={() => navigateTo('home')}
-            onNavigateAdmin={() => navigateTo('admin')}
-          />
+          <Suspense fallback={<PageFallback />}>
+            <ProductsPage
+              products={products}
+              isEmbedded={false}
+              onNavigateHome={() => navigateTo('home')}
+              onNavigateAdmin={() => navigateTo('admin')}
+            />
+          </Suspense>
         </main>
       ) : currentPage === 'contact' ? (
         <main className="relative z-10">
-          <ContactPage
-            onNavigateHome={() => navigateTo('home')}
-            onNavigateProducts={() => navigateTo('products')}
-          />
+          <Suspense fallback={<PageFallback />}>
+            <ContactPage
+              onNavigateHome={() => navigateTo('home')}
+              onNavigateProducts={() => navigateTo('products')}
+            />
+          </Suspense>
         </main>
       ) : (
         <main className="relative">
-          {/* 3D Animated Background Logo Canvas */}
-          <ViewCanvas />
+          {/* 3D Animated Background Logo Canvas: Desktop only, asynchronously loaded */}
+          {isDesktop && (
+            <Suspense fallback={null}>
+              <ViewCanvas />
+            </Suspense>
+          )}
 
           {/* 1. Hero Section */}
           <Hero onNavigate={navigateTo} />

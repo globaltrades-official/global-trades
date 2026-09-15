@@ -1,28 +1,25 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { View } from '@react-three/drei';
 import { ShieldCheck, FileText, Tag, Truck, Store, MessageCircle, HelpCircle } from 'lucide-react';
 
 import Button from '@/components/Button';
 import { TextSplitter } from '@/components/TextSplitter';
-import HeroScene from './HeroScene';
-import { Bubbles } from './Bubbles';
-import { useStore } from '@/hooks/useStore';
+import MobileHeroWatermark from './MobileHeroWatermark';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { BRANDING, CONTACT } from '@/constants/theme';
+
+// Lazy load the desktop 3D WebGL scene so mobile devices load instantly without Three.js
+const Desktop3DHero = lazy(() => import('./Desktop3DHero'));
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export default function Hero({ onNavigate }) {
-  const ready = useStore((state) => state.ready);
   const isDesktop = useMediaQuery('(min-width: 768px)', true);
 
   useGSAP(
     () => {
-      if (!ready) return;
-
       const introTl = gsap.timeline();
 
       introTl
@@ -93,7 +90,7 @@ export default function Hero({ onNavigate }) {
           opacity: 0,
         });
     },
-    { dependencies: [ready, isDesktop] }
+    { dependencies: [isDesktop] }
   );
 
   return (
@@ -101,11 +98,14 @@ export default function Hero({ onNavigate }) {
       id="hero"
       className="hero relative w-full overflow-hidden bg-gradient-to-b from-[#EBF3FC] via-[#F4F8FC] to-[#DDEAF8]"
     >
-      {/* 3D Animated Background Logo Scene (Desktop & Mobile) - Kept Subtle As Ambient Watermark */}
-      <View className="hero-scene pointer-events-none sticky top-0 z-0 -mt-[100vh] block h-screen w-full opacity-20 md:opacity-25">
-        <HeroScene />
-        <Bubbles count={isDesktop ? 120 : 45} speed={isDesktop ? 1.5 : 1} repeat={true} />
-      </View>
+      {/* Background Medallion: Ultra-fast CSS 3D on mobile, Three.js WebGL on desktop */}
+      {isDesktop ? (
+        <Suspense fallback={<MobileHeroWatermark />}>
+          <Desktop3DHero isDesktop={isDesktop} />
+        </Suspense>
+      ) : (
+        <MobileHeroWatermark />
+      )}
 
       <div className="mx-auto flex w-full max-w-7xl flex-col items-center px-4 md:px-8 relative z-10">
         {/* First Fold: Hero Banner with Clean Hierarchy */}
