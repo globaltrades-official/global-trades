@@ -479,7 +479,7 @@ function ProductCatalogCard({ product }) {
   const imageSrc = product.image || `/catalog_images/${safeName}.jpg`;
 
   const whatsappMessage = encodeURIComponent(
-    `Hello Global Trades, I am interested in wholesale pricing for:\n*${product.name}*\nBrand: ${product.brand}\nPack Size: ${product.size}\nCategory: ${product.category}\nPlease provide commercial rates and availability.`
+    `Hello Global Trades, I am interested in wholesale supply for ${product.name}.`
   );
 
   return (

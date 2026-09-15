@@ -44,7 +44,7 @@ export const CONTACT = {
   WHATSAPP_DISPLAY: "0495 2765320",
   WHATSAPP_ORDER_LABEL: "WhatsApp Orders: 0495 2765320",
   WHATSAPP_ORDER_URL: "https://wa.me/914952765320?text=Hi%20Global%20Trades,%20I%20would%20like%20to%20get%20a%20wholesale%20quote%20for%20our%20kitchen.",
-  WHATSAPP_HELP_URL: "https://wa.me/914952765320?text=Hi%20Global%20Trades,%20I%20need%20help%20choosing%20products%20for%20my%20kitchen.",
+  WHATSAPP_HELP_URL: "https://wa.me/914952765320?text=Hi%20Global%20Trades,%20I%20need%20help%20choosing%20products%20for%20me%20for%20my%20business.",
 
   // Legacy mappings for backwards compatibility
   PHONE: "94479 31507",
