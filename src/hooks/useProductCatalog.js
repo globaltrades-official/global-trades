@@ -10,7 +10,7 @@ import {
 
 const STORAGE_KEY = 'gt_wholesale_catalog_v2';
 
-// Default flagship IDs for Global Trades Malabar distribution:
+// Default flagship IDs for Global Trades Kozhikode distribution:
 // 211: Monin Mojito Mint Syrup 1L
 // 105: Morton Peaches Tin 800g
 // 153: Barry Callebaut Belgium Dark Chocolate 2.5kg
