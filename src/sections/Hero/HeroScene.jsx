@@ -23,8 +23,8 @@ export default function HeroScene() {
     isReady();
 
     // Position the main logo as an ambient background medallion with deep z-depth
-    const initialY = isDesktop ? -0.45 : -0.7;
-    const initialZ = isDesktop ? -6.5 : -7.0;
+    const initialY = isDesktop ? 0.0 : -0.3;
+    const initialZ = isDesktop ? -5.8 : -6.2;
     gsap.set(mainLogoRef.current.position, { x: 0, y: initialY, z: initialZ });
     gsap.set(mainLogoRef.current.rotation, { x: 0.08, y: 0, z: 0 });
 
