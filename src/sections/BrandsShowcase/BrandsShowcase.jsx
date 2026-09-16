@@ -56,11 +56,8 @@ export default function BrandsShowcase({
       }
     }
 
-    // Fallback: If no products are marked featured, display active brands from brand catalog
-    const fallback = (brands || []).filter((b) => b.isFeatured !== false && b.logo);
-    return fallback.length > 0
-      ? fallback
-      : (DEFAULT_TRUSTED_BRANDS || []).filter((b) => b.isFeatured !== false && b.logo);
+    // No default brands: only display brand logos for products explicitly featured in Admin
+    return [];
   }, [products, brands]);
 
   if (displayBrands.length === 0) {

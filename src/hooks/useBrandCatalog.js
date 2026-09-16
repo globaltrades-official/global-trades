@@ -7,11 +7,17 @@ const STORAGE_KEY = 'gt_trusted_brands_catalog';
 
 export function useBrandCatalog() {
   const [brands, setBrands] = useState(() => {
+    const CLEANUP_KEY = 'gt_default_brands_featured_cleared_v1';
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
-        const parsed = JSON.parse(saved);
+        let parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
+          if (!localStorage.getItem(CLEANUP_KEY)) {
+            parsed = parsed.map((b) => ({ ...b, isFeatured: false }));
+            localStorage.setItem(CLEANUP_KEY, 'true');
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+          }
           const defaultByName = new Map(
             DEFAULT_WHOLESALE_BRANDS.map((b) => [b.name.toLowerCase().trim(), b])
           );

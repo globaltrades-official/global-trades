@@ -151,7 +151,7 @@ export const DEFAULT_WHOLESALE_BRANDS = wholesaleBrands.map((b) => {
     category: b.specialty,
     origin: b.origin,
     logo: `/assets/images/brands/${fileName}`,
-    isFeatured: b.category === "Priority 1"
+    isFeatured: false
   };
 });
 

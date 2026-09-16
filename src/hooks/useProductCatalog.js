@@ -17,7 +17,7 @@ const STORAGE_KEY = 'gt_wholesale_catalog_v2';
 // 81:  Golden Crown Mushroom Tin 800g
 // 102: Veeba Professional Mayonnaise
 // 188: Del Monte Penne Rigate 500g
-const DEFAULT_FEATURED_IDS = [211, 105, 153, 81, 102, 188];
+const DEFAULT_FEATURED_IDS = [];
 
 function normalizeProduct(p) {
   const safeName = (p.name || '').replace(/[^a-zA-Z0-9]/g, '_');
@@ -26,21 +26,30 @@ function normalizeProduct(p) {
     ...p,
     size: p.size || p.packSize || '',
     image: p.image || p.customImage || defaultImage,
-    isFeatured:
-      p.isFeatured !== undefined
-        ? Boolean(p.isFeatured)
-        : DEFAULT_FEATURED_IDS.includes(p.id),
+    isFeatured: Boolean(p.isFeatured),
   };
 }
 
 export function useProductCatalog() {
   const [products, setProducts] = useState(() => {
     let rawProducts = CATALOG_PRODUCTS;
+    const CLEANUP_KEY = 'gt_default_featured_cleared_v1';
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
-        const parsed = JSON.parse(saved);
+        let parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
+          if (!localStorage.getItem(CLEANUP_KEY)) {
+            const OLD_DEFAULT_FEATURED_IDS = [211, 105, 153, 81, 102, 188];
+            parsed = parsed.map((p) => {
+              if (OLD_DEFAULT_FEATURED_IDS.includes(p.id)) {
+                return { ...p, isFeatured: false };
+              }
+              return p;
+            });
+            localStorage.setItem(CLEANUP_KEY, 'true');
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+          }
           rawProducts = parsed;
         }
       }
