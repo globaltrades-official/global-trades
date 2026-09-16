@@ -66,6 +66,17 @@ export default function Header({ currentPage = 'home', activeSection = 'hero', o
             <span>Products</span>
           </button>
 
+          <button
+            onClick={() => handleNavClick('home', '#carousel')}
+            className={`transition-all duration-200 cursor-pointer px-3.5 py-1.5 rounded-full text-xs lg:text-sm font-bold ${
+              activeSection === 'showcase' && currentPage === 'home'
+                ? 'text-white bg-[#1A4C98] shadow-sm font-black'
+                : 'text-[#081426]/75 hover:text-[#1A4C98] hover:bg-[#1A4C98]/10'
+            }`}
+          >
+            Showcase
+          </button>
+
           {/* Dedicated Brands Page Tab */}
           <button
             onClick={() => handleNavClick('brands')}
@@ -77,28 +88,6 @@ export default function Header({ currentPage = 'home', activeSection = 'hero', o
           >
             <Sparkles size={14} />
             <span>Brands</span>
-          </button>
-
-          <button
-            onClick={() => handleNavClick('home', '#carousel')}
-            className={`transition-all duration-200 cursor-pointer px-3.5 py-1.5 rounded-full text-xs lg:text-sm font-bold ${
-              activeSection === 'showcase' && currentPage !== 'admin'
-                ? 'text-white bg-[#1A4C98] shadow-sm font-black'
-                : 'text-[#081426]/75 hover:text-[#1A4C98] hover:bg-[#1A4C98]/10'
-            }`}
-          >
-            Showcase
-          </button>
-
-          <button
-            onClick={() => handleNavClick('home', '#how-we-serve')}
-            className={`transition-all duration-200 cursor-pointer px-3.5 py-1.5 rounded-full text-xs lg:text-sm font-bold ${
-              activeSection === 'how-we-serve' && currentPage === 'home'
-                ? 'text-white bg-[#1A4C98] shadow-sm font-black'
-                : 'text-[#081426]/75 hover:text-[#1A4C98] hover:bg-[#1A4C98]/10'
-            }`}
-          >
-            How We Serve
           </button>
 
           {/* Dedicated Contact Page Tab */}
@@ -190,6 +179,15 @@ export default function Header({ currentPage = 'home', activeSection = 'hero', o
           </button>
 
           <button
+            onClick={() => handleNavClick('home', '#carousel')}
+            className={`text-left py-2 px-3 rounded-lg text-sm font-bold ${
+              activeSection === 'showcase' && currentPage === 'home' ? 'bg-[#1A4C98] text-white' : 'text-[#081426]'
+            }`}
+          >
+            Featured Showcase
+          </button>
+
+          <button
             onClick={() => handleNavClick('brands')}
             className={`text-left py-2.5 px-3 rounded-lg text-sm font-bold flex items-center gap-2.5 ${
               currentPage === 'brands' ? 'bg-[#1A4C98] text-white' : 'text-[#1A4C98] bg-[#1A4C98]/10'
@@ -197,22 +195,6 @@ export default function Header({ currentPage = 'home', activeSection = 'hero', o
           >
             <Sparkles size={16} />
             <span>Trusted Brands</span>
-          </button>
-
-          <button
-            onClick={() => handleNavClick('home', '#carousel')}
-            className={`text-left py-2 px-3 rounded-lg text-sm font-bold ${
-              activeSection === 'showcase' ? 'bg-[#1A4C98] text-white' : 'text-[#081426]'
-            }`}
-          >
-            Featured Showcase
-          </button>
-
-          <button
-            onClick={() => handleNavClick('home', '#how-we-serve')}
-            className="text-left py-2 px-3 rounded-lg text-sm font-bold text-[#081426]"
-          >
-            How We Serve Businesses
           </button>
 
           <button
