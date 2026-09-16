@@ -318,14 +318,14 @@ export default function App() {
           {/* 2. Featured Brands (Logos Only, Derived from Admin Portal) */}
           <BrandsShowcase brands={brands} products={products} onNavigate={navigateTo} />
 
-          {/* 3. Shop by Category (Linked directly to catalogue filters) */}
-          <ShopByCategory onNavigate={navigateTo} />
+          {/* 3. Why Global Trades (Core Value Propositions & Trust Badges) */}
+          <WhyChooseUs onNavigate={navigateTo} />
 
           {/* 4. 3D Product Carousel Showcase (Featured Products) */}
           <Carousel products={products} onNavigate={navigateTo} />
 
-          {/* 5. Why Global Trades (6 Simple Cards) */}
-          <WhyChooseUs onNavigate={navigateTo} />
+          {/* 5. Shop by Category (Linked directly to catalogue filters) */}
+          <ShopByCategory onNavigate={navigateTo} />
 
           {/* 6. Industries We Serve (Cafes, Bakeries, Restaurants, Caterers, Cloud Kitchens, Hotels, Retail) */}
           <IndustriesWeServe onNavigate={navigateTo} />
