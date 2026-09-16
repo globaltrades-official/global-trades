@@ -122,29 +122,27 @@ export default function Hero({ onNavigate }) {
               />
             </div>
 
-            {/* Compact 5-Item Trust-Benefit Strip: Single-line scroll on mobile, flex-wrap on desktop */}
-            <div className="hero-trust-strip mt-6 sm:mt-8 w-full max-w-4xl px-2">
-              <div className="flex sm:flex-wrap items-center justify-start sm:justify-center gap-2 sm:gap-3 overflow-x-auto sm:overflow-visible pb-1 sm:pb-0 scrollbar-none snap-x">
-                <div className="shrink-0 snap-start flex items-center gap-1.5 rounded-full bg-white/90 border border-[#1A4C98]/15 px-3 py-1.5 sm:px-3.5 text-[11px] sm:text-xs font-semibold text-[#081426] shadow-2xs backdrop-blur-sm">
-                  <ShieldCheck size={14} className="text-emerald-700 shrink-0" />
-                  <span>Authorized Supply</span>
-                </div>
-                <div className="shrink-0 snap-start flex items-center gap-1.5 rounded-full bg-white/90 border border-[#1A4C98]/15 px-3 py-1.5 sm:px-3.5 text-[11px] sm:text-xs font-semibold text-[#081426] shadow-2xs backdrop-blur-sm">
-                  <FileText size={14} className="text-[#1A4C98] shrink-0" />
-                  <span>GST Billing</span>
-                </div>
-                <div className="shrink-0 snap-start flex items-center gap-1.5 rounded-full bg-white/90 border border-[#1A4C98]/15 px-3 py-1.5 sm:px-3.5 text-[11px] sm:text-xs font-semibold text-[#081426] shadow-2xs backdrop-blur-sm">
-                  <Tag size={14} className="text-emerald-700 shrink-0" />
-                  <span>Bulk Food-Service Rates</span>
-                </div>
-                <div className="shrink-0 snap-start flex items-center gap-1.5 rounded-full bg-white/90 border border-[#1A4C98]/15 px-3 py-1.5 sm:px-3.5 text-[11px] sm:text-xs font-semibold text-[#081426] shadow-2xs backdrop-blur-sm">
-                  <Truck size={14} className="text-[#1A4C98] shrink-0" />
-                  <span>Kozhikode Delivery</span>
-                </div>
-                <div className="shrink-0 snap-start flex items-center gap-1.5 rounded-full bg-white/90 border border-[#1A4C98]/15 px-3 py-1.5 sm:px-3.5 text-[11px] sm:text-xs font-semibold text-[#081426] shadow-2xs backdrop-blur-sm">
-                  <Store size={14} className="text-emerald-700 shrink-0" />
-                  <span>Store Pickup Available</span>
-                </div>
+            {/* Compact 5-Item Trust-Benefit Strip: Standard wrapping on both mobile and desktop (no swiping) */}
+            <div className="hero-trust-strip mt-5 sm:mt-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3 max-w-4xl px-2">
+              <div className="flex items-center gap-1.5 rounded-full bg-white/90 border border-[#1A4C98]/15 px-3 py-1.5 sm:px-3.5 text-[11px] sm:text-xs font-semibold text-[#081426] shadow-2xs backdrop-blur-sm">
+                <ShieldCheck size={14} className="text-emerald-700 shrink-0" />
+                <span>Authorized Supply</span>
+              </div>
+              <div className="flex items-center gap-1.5 rounded-full bg-white/90 border border-[#1A4C98]/15 px-3 py-1.5 sm:px-3.5 text-[11px] sm:text-xs font-semibold text-[#081426] shadow-2xs backdrop-blur-sm">
+                <FileText size={14} className="text-[#1A4C98] shrink-0" />
+                <span>GST Billing</span>
+              </div>
+              <div className="flex items-center gap-1.5 rounded-full bg-white/90 border border-[#1A4C98]/15 px-3 py-1.5 sm:px-3.5 text-[11px] sm:text-xs font-semibold text-[#081426] shadow-2xs backdrop-blur-sm">
+                <Tag size={14} className="text-emerald-700 shrink-0" />
+                <span>Bulk Food-Service Rates</span>
+              </div>
+              <div className="flex items-center gap-1.5 rounded-full bg-white/90 border border-[#1A4C98]/15 px-3 py-1.5 sm:px-3.5 text-[11px] sm:text-xs font-semibold text-[#081426] shadow-2xs backdrop-blur-sm">
+                <Truck size={14} className="text-[#1A4C98] shrink-0" />
+                <span>Kozhikode Delivery</span>
+              </div>
+              <div className="flex items-center gap-1.5 rounded-full bg-white/90 border border-[#1A4C98]/15 px-3 py-1.5 sm:px-3.5 text-[11px] sm:text-xs font-semibold text-[#081426] shadow-2xs backdrop-blur-sm">
+                <Store size={14} className="text-emerald-700 shrink-0" />
+                <span>Store Pickup Available</span>
               </div>
             </div>
           </div>

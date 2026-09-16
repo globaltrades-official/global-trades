@@ -61,12 +61,12 @@ export default function AlternatingText() {
           </p>
         </div>
 
-        {/* Compact Review Cards: Horizontal swipe on mobile, 3-column grid on desktop */}
-        <div className="flex sm:grid sm:grid-cols-3 gap-3 sm:gap-4 md:gap-5 overflow-x-auto sm:overflow-visible pb-2 sm:pb-0 scrollbar-none snap-x">
+        {/* Compact Review Cards: Standard responsive grid on both mobile and desktop (no swiping) */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 md:gap-5">
           {REVIEWS.map((item) => (
             <div
               key={item.reviewer}
-              className="w-[82vw] max-w-[310px] sm:w-auto shrink-0 snap-center rounded-2xl bg-white p-4 sm:p-5 border border-[#D0DFEF] shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between"
+              className="w-full rounded-2xl bg-white p-4 sm:p-5 border border-[#D0DFEF] shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between"
             >
               <div>
                 {/* Rating Stars & Tag */}
