@@ -11,7 +11,6 @@ import IndustriesWeServe from './sections/IndustriesWeServe/IndustriesWeServe';
 import HowToOrder from './sections/HowToOrder/HowToOrder';
 import AlternatingText from './sections/AlternatingText/AlternatingText';
 import HowWeServe from './sections/HowWeServe/HowWeServe';
-import SupplyPromise from './sections/SupplyPromise/SupplyPromise';
 import FAQ from './sections/FAQ/FAQ';
 import LocalSEOHubs from './sections/LocalSEOHubs/LocalSEOHubs';
 import StoreDeliveryInfoCard from './components/StoreDeliveryInfoCard';
@@ -256,7 +255,7 @@ export default function App() {
           {/* 3. Shop by Category (Linked directly to catalogue filters) */}
           <ShopByCategory onNavigate={navigateTo} />
 
-          {/* 4. Why Choose Global Trades (7 Verified Supportable Points) */}
+          {/* 4. Why Global Trades (6 Simple Cards) */}
           <WhyChooseUs onNavigate={navigateTo} />
 
           {/* 5. Brands Showcase (Authorized Brands & Explore CTA) */}
@@ -274,10 +273,7 @@ export default function App() {
           {/* 9. How We Serve Businesses */}
           <HowWeServe onNavigate={navigateTo} />
 
-          {/* 10. Our Supply Promise (5 Core Trust Statements) */}
-          <SupplyPromise />
-
-          {/* 11. FAQ Section (7 Core Wholesale & Delivery Questions) */}
+          {/* 10. FAQ Section (6 Core Questions) */}
           <FAQ />
 
           {/* 12. Local SEO Foodservice Distribution Hubs (6 Local Niches) */}

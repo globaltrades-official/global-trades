@@ -185,10 +185,7 @@ export default function ProductsPage({
             </span>
             <div className="space-y-1">
               <p className="font-bold text-[#081426] leading-tight">
-                Wholesale prices and live stock availability are shared on WhatsApp.
-              </p>
-              <p className="text-xs text-[#081426]/75 font-semibold">
-                ℹ️ For direct store purchase, please confirm availability before visiting.
+                Wholesale prices and live stock availability are shared on WhatsApp. Please confirm availability before visiting for direct purchase.
               </p>
             </div>
           </div>

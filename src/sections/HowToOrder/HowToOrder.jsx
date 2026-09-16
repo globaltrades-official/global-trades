@@ -7,27 +7,27 @@ export default function HowToOrder({ onNavigate }) {
   const steps = [
     {
       number: '01',
-      title: 'Browse products or send your requirement',
+      title: 'Browse products or send requirements',
       icon: Search,
       description:
-        'Explore our catalogue by category or brand, or compile your kitchen supply list to send directly to us.',
-      tip: 'Browse 200+ commercial food service items',
+        'Explore our catalogue by category or brand, or send your kitchen supply list directly to our team.',
+      tip: 'Browse Products & Commercial Brands',
     },
     {
       number: '02',
-      title: 'Request wholesale pricing on WhatsApp',
+      title: 'Get wholesale pricing on WhatsApp',
       icon: WhatsAppIcon,
       description:
-        'Share your item requirements and quantities with our dedicated order desk for live stock status and bulk trade quotes.',
-      tip: 'Dedicated Order Desk: 0495 2765320',
+        'Share your item list and quantities on WhatsApp for live stock availability, batch confirmation, and bulk trade rates.',
+      tip: 'WhatsApp Desk: 0495 2765320',
     },
     {
       number: '03',
-      title: 'Collect from our Vellayil store or arrange Kozhikode delivery',
+      title: 'Collect from Vellayil store or arrange Kozhikode delivery',
       icon: Truck,
       description:
-        'Pick up your order directly from our PT Usha Road store in Vellayil, or schedule local delivery within Kozhikode.',
-      tip: 'Store Pickup or Delivery Across Kozhikode',
+        'Pick up your order directly from our PT Usha Road store in Vellayil, or arrange delivery across Kozhikode.',
+      tip: 'Store Pickup or Kozhikode Delivery',
     },
   ];
 
@@ -41,7 +41,7 @@ export default function HowToOrder({ onNavigate }) {
         <div className="mx-auto max-w-3xl text-center mb-12 md:mb-16">
           <div className="inline-flex items-center gap-2 rounded-full bg-[#1A4C98]/10 border border-[#1A4C98]/20 px-4 py-1.5 text-xs font-black uppercase tracking-wider text-[#1A4C98] mb-4">
             <CheckCircle2 size={14} className="text-emerald-700" />
-            <span>Simple 3-Step Ordering</span>
+            <span>Ordering Process</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-[#081426] leading-tight">
@@ -55,7 +55,7 @@ export default function HowToOrder({ onNavigate }) {
 
         {/* 3-Step Flow Layout */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          {steps.map((step, idx) => {
+          {steps.map((step) => {
             const Icon = step.icon;
 
             return (
@@ -92,7 +92,7 @@ export default function HowToOrder({ onNavigate }) {
           })}
         </div>
 
-        {/* WhatsApp Orders Highlight Box with Prominent CTA */}
+        {/* WhatsApp Orders CTA Box */}
         <div className="rounded-3xl bg-gradient-to-r from-emerald-900 via-[#1A4C98] to-[#081426] text-white p-6 sm:p-10 shadow-xl border border-white/10 flex flex-col lg:flex-row items-center justify-between gap-6">
           <div className="space-y-2 text-center lg:text-left">
             <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-bold text-emerald-300 border border-emerald-400/30">
@@ -100,10 +100,10 @@ export default function HowToOrder({ onNavigate }) {
               <span>WhatsApp Orders: {CONTACT.WHATSAPP_DISPLAY}</span>
             </div>
             <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white">
-              Ready to request wholesale pricing?
+              Ready to Order or Request Quotes?
             </h3>
             <p className="text-sm sm:text-base text-white/80 font-medium max-w-xl">
-              Send your item list directly to our sales desk. We respond promptly with live availability, institutional pricing, and delivery options.
+              Message our sales desk for live availability, trade rates, and Kozhikode delivery or Vellayil store pickup.
             </p>
           </div>
 
@@ -115,7 +115,7 @@ export default function HowToOrder({ onNavigate }) {
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-[#081426] font-black px-6 py-4 text-xs sm:text-sm uppercase tracking-wider shadow-lg shadow-emerald-950/30 transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
             >
               <WhatsAppIcon size={18} />
-              <span>Get Wholesale Quote</span>
+              <span>WhatsApp Orders: {CONTACT.WHATSAPP_DISPLAY}</span>
             </a>
 
             {onNavigate && (

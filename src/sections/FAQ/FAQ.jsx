@@ -1,36 +1,32 @@
 import React, { useState } from 'react';
-import { ChevronDown, HelpCircle, CheckCircle2, Phone } from 'lucide-react';
+import { ChevronDown, HelpCircle, Phone } from 'lucide-react';
 import WhatsAppIcon from '@/components/WhatsAppIcon';
 import { CONTACT } from '@/constants/theme';
 
 const FAQS = [
   {
     q: 'Do you deliver outside Kozhikode?',
-    a: 'No. Delivery is available strictly within Kozhikode only. Customers and food businesses located outside Kozhikode are welcome to arrange direct store pickup from our Vellayil warehouse.',
+    a: 'Delivery is available strictly within Kozhikode only. Customers and food businesses located outside Kozhikode are welcome to visit our Vellayil store for direct store pickup.',
   },
   {
     q: 'Can I purchase directly from the store?',
-    a: 'Yes. Customers, chefs, cafe operators, and bakery owners are welcome to visit our store at PT Usha Road, 4th Gate, Vellayil, Kozhikode for direct purchase and product collection.',
+    a: 'Yes. Direct store purchase is available at our PT Usha Road, Vellayil store in Kozhikode. Customers and food businesses are welcome to visit and collect products directly.',
   },
   {
     q: 'How do I get wholesale prices?',
-    a: 'Wholesale prices and live stock availability are confirmed through WhatsApp (0495 2765320). Simply send your product requirements and carton quantities to receive an immediate trade quote.',
+    a: 'Wholesale prices and commercial rates are confirmed on WhatsApp (0495 2765320). Share your required products and quantities with our sales desk for instant trade pricing.',
   },
   {
     q: 'Do you provide GST invoices?',
-    a: 'Yes. GST billing is available for all commercial and institutional orders. We provide official itemized GST tax invoices for business bookkeeping and input tax credit claims.',
-  },
-  {
-    q: 'Can cafes and restaurants place bulk orders?',
-    a: 'Yes. We specialize in B2B commercial supply for cafes, fine-dining restaurants, bakeries, cloud kitchens, and caterers, offering institutional carton packs and crate quantities.',
+    a: 'Yes, GST billing is available for all commercial purchases. We provide official itemized GST tax invoices for your business records and tax compliance.',
   },
   {
     q: 'How can I check product availability?',
-    a: 'You can check live product availability directly through our WhatsApp desk at 0495 2765320 or by calling 94479 31507. For direct store purchase, please confirm availability before visiting.',
+    a: 'Product availability is confirmed on WhatsApp at 0495 2765320 or by phone at 94479 31507. Please confirm availability before visiting for direct purchase.',
   },
   {
-    q: 'What are your store timings?',
-    a: 'Our store and distribution center is open Monday through Saturday from 10:00 AM to 6:00 PM. We are closed on Sundays.',
+    q: 'What are store timings?',
+    a: 'Our store in Vellayil, Kozhikode is open Monday through Saturday, from 10:00 AM to 6:00 PM. We are closed on Sundays.',
   },
 ];
 
@@ -55,11 +51,11 @@ export default function FAQ() {
           </div>
 
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-[#081426] leading-tight">
-            Everything You Need to Know
+            Frequently Asked Questions
           </h2>
 
           <p className="mt-4 text-base sm:text-lg text-[#081426]/80 font-medium leading-relaxed">
-            Clear, transparent details on ordering, wholesale pricing, store pickup at Vellayil, and Kozhikode delivery.
+            Essential information on wholesale pricing, store pickup in Vellayil, and Kozhikode delivery.
           </p>
         </div>
 
@@ -107,10 +103,10 @@ export default function FAQ() {
         <div className="mt-12 rounded-2xl bg-white p-6 border border-[#D0DFEF] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <h3 className="text-base font-black text-[#081426]">
-              Still have questions about an order?
+              Have a question about products or pricing?
             </h3>
             <p className="text-xs text-[#081426]/70 mt-0.5">
-              Contact our sales team directly on WhatsApp or by phone.
+              Contact our sales desk on WhatsApp or call our office.
             </p>
           </div>
 

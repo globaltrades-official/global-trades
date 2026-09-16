@@ -222,10 +222,10 @@ export default function Footer({ onNavigate }) {
           <span>·</span>
           <button
             type="button"
-            onClick={() => onNavigate && onNavigate('home', '#why-choose-us')}
+            onClick={() => onNavigate && onNavigate('home', '#why-global-trades')}
             className="hover:text-[#1A4C98] transition-colors cursor-pointer"
           >
-            Why Choose Us
+            Why Global Trades
           </button>
           <span>·</span>
           <button
@@ -258,14 +258,6 @@ export default function Footer({ onNavigate }) {
             className="hover:text-[#1A4C98] transition-colors cursor-pointer"
           >
             Reviews
-          </button>
-          <span>·</span>
-          <button
-            type="button"
-            onClick={() => onNavigate && onNavigate('home', '#supply-promise')}
-            className="hover:text-[#1A4C98] transition-colors cursor-pointer"
-          >
-            Our Supply Promise
           </button>
           <span>·</span>
           <button
