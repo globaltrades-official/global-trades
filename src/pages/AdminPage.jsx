@@ -182,9 +182,14 @@ export default function AdminPage({
     return set;
   }, [products]);
 
+  const isBrandLiveOnHome = useCallback(
+    (b) => Boolean(b.isFeatured) || featuredProductBrands.has((b.name || '').toLowerCase().trim()),
+    [featuredProductBrands]
+  );
+
   const filteredBrands = useMemo(() => {
     return (brands || []).filter((b) => {
-      if (brandFilter === 'featured' && !b.isFeatured) return false;
+      if (brandFilter === 'featured' && !isBrandLiveOnHome(b)) return false;
       const q = (brandSearchQuery || '').toLowerCase().trim();
       if (!q) return true;
       return (
@@ -193,7 +198,7 @@ export default function AdminPage({
         (b.origin && b.origin.toLowerCase().includes(q))
       );
     });
-  }, [brands, brandFilter, brandSearchQuery]);
+  }, [brands, brandFilter, brandSearchQuery, isBrandLiveOnHome]);
 
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -1095,7 +1100,7 @@ END $$;`;
                 Featured in Showcase
               </span>
               <div className="text-2xl md:text-3xl font-black text-emerald-700 mt-1">
-                {(brands || []).filter((b) => Boolean(b.isFeatured)).length} <span className="text-xs font-bold text-[#081426]/60">Live</span>
+                {(brands || []).filter(isBrandLiveOnHome).length} <span className="text-xs font-bold text-[#081426]/60">Live</span>
               </div>
             </div>
 
@@ -1161,7 +1166,7 @@ END $$;`;
                     : 'bg-[#F4F8FC] text-[#081426]/75 hover:bg-[#E8F1FB]'
                 }`}
               >
-                Featured Only ({(brands || []).filter((b) => Boolean(b.isFeatured)).length})
+                Featured Only ({(brands || []).filter(isBrandLiveOnHome).length})
               </button>
             </div>
           </div>
@@ -1204,13 +1209,13 @@ END $$;`;
                     <span
                       onClick={() => toggleBrandFeatured && toggleBrandFeatured(brand.id)}
                       className={`absolute top-2 right-2 size-7 rounded-full flex items-center justify-center cursor-pointer transition-transform hover:scale-110 ${
-                        Boolean(brand.isFeatured)
+                        isBrandLiveOnHome(brand)
                           ? 'bg-emerald-600 text-white shadow-xs'
                           : 'bg-gray-200 text-gray-400'
                       }`}
-                      title={Boolean(brand.isFeatured) ? 'Featured on Home (Click to remove)' : 'Hidden from Home (Click to feature)'}
+                      title={isBrandLiveOnHome(brand) ? 'Featured on Home (Click to toggle)' : 'Hidden from Home (Click to feature)'}
                     >
-                      <Star size={13} className={Boolean(brand.isFeatured) ? 'fill-white' : ''} />
+                      <Star size={13} className={isBrandLiveOnHome(brand) ? 'fill-white' : ''} />
                     </span>
                   </div>
 
@@ -1230,11 +1235,11 @@ END $$;`;
 
                 <div className="mt-4 pt-3 border-t border-[#F0F5FA] flex items-center justify-between">
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                    Boolean(brand.isFeatured)
+                    isBrandLiveOnHome(brand)
                       ? 'bg-emerald-100 text-emerald-900 border border-emerald-300 font-black'
                       : 'bg-gray-100 text-gray-500'
                   }`}>
-                    {Boolean(brand.isFeatured)
+                    {isBrandLiveOnHome(brand)
                       ? '★ Featured on Home'
                       : '— Hidden from Home'}
                   </span>

@@ -39,17 +39,6 @@ export function useProductCatalog() {
       if (saved) {
         let parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          if (!localStorage.getItem(CLEANUP_KEY)) {
-            const OLD_DEFAULT_FEATURED_IDS = [211, 105, 153, 81, 102, 188];
-            parsed = parsed.map((p) => {
-              if (OLD_DEFAULT_FEATURED_IDS.includes(p.id)) {
-                return { ...p, isFeatured: false };
-              }
-              return p;
-            });
-            localStorage.setItem(CLEANUP_KEY, 'true');
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
-          }
           rawProducts = parsed;
         }
       }
@@ -97,14 +86,7 @@ export function useProductCatalog() {
       fetchCatalogFromPostgres().then((dbProducts) => {
         if (Array.isArray(dbProducts) && dbProducts.length > 0) {
           setProducts((current) => {
-            const OLD_DEFAULT_FEATURED_IDS = [211, 105, 153, 81, 102, 188];
-            const normalized = dbProducts.map((p) => {
-              const item = normalizeProduct(p);
-              if (OLD_DEFAULT_FEATURED_IDS.includes(item.id) && !localStorage.getItem('gt_custom_featured_' + item.id)) {
-                return { ...item, isFeatured: false };
-              }
-              return item;
-            });
+            const normalized = dbProducts.map(normalizeProduct);
             try {
               localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
               window.dispatchEvent(new Event('catalog-updated'));

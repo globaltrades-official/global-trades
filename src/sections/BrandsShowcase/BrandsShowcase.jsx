@@ -15,9 +15,9 @@ export default function BrandsShowcase({
       (b) => Boolean(b.isFeatured) && b.logo
     );
 
-    // 2. Brands from products explicitly featured in Admin (excluding old default IDs)
+    // 2. Brands from products explicitly featured in Admin
     const featuredProducts = (products || []).filter(
-      (p) => Boolean(p.isFeatured) && ![211, 105, 153, 81, 102, 188].includes(p.id)
+      (p) => Boolean(p.isFeatured)
     );
 
     const brandMap = new Map();
@@ -96,7 +96,7 @@ export default function BrandsShowcase({
         </div>
 
         {/* Pure Logo Grid — Responsive Multi-Column Grid */}
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5 sm:gap-3 md:gap-4">
           {displayBrands.map((brand) => {
             const brandKey = (brand.name || '').toLowerCase().trim();
             const isFailed = failedImages[brandKey];
