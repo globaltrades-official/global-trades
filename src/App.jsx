@@ -12,7 +12,6 @@ import HowToOrder from './sections/HowToOrder/HowToOrder';
 import AlternatingText from './sections/AlternatingText/AlternatingText';
 import HowWeServe from './sections/HowWeServe/HowWeServe';
 import FAQ from './sections/FAQ/FAQ';
-import LocalSEOHubs from './sections/LocalSEOHubs/LocalSEOHubs';
 import StoreDeliveryInfoCard from './components/StoreDeliveryInfoCard';
 import BigText from './sections/BigText/BigText';
 import { useProductCatalog } from './hooks/useProductCatalog';
@@ -276,15 +275,12 @@ export default function App() {
           {/* 10. FAQ Section (6 Core Questions) */}
           <FAQ />
 
-          {/* 12. Local SEO Foodservice Distribution Hubs (6 Local Niches) */}
-          <LocalSEOHubs onNavigate={navigateTo} />
-
-          {/* 13. Store Pickup & Kozhikode Delivery Information Visibility Card */}
+          {/* 11. Store Pickup & Kozhikode Delivery Information Visibility Card */}
           <div className="mx-auto max-w-7xl px-4 md:px-8 py-10">
             <StoreDeliveryInfoCard />
           </div>
 
-          {/* 14. Brand Statement */}
+          {/* 12. Brand Statement */}
           <BigText />
         </main>
       )}

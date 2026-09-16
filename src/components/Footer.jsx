@@ -267,14 +267,6 @@ export default function Footer({ onNavigate }) {
           >
             FAQ
           </button>
-          <span>·</span>
-          <button
-            type="button"
-            onClick={() => onNavigate && onNavigate('home', '#local-supply-hubs')}
-            className="hover:text-[#1A4C98] transition-colors cursor-pointer"
-          >
-            Kozhikode Supply Hubs
-          </button>
         </div>
 
         {/* Bottom Bar with perfect horizontal alignment */}
