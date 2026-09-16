@@ -4,7 +4,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Alpino", "sans-serif"],
+        sans: ['"Times New Roman"', 'Times', '"Liberation Serif"', 'serif'],
+        serif: ['"Times New Roman"', 'Times', '"Liberation Serif"', 'serif'],
       },
       keyframes: {
         "slide-left": {

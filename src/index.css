@@ -2,17 +2,8 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-@font-face {
-  font-family: 'Alpino';
-  src: url('/fonts/Alpino-Variable.woff2') format('woff2'),
-       url('/fonts/Alpino-Variable.woff') format('woff');
-  font-weight: 100 900;
-  font-display: swap;
-  font-style: normal;
-}
-
 :root {
-  --font-alpino: 'Alpino', sans-serif;
+  --font-times: 'Times New Roman', Times, 'Liberation Serif', serif;
 }
 
 html {
@@ -29,7 +20,7 @@ html {
 }
 
 body {
-  font-family: 'Alpino', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Times New Roman', Times, 'Liberation Serif', serif;
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
