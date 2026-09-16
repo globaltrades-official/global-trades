@@ -89,12 +89,12 @@ export default function IndustriesWeServe({ onNavigate }) {
   return (
     <section
       id="industries"
-      className="relative w-full bg-[#F4F8FC] py-8 sm:py-12 md:py-20 border-t border-[#1A4C98]/15"
+      className="relative w-full bg-[#F4F8FC] py-12 sm:py-16 md:py-20 border-t border-[#1A4C98]/15"
     >
       <div className="mx-auto w-full max-w-7xl px-4 md:px-8 relative z-10">
         {/* Section Header */}
-        <div className="mx-auto max-w-3xl text-center mb-6 sm:mb-10 md:mb-14">
-          <div className="inline-flex items-center gap-2 rounded-full bg-[#1A4C98]/10 border border-[#1A4C98]/20 px-3.5 py-1 text-xs font-black uppercase tracking-wider text-[#1A4C98] mb-3">
+        <div className="mx-auto max-w-3xl text-center mb-8 sm:mb-12 md:mb-14">
+          <div className="inline-flex items-center gap-2 rounded-full bg-[#1A4C98]/10 border border-[#1A4C98]/20 px-3.5 py-1 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#1A4C98] mb-3">
             <CheckCircle2 size={13} className="text-emerald-700" />
             <span>Food Service Sectors</span>
           </div>
@@ -103,13 +103,13 @@ export default function IndustriesWeServe({ onNavigate }) {
             Industries We Serve
           </h2>
 
-          <p className="mt-2 sm:mt-4 text-xs sm:text-base text-[#081426]/80 font-medium leading-relaxed">
+          <p className="mt-2.5 sm:mt-4 text-xs sm:text-base text-[#081426]/75 font-normal leading-relaxed max-w-2xl mx-auto">
             Reliable wholesale food-service supply customized for hospitality, dining, and commercial kitchens across Kozhikode.
           </p>
         </div>
 
         {/* 7-Card Grid: 2-Column Grid on Mobile matching Why Global Trades, 3-4 Col on Desktop */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-6">
           {INDUSTRIES.map((industry, index) => {
             const Icon = industry.icon;
             const isLast = index === INDUSTRIES.length - 1;
@@ -117,30 +117,30 @@ export default function IndustriesWeServe({ onNavigate }) {
             return (
               <div
                 key={industry.id}
-                className={`group flex flex-col justify-between rounded-2xl sm:rounded-3xl bg-white p-3 sm:p-6 border border-[#D0DFEF] shadow-2xs hover:shadow-lg hover:border-[#1A4C98]/40 hover:-translate-y-0.5 transition-all duration-300 ${
+                className={`group flex flex-col justify-between rounded-2xl sm:rounded-3xl bg-white p-3.5 sm:p-6 border border-[#D0DFEF] shadow-2xs hover:shadow-lg hover:border-[#1A4C98]/40 hover:-translate-y-0.5 transition-all duration-300 ${
                   isLast ? 'col-span-2 sm:col-span-2 lg:col-span-3 xl:col-span-1' : ''
                 }`}
               >
                 <div>
-                  <div className="flex items-center justify-between mb-2 sm:mb-3">
-                    <div className="size-8 sm:size-12 rounded-xl sm:rounded-2xl bg-[#1A4C98]/10 text-[#1A4C98] flex items-center justify-center group-hover:bg-[#1A4C98] group-hover:text-white transition-colors duration-200">
-                      <Icon size={16} className="sm:w-6 sm:h-6" />
+                  <div className="flex items-center justify-between mb-2.5 sm:mb-3">
+                    <div className="size-9 sm:size-12 rounded-xl sm:rounded-2xl bg-[#1A4C98]/10 text-[#1A4C98] flex items-center justify-center group-hover:bg-[#1A4C98] group-hover:text-white transition-colors duration-200">
+                      <Icon size={17} className="sm:w-6 sm:h-6" />
                     </div>
-                    <span className="text-[8px] sm:text-[11px] font-extrabold uppercase tracking-wider text-[#00A3E0] bg-[#00A3E0]/10 px-2 py-0.5 rounded-full">
+                    <span className="text-[9px] sm:text-[11px] font-bold uppercase tracking-wider text-[#00A3E0] bg-[#00A3E0]/10 px-2 py-0.5 rounded-full">
                       {industry.tag}
                     </span>
                   </div>
 
-                  <h3 className="text-xs sm:text-xl font-black text-[#081426] group-hover:text-[#1A4C98] transition-colors mb-1 leading-snug">
+                  <h3 className="text-xs sm:text-lg md:text-xl font-black text-[#081426] group-hover:text-[#1A4C98] transition-colors mb-1 leading-snug">
                     {industry.name}
                   </h3>
 
-                  <p className="text-[11px] sm:text-sm font-medium text-[#081426]/75 leading-relaxed line-clamp-3 sm:line-clamp-none">
+                  <p className="text-[11px] sm:text-sm font-normal text-[#081426]/75 leading-relaxed line-clamp-3 sm:line-clamp-none">
                     {industry.description}
                   </p>
                 </div>
 
-                <div className="mt-2.5 sm:mt-6 pt-2 sm:pt-4 border-t border-[#F0F5FA] flex items-center justify-between gap-1">
+                <div className="mt-3 sm:mt-5 pt-2.5 sm:pt-4 border-t border-[#D0DFEF]/60 flex items-center justify-between gap-1">
                   <button
                     type="button"
                     onClick={() => handleIndustryClick(industry.recommendedCategory)}
@@ -156,7 +156,7 @@ export default function IndustriesWeServe({ onNavigate }) {
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-extrabold text-emerald-800 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded-lg border border-emerald-200/60 transition-colors"
+                    className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-bold text-emerald-800 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded-lg border border-emerald-200/60 transition-colors"
                   >
                     <WhatsAppIcon size={11} />
                     <span>Quote</span>

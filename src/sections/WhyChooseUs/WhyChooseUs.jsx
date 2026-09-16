@@ -52,12 +52,12 @@ export default function WhyChooseUs({ onNavigate }) {
   return (
     <section
       id="why-global-trades"
-      className="relative w-full bg-white py-8 sm:py-12 md:py-20 border-t border-[#1A4C98]/15"
+      className="relative w-full bg-white py-12 sm:py-16 md:py-20 border-t border-[#1A4C98]/15"
     >
       <div className="mx-auto w-full max-w-7xl px-4 md:px-8 relative z-10">
         {/* Section Header */}
-        <div className="mx-auto max-w-3xl text-center mb-6 sm:mb-10 md:mb-14">
-          <div className="inline-flex items-center gap-2 rounded-full bg-[#1A4C98]/10 border border-[#1A4C98]/20 px-3.5 py-1 text-xs font-black uppercase tracking-wider text-[#1A4C98] mb-3">
+        <div className="mx-auto max-w-3xl text-center mb-8 sm:mb-12 md:mb-14">
+          <div className="inline-flex items-center gap-2 rounded-full bg-[#1A4C98]/10 border border-[#1A4C98]/20 px-3.5 py-1 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#1A4C98] mb-3">
             <CheckCircle2 size={13} className="text-emerald-700" />
             <span>Reliable B2B Partner</span>
           </div>
@@ -66,13 +66,13 @@ export default function WhyChooseUs({ onNavigate }) {
             Why Global Trades
           </h2>
 
-          <p className="mt-2 sm:mt-4 text-xs sm:text-base text-[#081426]/80 font-medium leading-relaxed">
+          <p className="mt-2.5 sm:mt-4 text-xs sm:text-base text-[#081426]/75 font-normal leading-relaxed max-w-2xl mx-auto">
             Genuine wholesale supply, transparent trade pricing, and responsive local service for food businesses in Kozhikode.
           </p>
         </div>
 
         {/* 6 Simple Cards in 2-Column Grid on Mobile, 3-Column on Desktop */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6">
           {REASONS.map((reason, index) => {
             const Icon = reason.icon;
 
@@ -83,19 +83,19 @@ export default function WhyChooseUs({ onNavigate }) {
               >
                 <div>
                   <div className="flex items-center justify-between mb-2.5 sm:mb-5">
-                    <div className="size-9 sm:size-12 rounded-xl sm:rounded-2xl bg-white text-[#1A4C98] flex items-center justify-center shadow-xs group-hover:bg-[#1A4C98] group-hover:text-white transition-colors duration-200 border border-[#D0DFEF]">
+                    <div className="size-9 sm:size-12 rounded-xl sm:rounded-2xl bg-white text-[#1A4C98] flex items-center justify-center shadow-2xs group-hover:bg-[#1A4C98] group-hover:text-white transition-colors duration-200 border border-[#D0DFEF]">
                       <Icon size={18} className="sm:w-5 sm:h-5" />
                     </div>
-                    <span className="text-[10px] sm:text-xs font-black text-[#081426]/30">
+                    <span className="text-[10px] sm:text-xs font-bold text-[#081426]/30">
                       0{index + 1}
                     </span>
                   </div>
 
-                  <h3 className="text-xs sm:text-lg font-black text-[#081426] group-hover:text-[#1A4C98] transition-colors mb-1 sm:mb-2 leading-snug">
+                  <h3 className="text-xs sm:text-base md:text-lg font-black text-[#081426] group-hover:text-[#1A4C98] transition-colors mb-1 sm:mb-2 leading-snug">
                     {reason.title}
                   </h3>
 
-                  <p className="text-[11px] sm:text-sm font-medium text-[#081426]/75 leading-relaxed line-clamp-3 sm:line-clamp-none">
+                  <p className="text-[11px] sm:text-sm font-normal text-[#081426]/75 leading-relaxed line-clamp-3 sm:line-clamp-none">
                     {reason.description}
                   </p>
                 </div>

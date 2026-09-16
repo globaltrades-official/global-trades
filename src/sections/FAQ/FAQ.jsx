@@ -38,12 +38,12 @@ export default function FAQ() {
   return (
     <section
       id="faq"
-      className="relative w-full bg-[#F4F8FC] py-8 sm:py-12 md:py-20 border-t border-[#1A4C98]/15"
+      className="relative w-full bg-[#F4F8FC] py-12 sm:py-16 md:py-20 border-t border-[#1A4C98]/15"
     >
       <div className="mx-auto w-full max-w-4xl px-4 md:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-6 sm:mb-10 md:mb-14">
-          <div className="inline-flex items-center gap-2 rounded-full bg-[#1A4C98]/10 border border-[#1A4C98]/20 px-3.5 py-1 text-xs font-black uppercase tracking-wider text-[#1A4C98] mb-3">
+        <div className="text-center mb-8 sm:mb-12 md:mb-14">
+          <div className="inline-flex items-center gap-2 rounded-full bg-[#1A4C98]/10 border border-[#1A4C98]/20 px-3.5 py-1 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#1A4C98] mb-3">
             <HelpCircle size={13} className="text-[#00A3E0]" />
             <span>Frequently Asked Questions</span>
           </div>
@@ -52,43 +52,43 @@ export default function FAQ() {
             Frequently Asked Questions
           </h2>
 
-          <p className="mt-2 sm:mt-4 text-xs sm:text-base text-[#081426]/80 font-medium leading-relaxed">
+          <p className="mt-2.5 sm:mt-4 text-xs sm:text-base text-[#081426]/75 font-normal leading-relaxed max-w-2xl mx-auto">
             Essential information on wholesale pricing, store pickup in Vellayil, and Kozhikode delivery.
           </p>
         </div>
 
         {/* Accordion List */}
-        <div className="space-y-4">
+        <div className="space-y-3.5 sm:space-y-4">
           {FAQS.map((faq, index) => {
             const isOpen = openIndex === index;
 
             return (
               <div
                 key={faq.q}
-                className="rounded-2xl bg-white border border-[#D0DFEF] shadow-xs overflow-hidden transition-all duration-200"
+                className="rounded-2xl bg-white border border-[#D0DFEF] shadow-2xs overflow-hidden transition-all duration-200"
               >
                 <button
                   type="button"
                   onClick={() => toggleFAQ(index)}
-                  className="w-full text-left p-5 sm:p-6 flex items-center justify-between gap-4 cursor-pointer hover:bg-[#F8FAFD] transition-colors"
+                  className="w-full text-left p-4 sm:p-6 flex items-center justify-between gap-4 cursor-pointer hover:bg-[#F8FAFD] transition-colors"
                   aria-expanded={isOpen}
                 >
-                  <span className="text-base sm:text-lg font-black text-[#081426] leading-snug">
+                  <span className="text-sm sm:text-lg font-black text-[#081426] leading-snug">
                     {faq.q}
                   </span>
                   <div
-                    className={`size-8 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 ${
+                    className={`size-7 sm:size-8 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 ${
                       isOpen
                         ? 'rotate-180 bg-[#1A4C98] text-white'
                         : 'bg-[#F4F8FC] text-[#1A4C98] border border-[#D0DFEF]'
                     }`}
                   >
-                    <ChevronDown size={16} />
+                    <ChevronDown size={15} />
                   </div>
                 </button>
 
                 {isOpen && (
-                  <div className="px-5 sm:px-6 pb-6 pt-1 text-sm sm:text-base text-[#081426]/80 font-medium leading-relaxed border-t border-[#F0F5FA]">
+                  <div className="px-4 sm:px-6 pb-5 sm:pb-6 pt-1 text-xs sm:text-base text-[#081426]/80 font-normal leading-relaxed border-t border-[#F0F5FA]">
                     <p className="pt-2">{faq.a}</p>
                   </div>
                 )}

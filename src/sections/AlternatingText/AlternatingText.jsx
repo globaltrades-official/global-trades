@@ -127,7 +127,7 @@ export default function AlternatingText() {
     <section
       ref={containerRef}
       id="benefits"
-      className="alternating-text-container relative w-full bg-[#E2ECF8] text-[#081426] transition-colors duration-700 py-8 md:py-0"
+      className="alternating-text-container relative w-full bg-[#E2ECF8] text-[#081426] transition-colors duration-700 py-12 sm:py-16 md:py-0"
     >
       {/* Pinned Shared Scroll-Driven Decorative Logo (Desktop only >= 1024px) */}
       <div
@@ -150,10 +150,10 @@ export default function AlternatingText() {
         </div>
       </div>
 
-      <div className="relative w-full pt-12 md:pt-16">
+      <div className="relative w-full pt-4 sm:pt-8 md:pt-16">
         {/* Section Header */}
-        <div className="mx-auto max-w-3xl text-center px-4 mb-6 sm:mb-14 relative z-10">
-          <div className="inline-flex items-center gap-2 rounded-full bg-amber-50 border border-amber-200 px-3.5 py-1 text-xs font-black uppercase tracking-wider text-amber-900 shadow-2xs mb-3">
+        <div className="mx-auto max-w-3xl text-center px-4 mb-8 sm:mb-12 md:mb-14 relative z-10">
+          <div className="inline-flex items-center gap-2 rounded-full bg-amber-50 border border-amber-200 px-3.5 py-1 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-amber-900 shadow-2xs mb-3">
             <span className="text-amber-600 font-extrabold">★ {BRANDING.RATING}</span>
             <span className="text-amber-300">·</span>
             <span className="text-[#081426]/80">{BRANDING.REVIEWS_COUNT} Reviews</span>
@@ -163,13 +163,13 @@ export default function AlternatingText() {
             Trusted by Kozhikode Food Businesses
           </h2>
 
-          <p className="mt-2 sm:mt-3 text-xs sm:text-base text-[#081426]/80 font-medium leading-relaxed">
+          <p className="mt-2.5 sm:mt-3 text-xs sm:text-base text-[#081426]/75 font-normal leading-relaxed max-w-2xl mx-auto">
             What cafes, restaurants, and bakery customers say about Global Trades.
           </p>
         </div>
 
         {/* Review Cards: Grid on Mobile/Tablet matching Why Global Trades, Scroll-pinned on Desktop */}
-        <div className="mx-auto grid grid-cols-1 md:grid-cols-3 lg:flex lg:flex-col items-stretch lg:items-center px-4 md:px-8 relative z-10 gap-3 sm:gap-6 lg:gap-0">
+        <div className="mx-auto grid grid-cols-1 md:grid-cols-3 lg:flex lg:flex-col items-stretch lg:items-center px-4 md:px-8 relative z-10 gap-4 sm:gap-6 lg:gap-0">
           {TEXT_GROUP.map((item, index) => {
             const isEven = index % 2 === 0;
             return (
@@ -187,7 +187,7 @@ export default function AlternatingText() {
                   )}
                 >
                   <div>
-                    <span className="inline-block rounded-full bg-emerald-900/10 px-2.5 py-0.5 sm:px-3.5 sm:py-1 text-[10px] sm:text-xs font-black uppercase tracking-wider text-emerald-900 mb-2 sm:mb-3 border border-emerald-900/15">
+                    <span className="inline-block rounded-full bg-emerald-900/10 px-2.5 py-0.5 sm:px-3.5 sm:py-1 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-900 mb-2 sm:mb-3 border border-emerald-900/15">
                       {item.tag}
                     </span>
 
@@ -200,12 +200,12 @@ export default function AlternatingText() {
                       <p className="text-xs sm:text-sm md:text-base font-bold italic text-[#081426] leading-relaxed">
                         {item.reviewQuote}
                       </p>
-                      <span className="block mt-1 sm:mt-1.5 text-[10px] sm:text-xs font-black text-amber-800">
+                      <span className="block mt-1 sm:mt-1.5 text-[10px] sm:text-xs font-bold text-amber-800">
                         ★ 5.0 — {item.reviewer}
                       </span>
                     </div>
 
-                    <div className="mt-2.5 sm:mt-4 text-xs sm:text-sm md:text-base font-medium text-[#081426]/85 leading-relaxed">
+                    <div className="mt-2.5 sm:mt-4 text-xs sm:text-sm md:text-base font-normal text-[#081426]/80 leading-relaxed">
                       <p>{item.body}</p>
                     </div>
                   </div>

@@ -86,17 +86,17 @@ export default function BrandsShowcase({
   };
 
   return (
-    <section className="relative w-full bg-gradient-to-b from-[#F4F8FC] via-white to-[#F4F8FC] py-8 sm:py-12 md:py-16 border-y border-[#D0DFEF]">
+    <section className="relative w-full bg-gradient-to-b from-[#F4F8FC] via-white to-[#F4F8FC] py-10 sm:py-12 md:py-16 border-y border-[#D0DFEF]">
       <div className="mx-auto w-full max-w-7xl px-4 md:px-8">
         {/* Subtle Eyebrow Title */}
-        <div className="text-center mb-4 sm:mb-8">
-          <span className="inline-block text-[10px] sm:text-xs font-black uppercase tracking-widest text-[#1A4C98] bg-[#1A4C98]/10 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full border border-[#1A4C98]/15">
+        <div className="text-center mb-5 sm:mb-8">
+          <span className="inline-block text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#1A4C98] bg-[#1A4C98]/10 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full border border-[#1A4C98]/15">
             Brands Trusted by Food Businesses
           </span>
         </div>
 
         {/* Pure Logo Grid — Responsive Multi-Column Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5 sm:gap-3 md:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-3 md:gap-4">
           {displayBrands.map((brand) => {
             const brandKey = (brand.name || '').toLowerCase().trim();
             const isFailed = failedImages[brandKey];
