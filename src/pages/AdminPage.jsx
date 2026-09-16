@@ -24,6 +24,7 @@ import {
   RefreshCw,
   Copy,
   Check,
+  Sparkles,
 } from 'lucide-react';
 import { CATALOG_CATEGORIES, CATALOG_BRANDS } from '@/data/catalogProducts';
 import { BRANDING, CONTACT } from '@/constants/theme';
@@ -42,6 +43,13 @@ export default function AdminPage({
   toggleFeatured,
   deleteProduct,
   resetCatalog,
+  brands = [],
+  addBrand,
+  updateBrand,
+  deleteBrand,
+  toggleBrandFeatured,
+  resetBrands,
+  initialTab = 'products',
   onNavigateHome,
   onNavigateProducts,
 }) {
@@ -49,17 +57,133 @@ export default function AdminPage({
     return sessionStorage.getItem('gt_admin_auth') === 'true';
   });
 
+  const [activeAdminTab, setActiveAdminTab] = useState(initialTab || 'products');
+
+  useEffect(() => {
+    if (initialTab) {
+      setActiveAdminTab(initialTab);
+    }
+  }, [initialTab]);
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState('');
 
-  // Dashboard controls
+  // Dashboard controls (Products)
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedBrand, setSelectedBrand] = useState('All');
   const [showFeaturedOnly, setShowFeaturedOnly] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
+
+  // Brand management controls & state
+  const [brandSearchQuery, setBrandSearchQuery] = useState('');
+  const [brandFilter, setBrandFilter] = useState('all');
+  const [isBrandModalOpen, setIsBrandModalOpen] = useState(false);
+  const [editingBrand, setEditingBrand] = useState(null);
+  const [brandToDelete, setBrandToDelete] = useState(null);
+
+  const [brandFormData, setBrandFormData] = useState({
+    name: '',
+    category: '',
+    origin: '',
+    logo: '',
+    isFeatured: true,
+  });
+
+  const openAddBrandModal = () => {
+    setEditingBrand(null);
+    setBrandFormData({
+      name: '',
+      category: '',
+      origin: '',
+      logo: '',
+      isFeatured: true,
+    });
+    setIsBrandModalOpen(true);
+  };
+
+  const openEditBrandModal = (brand) => {
+    setEditingBrand(brand);
+    setBrandFormData({
+      name: brand.name || '',
+      category: brand.category || '',
+      origin: brand.origin || '',
+      logo: brand.logo || '',
+      isFeatured: brand.isFeatured !== false,
+    });
+    setIsBrandModalOpen(true);
+  };
+
+  const handleBrandFormSubmit = (e) => {
+    e.preventDefault();
+    if (!brandFormData.name.trim()) {
+      alert('Brand name is required.');
+      return;
+    }
+
+    if (editingBrand) {
+      if (updateBrand) {
+        updateBrand(editingBrand.id, brandFormData);
+      }
+      showToast(`Updated brand "${brandFormData.name}" successfully!`);
+    } else {
+      if (addBrand) {
+        addBrand(brandFormData);
+      }
+      showToast(`Added brand "${brandFormData.name}" to trusted showcase!`);
+    }
+
+    setIsBrandModalOpen(false);
+  };
+
+  const handleBrandLogoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        alert('File size exceeds 2MB limit. Please upload a smaller logo image.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setBrandFormData((prev) => ({ ...prev, logo: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const confirmBrandDelete = () => {
+    if (brandToDelete) {
+      if (deleteBrand) {
+        deleteBrand(brandToDelete.id);
+      }
+      showToast(`Removed brand "${brandToDelete.name}".`);
+      setBrandToDelete(null);
+    }
+  };
+
+  const handleResetBrands = () => {
+    if (confirm('Restore default trusted brands showcase? Any custom edits will be reset.')) {
+      if (resetBrands) {
+        resetBrands();
+      }
+      showToast('Trusted brands restored to verified defaults.');
+    }
+  };
+
+  const filteredBrands = useMemo(() => {
+    return (brands || []).filter((b) => {
+      if (brandFilter === 'featured' && !b.isFeatured) return false;
+      const q = (brandSearchQuery || '').toLowerCase().trim();
+      if (!q) return true;
+      return (
+        (b.name && b.name.toLowerCase().includes(q)) ||
+        (b.category && b.category.toLowerCase().includes(q)) ||
+        (b.origin && b.origin.toLowerCase().includes(q))
+      );
+    });
+  }, [brands, brandFilter, brandSearchQuery]);
 
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -525,7 +649,39 @@ END $$;`;
         </div>
       </div>
 
-      {/* Dashboard Title & Stats */}
+      {/* Primary Admin Tab Navigation Switcher */}
+      <div className="mx-auto max-w-7xl px-4 md:px-8 mb-6">
+        <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-white border border-[#D0DFEF] shadow-xs max-w-md">
+          <button
+            type="button"
+            onClick={() => setActiveAdminTab('products')}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+              activeAdminTab === 'products'
+                ? 'bg-[#1A4C98] text-white shadow-sm'
+                : 'text-[#081426]/75 hover:text-[#1A4C98] hover:bg-[#F4F8FC]'
+            }`}
+          >
+            <Package size={16} />
+            <span>Products ({products.length})</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveAdminTab('brands')}
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+              activeAdminTab === 'brands'
+                ? 'bg-[#1A4C98] text-white shadow-sm'
+                : 'text-[#081426]/75 hover:text-[#1A4C98] hover:bg-[#F4F8FC]'
+            }`}
+          >
+            <Sparkles size={16} />
+            <span>Trusted Brands ({(brands || []).length})</span>
+          </button>
+        </div>
+      </div>
+
+      {activeAdminTab === 'products' ? (
+        <>
+          {/* Dashboard Title & Stats */}
       <div className="mx-auto max-w-7xl px-4 md:px-8 mb-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
@@ -861,6 +1017,244 @@ END $$;`;
           )}
         </div>
       </div>
+      </>
+      ) : (
+        <div className="mx-auto max-w-7xl px-4 md:px-8 mb-8">
+          {/* Header & Quick Actions */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full bg-[#1A4C98]/10 px-3 py-1 text-xs font-black uppercase tracking-wider text-[#1A4C98] mb-2 border border-[#1A4C98]/20">
+                <Sparkles size={14} className="text-[#00A3E0]" />
+                <span>Home Page Showcase</span>
+              </div>
+              <h1 className="text-3xl md:text-4xl font-black uppercase text-[#081426] tracking-tight">
+                Brands Trusted by Food Businesses
+              </h1>
+              <p className="text-sm text-[#081426]/75 mt-1">
+                Add, edit, or upload authorized brand logos displayed in the "Brands Trusted by Food Businesses" section on the public Home page.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={openAddBrandModal}
+                className="inline-flex items-center gap-2 rounded-2xl bg-[#1A4C98] px-5 py-3 text-sm font-black uppercase tracking-wider text-white shadow-md shadow-[#1A4C98]/30 hover:bg-[#123873] hover:scale-105 active:scale-95 transition-all cursor-pointer"
+              >
+                <Plus size={18} />
+                <span>Add Brand Logo</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleResetBrands}
+                className="inline-flex items-center gap-1.5 rounded-2xl border border-[#D0DFEF] bg-white px-4 py-3 text-xs font-bold text-[#081426]/80 hover:bg-red-50 hover:text-red-700 hover:border-red-200 transition-colors cursor-pointer"
+                title="Restore default verified brand list"
+              >
+                <RotateCcw size={14} />
+                <span>Reset Defaults</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={onNavigateHome}
+                className="inline-flex items-center gap-1.5 rounded-2xl border border-[#D0DFEF] bg-white px-4 py-3 text-xs font-bold text-[#1A4C98] hover:bg-sky-50 transition-colors cursor-pointer"
+              >
+                <ExternalLink size={14} />
+                <span>View on Home</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Quick Brand KPIs */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+            <div className="rounded-2xl bg-white p-4 border border-[#D0DFEF] shadow-sm">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#081426]/60">
+                Total Brands
+              </span>
+              <div className="text-2xl md:text-3xl font-black text-[#1A4C98] mt-1">
+                {(brands || []).length} <span className="text-xs font-bold text-[#081426]/60">Brands</span>
+              </div>
+            </div>
+
+            <div className="rounded-2xl bg-white p-4 border border-[#D0DFEF] shadow-sm">
+              <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">
+                Featured in Showcase
+              </span>
+              <div className="text-2xl md:text-3xl font-black text-emerald-700 mt-1">
+                {(brands || []).filter((b) => b.isFeatured !== false).length} <span className="text-xs font-bold text-[#081426]/60">Live</span>
+              </div>
+            </div>
+
+            <div className="rounded-2xl bg-white p-4 border border-[#D0DFEF] shadow-sm">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#00A3E0]">
+                With Custom Logos
+              </span>
+              <div className="text-2xl md:text-3xl font-black text-[#00A3E0] mt-1">
+                {(brands || []).filter((b) => b.logo).length} <span className="text-xs font-bold text-[#081426]/60">Logos</span>
+              </div>
+            </div>
+
+            <div className="rounded-2xl bg-white p-4 border border-[#D0DFEF] shadow-sm">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#081426]/60">
+                Display Format
+              </span>
+              <div className="text-sm font-black text-[#081426] mt-2">
+                Dynamic Logo Grid
+              </div>
+            </div>
+          </div>
+
+          {/* Search & Filter Controls */}
+          <div className="mt-8 rounded-2xl bg-white p-4 sm:p-5 border border-[#D0DFEF] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="relative w-full sm:w-96">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#1A4C98]/60" size={17} />
+              <input
+                type="text"
+                value={brandSearchQuery}
+                onChange={(e) => setBrandSearchQuery(e.target.value)}
+                placeholder="Search brands by name, specialty, origin..."
+                className="w-full rounded-xl border border-[#D0DFEF] bg-[#F4F8FC] py-2.5 pl-10 pr-9 text-xs sm:text-sm font-semibold text-[#081426] focus:border-[#1A4C98] focus:bg-white focus:outline-none"
+              />
+              {brandSearchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setBrandSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#081426]/40 hover:text-[#081426] cursor-pointer"
+                >
+                  <X size={15} />
+                </button>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={() => setBrandFilter('all')}
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
+                  brandFilter === 'all'
+                    ? 'bg-[#1A4C98] text-white shadow-xs'
+                    : 'bg-[#F4F8FC] text-[#081426]/75 hover:bg-[#E8F1FB]'
+                }`}
+              >
+                All Brands ({(brands || []).length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setBrandFilter('featured')}
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
+                  brandFilter === 'featured'
+                    ? 'bg-emerald-800 text-white shadow-xs'
+                    : 'bg-[#F4F8FC] text-[#081426]/75 hover:bg-[#E8F1FB]'
+                }`}
+              >
+                Featured Only ({(brands || []).filter((b) => b.isFeatured !== false).length})
+              </button>
+            </div>
+          </div>
+
+          {/* Brands Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mt-6">
+            {filteredBrands.map((brand) => (
+              <div
+                key={brand.id}
+                className="rounded-2xl bg-white p-5 border border-[#D0DFEF] shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
+              >
+                <div>
+                  {/* Logo Preview Box */}
+                  <div className="h-24 w-full rounded-xl bg-[#F8FAFD] border border-[#E2ECF8] flex items-center justify-center p-2 mb-3 relative overflow-hidden group">
+                    {brand.logo ? (
+                      <img
+                        src={brand.logo}
+                        alt={`${brand.name} logo`}
+                        className="max-h-full max-w-full object-contain"
+                      />
+                    ) : (
+                      <div className="flex items-center gap-2.5">
+                        <div className="size-11 rounded-lg bg-[#1A4C98] text-white flex items-center justify-center font-black text-base shadow-2xs">
+                          {brand.name.substring(0, 2).toUpperCase()}
+                        </div>
+                        <div className="text-left">
+                          <span className="font-black text-sm text-[#081426] block leading-tight">
+                            {brand.name}
+                          </span>
+                          <span className="text-[10px] font-bold text-[#00A3E0]">No Image Set</span>
+                        </div>
+                      </div>
+                    )}
+
+                    <span
+                      onClick={() => toggleBrandFeatured && toggleBrandFeatured(brand.id)}
+                      className={`absolute top-2 right-2 size-7 rounded-full flex items-center justify-center cursor-pointer transition-transform hover:scale-110 ${
+                        brand.isFeatured !== false
+                          ? 'bg-emerald-600 text-white shadow-xs'
+                          : 'bg-gray-200 text-gray-400'
+                      }`}
+                      title={brand.isFeatured !== false ? 'Featured on Home (Click to toggle)' : 'Hidden from Home (Click to toggle)'}
+                    >
+                      <Star size={13} className={brand.isFeatured !== false ? 'fill-white' : ''} />
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <h3 className="text-base font-black text-[#081426] truncate">
+                      {brand.name}
+                    </h3>
+                    <span className="text-[10px] font-black uppercase text-[#00A3E0] bg-[#00A3E0]/10 px-2 py-0.5 rounded-full shrink-0">
+                      {brand.origin || 'Brand'}
+                    </span>
+                  </div>
+
+                  <p className="text-xs text-[#081426]/70 line-clamp-2">
+                    {brand.category || 'Food Service Specialty'}
+                  </p>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-[#F0F5FA] flex items-center justify-between">
+                  <span className="text-[10px] font-bold text-[#081426]/60">
+                    {brand.isFeatured !== false ? '✓ In Showcase' : '— Inactive'}
+                  </span>
+
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => openEditBrandModal(brand)}
+                      className="p-1.5 rounded-lg text-[#1A4C98] hover:bg-[#1A4C98]/10 transition-colors cursor-pointer"
+                      title="Edit Brand"
+                    >
+                      <Pencil size={15} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setBrandToDelete(brand)}
+                      className="p-1.5 rounded-lg text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                      title="Delete Brand"
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {filteredBrands.length === 0 && (
+            <div className="text-center py-12 rounded-3xl bg-white border border-[#D0DFEF] mt-6">
+              <p className="text-sm font-bold text-[#081426]/60">No brands match your search query.</p>
+              <button
+                type="button"
+                onClick={() => {
+                  setBrandSearchQuery('');
+                  setBrandFilter('all');
+                }}
+                className="mt-3 text-xs font-bold text-[#1A4C98] hover:underline cursor-pointer"
+              >
+                Clear Filters
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ADD / EDIT MODAL */}
       {isModalOpen && (
@@ -1069,6 +1463,213 @@ END $$;`;
                 className="rounded-xl bg-red-600 hover:bg-red-700 px-5 py-2.5 text-xs font-bold text-white shadow-md cursor-pointer"
               >
                 Yes, Delete Product
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* BRAND ADD / EDIT MODAL */}
+      {isBrandModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
+          <div className="w-full max-w-xl rounded-3xl bg-white p-6 md:p-8 shadow-2xl border border-[#D0DFEF] my-8 relative">
+            <button
+              onClick={() => setIsBrandModalOpen(false)}
+              className="absolute right-5 top-5 text-[#081426]/40 hover:text-[#081426] cursor-pointer"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="mb-6">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#1A4C98]">
+                {editingBrand ? 'Update Showcase Brand' : 'New Partner Brand'}
+              </span>
+              <h3 className="text-2xl font-black text-[#081426] mt-0.5">
+                {editingBrand ? 'Edit Trusted Brand' : 'Add Trusted Brand'}
+              </h3>
+              <p className="text-xs text-[#081426]/70 mt-1">
+                Manage how this brand appears in the "Brands Trusted by Food Businesses" section on the home page.
+              </p>
+            </div>
+
+            <form onSubmit={handleBrandFormSubmit} className="space-y-4">
+              {/* Brand Name */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#081426]/70 mb-1">
+                  Brand Name *
+                </label>
+                <input
+                  type="text"
+                  value={brandFormData.name}
+                  onChange={(e) => setBrandFormData({ ...brandFormData, name: e.target.value })}
+                  placeholder="e.g. Monin, Veeba, Barry Callebaut..."
+                  className="w-full rounded-xl border border-[#D0DFEF] bg-[#F4F8FC] px-4 py-2.5 text-sm font-semibold text-[#081426] focus:border-[#1A4C98] focus:bg-white focus:outline-none"
+                  required
+                />
+              </div>
+
+              {/* Specialty & Origin */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#081426]/70 mb-1">
+                    Specialty / Product Line
+                  </label>
+                  <input
+                    type="text"
+                    value={brandFormData.category}
+                    onChange={(e) => setBrandFormData({ ...brandFormData, category: e.target.value })}
+                    placeholder="e.g. Gourmet Syrups, Couverture & Cocoa"
+                    className="w-full rounded-xl border border-[#D0DFEF] bg-[#F4F8FC] px-4 py-2.5 text-sm font-semibold text-[#081426] focus:border-[#1A4C98] focus:bg-white focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#081426]/70 mb-1">
+                    Origin / Distribution Scope
+                  </label>
+                  <input
+                    type="text"
+                    value={brandFormData.origin}
+                    onChange={(e) => setBrandFormData({ ...brandFormData, origin: e.target.value })}
+                    placeholder="e.g. France, India, Belgium"
+                    className="w-full rounded-xl border border-[#D0DFEF] bg-[#F4F8FC] px-4 py-2.5 text-sm font-semibold text-[#081426] focus:border-[#1A4C98] focus:bg-white focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Brand Logo Upload / URL */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#081426]/70 mb-1">
+                  Brand Logo
+                </label>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3">
+                    <label className="flex items-center justify-center gap-2 rounded-xl border border-dashed border-[#1A4C98]/40 bg-[#1A4C98]/5 hover:bg-[#1A4C98]/10 px-4 py-2.5 text-xs font-bold text-[#1A4C98] cursor-pointer transition-colors w-full sm:w-auto">
+                      <Upload size={15} />
+                      <span>Upload Logo File (PNG / JPG / SVG)</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleBrandLogoUpload}
+                        className="hidden"
+                      />
+                    </label>
+                    {brandFormData.logo && (
+                      <button
+                        type="button"
+                        onClick={() => setBrandFormData({ ...brandFormData, logo: '' })}
+                        className="text-xs text-red-600 hover:text-red-800 font-bold cursor-pointer"
+                      >
+                        Remove Logo
+                      </button>
+                    )}
+                  </div>
+                  <input
+                    type="text"
+                    value={brandFormData.logo}
+                    onChange={(e) => setBrandFormData({ ...brandFormData, logo: e.target.value })}
+                    placeholder="Or enter logo image URL (https://...)"
+                    className="w-full rounded-xl border border-[#D0DFEF] bg-[#F4F8FC] px-4 py-2 text-xs text-[#081426] focus:border-[#1A4C98] focus:bg-white focus:outline-none font-mono"
+                  />
+                </div>
+              </div>
+
+              {/* Real-time Logo Preview */}
+              <div>
+                <span className="block text-[11px] font-bold uppercase tracking-wider text-[#081426]/60 mb-1">
+                  Logo Live Preview (Home Showcase Card)
+                </span>
+                <div className="h-28 rounded-2xl border border-[#D0DFEF] bg-[#F8FAFD] p-4 flex items-center justify-center">
+                  {brandFormData.logo ? (
+                    <img
+                      src={brandFormData.logo}
+                      alt="Brand preview"
+                      className="max-h-20 max-w-full object-contain"
+                    />
+                  ) : (
+                    <div className="flex items-center gap-3">
+                      <div className="size-12 rounded-xl bg-[#1A4C98] text-white flex items-center justify-center font-black text-lg shadow-sm">
+                        {(brandFormData.name || 'GT').substring(0, 2).toUpperCase()}
+                      </div>
+                      <div className="text-left">
+                        <span className="font-black text-sm text-[#081426] block">
+                          {brandFormData.name || 'Brand Name'}
+                        </span>
+                        <span className="text-[11px] font-bold text-[#00A3E0]">
+                          Avatar Fallback (When no logo image is set)
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Showcase on Home Page Toggle */}
+              <label className="flex items-center gap-3 p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200 cursor-pointer transition-colors hover:bg-emerald-100/50">
+                <input
+                  type="checkbox"
+                  checked={Boolean(brandFormData.isFeatured)}
+                  onChange={(e) => setBrandFormData({ ...brandFormData, isFeatured: e.target.checked })}
+                  className="size-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                />
+                <div className="flex-1">
+                  <span className="text-xs font-black uppercase tracking-wider text-emerald-950 flex items-center gap-1.5">
+                    <Star size={13} className="fill-emerald-600 text-emerald-600" />
+                    <span>Feature in Home "Brands Trusted by Food Businesses"</span>
+                  </span>
+                  <p className="text-[11px] font-medium text-emerald-900/75 mt-0.5">
+                    When checked, this brand logo is featured on the home page showcase with direct link to wholesale catalogue.
+                  </p>
+                </div>
+              </label>
+
+              {/* Buttons */}
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#D0DFEF]">
+                <button
+                  type="button"
+                  onClick={() => setIsBrandModalOpen(false)}
+                  className="rounded-xl border border-[#D0DFEF] bg-white px-5 py-2.5 text-xs font-bold text-[#081426] hover:bg-[#F4F8FC] cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="rounded-xl bg-[#1A4C98] px-6 py-2.5 text-xs font-black uppercase tracking-wider text-white shadow-md hover:bg-[#123873] cursor-pointer"
+                >
+                  {editingBrand ? 'Save Brand Changes' : 'Add to Trusted Brands'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* BRAND DELETE CONFIRMATION DIALOG */}
+      {brandToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl border border-[#D0DFEF] text-center">
+            <div className="mx-auto size-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mb-3">
+              <Trash2 size={24} />
+            </div>
+            <h3 className="text-xl font-bold text-[#081426]">
+              Remove Brand from Showcase?
+            </h3>
+            <p className="text-sm text-[#081426]/75 mt-2">
+              Are you sure you want to delete brand <strong className="text-[#081426]">"{brandToDelete.name}"</strong>? It will no longer appear in the Trusted Brands showcase.
+            </p>
+
+            <div className="flex items-center justify-center gap-3 mt-6">
+              <button
+                onClick={() => setBrandToDelete(null)}
+                className="rounded-xl border border-[#D0DFEF] bg-white px-5 py-2.5 text-xs font-bold text-[#081426] hover:bg-[#F4F8FC] cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmBrandDelete}
+                className="rounded-xl bg-red-600 hover:bg-red-700 px-5 py-2.5 text-xs font-bold text-white shadow-md cursor-pointer"
+              >
+                Yes, Delete Brand
               </button>
             </div>
           </div>

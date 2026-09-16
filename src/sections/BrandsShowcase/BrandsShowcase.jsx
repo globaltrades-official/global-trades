@@ -1,28 +1,14 @@
 import React, { useState } from 'react';
-import { ArrowRight, CheckCircle2, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, ShieldCheck } from 'lucide-react';
+import { DEFAULT_TRUSTED_BRANDS } from '@/hooks/useBrandCatalog';
 import { CATALOG_BRANDS } from '@/data/catalogProducts';
 
-const FEATURED_BRANDS = [
-  { name: 'Monin', category: 'Syrups, Purees & Frappes', origin: 'Imported (France)' },
-  { name: 'Callebaut', category: 'Belgian Couverture & Cocoa', origin: 'Imported (Belgium)' },
-  { name: 'Veeba', category: 'Sauces, Dressings & Dips', origin: 'Institutional Foodservice' },
-  { name: 'Del Monte', category: 'Canned Fruits & Condiments', origin: 'Commercial Packs' },
-  { name: 'American Garden', category: 'Hot Sauces, BBQ & Dressings', origin: 'Imported' },
-  { name: 'Kikkoman', category: 'Naturally Brewed Soy Sauces', origin: 'Imported' },
-  { name: 'Lee Kum Kee', category: 'Asian Sauces & Seasonings', origin: 'Imported' },
-  { name: 'Fruitomans', category: 'Bulk Sauces (1kg - 25kg)', origin: 'Institutional Supply' },
-  { name: 'Morton', category: 'Canned Mushrooms & Produce', origin: 'Commercial Cans' },
-  { name: 'Golden Crown', category: 'Gourmet Canned Fruits', origin: 'Hotel & Cafe Supply' },
-  { name: "D'lecta", category: 'Cheese Slices & Dairy', origin: 'Foodservice Dairy' },
-  { name: 'HyFun Foods', category: 'Frozen Fries & Burger Patties', origin: 'Commercial Frozen' },
-  { name: 'Amul', category: 'Cheese Blocks & Dairy', origin: 'Bulk Dairy' },
-  { name: 'Western', category: 'Frozen Chicken Nuggets & Patties', origin: 'Foodservice Line' },
-  { name: 'Fortune', category: 'Imported Specialty Cheeses', origin: 'Gourmet Kitchens' },
-  { name: 'Tetley', category: 'Tea Bags & Envelopes', origin: 'Hotel & Cafe Sachets' },
-];
-
-export default function BrandsShowcase({ onNavigate }) {
+export default function BrandsShowcase({ brands = DEFAULT_TRUSTED_BRANDS, onNavigate }) {
   const [hoveredBrand, setHoveredBrand] = useState(null);
+
+  const displayBrands = brands && brands.length > 0
+    ? brands.filter((b) => b.isFeatured !== false)
+    : DEFAULT_TRUSTED_BRANDS;
 
   const handleBrandClick = (brandName) => {
     if (onNavigate) {
@@ -36,6 +22,12 @@ export default function BrandsShowcase({ onNavigate }) {
     }
   };
 
+  const handleAdminAccess = () => {
+    if (onNavigate) {
+      onNavigate('admin', null, { tab: 'brands' });
+    }
+  };
+
   return (
     <section
       id="brands"
@@ -44,9 +36,24 @@ export default function BrandsShowcase({ onNavigate }) {
       <div className="mx-auto w-full max-w-7xl px-4 md:px-8 relative z-10">
         {/* Section Header */}
         <div className="mx-auto max-w-3xl text-center mb-12 md:mb-16">
-          <div className="inline-flex items-center gap-2 rounded-full bg-[#1A4C98]/10 border border-[#1A4C98]/20 px-4 py-1.5 text-xs font-black uppercase tracking-wider text-[#1A4C98] mb-4">
-            <Sparkles size={14} className="text-[#00A3E0]" />
-            <span>Authorized Foodservice Distribution</span>
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-4">
+            <div className="inline-flex items-center gap-2 rounded-full bg-[#1A4C98]/10 border border-[#1A4C98]/20 px-4 py-1.5 text-xs font-black uppercase tracking-wider text-[#1A4C98]">
+              <Sparkles size={14} className="text-[#00A3E0]" />
+              <span>Authorized Foodservice Distribution</span>
+            </div>
+
+            {/* Admin Quick Option to manage brands directly */}
+            {onNavigate && (
+              <button
+                type="button"
+                onClick={handleAdminAccess}
+                className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#1A4C98]/80 hover:text-[#1A4C98] bg-white hover:bg-[#F4F8FC] border border-[#D0DFEF] px-3 py-1.5 rounded-full shadow-2xs transition-all cursor-pointer"
+                title="Manage Brands Trusted by Food Businesses (Admin)"
+              >
+                <ShieldCheck size={13} className="text-[#1A4C98]" />
+                <span>Manage Brands (Admin)</span>
+              </button>
+            )}
           </div>
 
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-[#081426] leading-tight">
@@ -58,18 +65,43 @@ export default function BrandsShowcase({ onNavigate }) {
           </p>
         </div>
 
-        {/* Polished Brand Grid */}
+        {/* Polished Brand Grid with Logo Support */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
-          {FEATURED_BRANDS.map((brand) => (
+          {displayBrands.map((brand) => (
             <div
-              key={brand.name}
+              key={brand.id || brand.name}
               onClick={() => handleBrandClick(brand.name)}
               onMouseEnter={() => setHoveredBrand(brand.name)}
               onMouseLeave={() => setHoveredBrand(null)}
               className="group cursor-pointer rounded-2xl bg-white p-5 sm:p-6 border border-[#D0DFEF] shadow-xs hover:shadow-lg hover:border-[#1A4C98]/40 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
             >
               <div>
-                <span className="text-[10px] font-black uppercase tracking-wider text-[#00A3E0] bg-[#00A3E0]/10 px-2 py-0.5 rounded-full inline-block mb-3">
+                {/* Brand Logo Container */}
+                {brand.logo ? (
+                  <div className="h-16 w-full flex items-center justify-center p-2 rounded-xl bg-[#F8FAFD] border border-[#E2ECF8] mb-3 overflow-hidden group-hover:bg-white group-hover:border-[#1A4C98]/20 transition-colors">
+                    <img
+                      src={brand.logo}
+                      alt={`${brand.name} logo`}
+                      className="max-h-full max-w-full object-contain"
+                    />
+                  </div>
+                ) : (
+                  <div className="h-16 w-full flex items-center justify-between px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#F0F5FA] to-[#E8F1FB] border border-[#D0DFEF] mb-3 group-hover:from-white group-hover:to-[#F4F8FC] transition-colors">
+                    <div className="flex items-center gap-2.5">
+                      <div className="size-9 rounded-lg bg-[#1A4C98] text-white flex items-center justify-center font-black text-sm shadow-2xs">
+                        {brand.name.substring(0, 2).toUpperCase()}
+                      </div>
+                      <span className="font-black text-sm text-[#081426] tracking-tight uppercase">
+                        {brand.name}
+                      </span>
+                    </div>
+                    <span className="text-[9px] font-black uppercase tracking-wider text-[#00A3E0] bg-white px-2 py-0.5 rounded-md border border-[#D0DFEF]">
+                      Official
+                    </span>
+                  </div>
+                )}
+
+                <span className="text-[10px] font-black uppercase tracking-wider text-[#00A3E0] bg-[#00A3E0]/10 px-2 py-0.5 rounded-full inline-block mb-2">
                   {brand.origin}
                 </span>
 
@@ -77,7 +109,7 @@ export default function BrandsShowcase({ onNavigate }) {
                   {brand.name}
                 </h3>
 
-                <p className="text-xs text-[#081426]/70 mt-1.5 font-medium leading-snug">
+                <p className="text-xs text-[#081426]/70 mt-1 font-medium leading-snug">
                   {brand.category}
                 </p>
               </div>
@@ -97,7 +129,7 @@ export default function BrandsShowcase({ onNavigate }) {
           </p>
           <div className="flex flex-wrap justify-center items-center gap-2">
             {CATALOG_BRANDS.filter(
-              (b) => b !== 'All' && !FEATURED_BRANDS.some((fb) => fb.name === b)
+              (b) => b !== 'All' && !displayBrands.some((fb) => fb.name.toLowerCase() === b.toLowerCase())
             ).map((brand) => (
               <button
                 key={brand}

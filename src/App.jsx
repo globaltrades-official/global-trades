@@ -15,6 +15,7 @@ import FAQ from './sections/FAQ/FAQ';
 import StoreDeliveryInfoCard from './components/StoreDeliveryInfoCard';
 import BigText from './sections/BigText/BigText';
 import { useProductCatalog } from './hooks/useProductCatalog';
+import { useBrandCatalog } from './hooks/useBrandCatalog';
 import { useMediaQuery } from './hooks/useMediaQuery';
 
 // Code-split pages so initial load is feather-light (< 200KB)
@@ -43,11 +44,30 @@ export default function App() {
     resetToDefaultCatalog,
   } = useProductCatalog();
 
+  const {
+    brands,
+    addBrand,
+    updateBrand,
+    deleteBrand,
+    toggleBrandFeatured,
+    resetToDefaultBrands,
+  } = useBrandCatalog();
+
+  const [adminTab, setAdminTab] = useState(() => {
+    const hash = (typeof window !== 'undefined' ? window.location.hash || '' : '').toLowerCase();
+    return hash.includes('brand') ? 'brands' : 'products';
+  });
+
   const getPageFromLocation = useCallback(() => {
     const hash = (window.location.hash || '').toLowerCase();
     const path = (window.location.pathname || '').toLowerCase();
 
-    if (hash.includes('admin') || path.includes('/admin')) return 'admin';
+    if (hash.includes('admin') || path.includes('/admin')) {
+      if (hash.includes('brand')) {
+        setAdminTab('brands');
+      }
+      return 'admin';
+    }
     if (hash.includes('products') || path.includes('/products')) return 'products';
     if (hash.includes('contact') || path.includes('/contact')) return 'contact';
     return 'home';
@@ -61,13 +81,17 @@ export default function App() {
   const navigateTo = useCallback((page, anchor, state) => {
     let targetHash = '#';
     if (page === 'admin') {
-      targetHash = '#admin';
+      targetHash = state?.tab === 'brands' ? '#admin-brands' : '#admin';
     } else if (page === 'products') {
       targetHash = '#products';
     } else if (page === 'contact') {
       targetHash = '#contact';
     } else if (anchor && anchor !== '#') {
       targetHash = anchor;
+    }
+
+    if (state?.tab) {
+      setAdminTab(state.tab);
     }
 
     if (state) {
@@ -211,6 +235,13 @@ export default function App() {
               toggleFeatured={toggleFeatured}
               deleteProduct={deleteProduct}
               resetCatalog={resetToDefaultCatalog}
+              brands={brands}
+              addBrand={addBrand}
+              updateBrand={updateBrand}
+              deleteBrand={deleteBrand}
+              toggleBrandFeatured={toggleBrandFeatured}
+              resetBrands={resetToDefaultBrands}
+              initialTab={adminTab}
               onNavigateHome={() => navigateTo('home')}
               onNavigateProducts={() => navigateTo('products')}
             />
@@ -258,7 +289,7 @@ export default function App() {
           <WhyChooseUs onNavigate={navigateTo} />
 
           {/* 5. Brands Showcase (Authorized Brands & Explore CTA) */}
-          <BrandsShowcase onNavigate={navigateTo} />
+          <BrandsShowcase brands={brands} onNavigate={navigateTo} />
 
           {/* 6. Industries We Serve (Cafes, Bakeries, Restaurants, Caterers, Cloud Kitchens, Hotels, Retail) */}
           <IndustriesWeServe onNavigate={navigateTo} />
