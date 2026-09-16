@@ -73,14 +73,15 @@ export default function Hero({ onNavigate }) {
         <div className="grid min-h-[calc(100vh-7rem)] place-items-center py-6 md:py-10 w-full">
           <div className="grid auto-rows-min place-items-center text-center max-w-5xl w-full px-2 sm:px-4">
             {/* 1. Business Type */}
-            <div className="hero-badge mb-3 md:mb-4 flex items-center justify-center">
-              <span className="rounded-full bg-white/85 px-4 py-1.5 text-xs md:text-sm font-extrabold uppercase tracking-wider text-[#1A4C98] border border-[#1A4C98]/20 backdrop-blur-md shadow-sm">
-                Wholesale Food Service &amp; Institutional Distribution · Kozhikode
+            <div className="hero-badge mb-2.5 sm:mb-4 flex items-center justify-center">
+              <span className="rounded-full bg-white/85 px-3.5 py-1.5 sm:px-4 text-[11px] sm:text-xs md:text-sm font-extrabold uppercase tracking-wider text-[#1A4C98] border border-[#1A4C98]/20 backdrop-blur-md shadow-sm">
+                <span className="hidden sm:inline">Wholesale Food Service &amp; Institutional Distribution · Kozhikode</span>
+                <span className="sm:hidden">Wholesale Food Service · Kozhikode</span>
               </span>
             </div>
 
             {/* 2. Main Headline */}
-            <h1 className="hero-header text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.5rem] 2xl:text-[6.25rem] font-black uppercase leading-[1.05] text-[#1A4C98] tracking-tight drop-shadow-[0_2px_16px_rgba(255,255,255,0.95)] w-full select-none">
+            <h1 className="hero-header text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.5rem] 2xl:text-[6.25rem] font-black uppercase leading-[1.05] text-[#1A4C98] tracking-tight drop-shadow-[0_2px_16px_rgba(255,255,255,0.95)] w-full select-none">
               <TextSplitter
                 text="Global Trades"
                 wordDisplayStyle="inline-block"
@@ -89,22 +90,25 @@ export default function Hero({ onNavigate }) {
             </h1>
 
             {/* 3. Short Value Proposition with Accurate Service Area */}
-            <div className="hero-subheading mt-3 md:mt-4 text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-[#081426] tracking-tight max-w-3xl drop-shadow-[0_1px_8px_rgba(255,255,255,0.9)] leading-snug">
-              <p>
+            <div className="hero-subheading mt-2.5 sm:mt-4 text-xs sm:text-lg md:text-xl lg:text-2xl font-bold text-[#081426] tracking-tight max-w-3xl drop-shadow-[0_1px_8px_rgba(255,255,255,0.9)] leading-relaxed sm:leading-snug px-2">
+              <p className="hidden sm:block">
                 Authorized B2B supply of gourmet syrups, cafe essentials, bakery ingredients, and imported culinary foods. Delivery across Kozhikode. Customers are welcome to visit our store for direct purchase.
+              </p>
+              <p className="sm:hidden text-xs text-[#081426]/85 font-medium leading-relaxed">
+                Authorized wholesale distributor of gourmet syrups, cafe supplies, bakery essentials &amp; imported foods in Kozhikode.
               </p>
             </div>
 
             {/* 4. Action CTAs */}
-            <div className="hero-buttons mt-6 md:mt-7 flex flex-wrap items-center justify-center gap-3.5 sm:gap-4">
+            <div className="hero-buttons mt-4 sm:mt-7 flex flex-wrap items-center justify-center gap-2.5 sm:gap-4">
               {/* Primary CTA */}
               <a
                 href={`https://wa.me/${CONTACT.WHATSAPP_NUMBER}?text=Hi%20Global%20Trades,%20I%20would%20like%20to%20place%20a%20bulk%20order.`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-xl bg-emerald-800 px-6 py-3.5 text-center text-sm sm:text-base md:text-lg font-bold uppercase tracking-wider text-white transition-all duration-200 hover:bg-emerald-900 hover:scale-105 active:scale-95 shadow-lg shadow-emerald-900/30 cursor-pointer inline-flex items-center gap-2.5"
+                className="rounded-xl bg-emerald-800 px-5 sm:px-6 py-2.5 sm:py-3.5 text-center text-xs sm:text-base md:text-lg font-bold uppercase tracking-wider text-white transition-all duration-200 hover:bg-emerald-900 hover:scale-105 active:scale-95 shadow-lg shadow-emerald-900/30 cursor-pointer inline-flex items-center gap-2"
               >
-                <WhatsAppIcon size={20} className="shrink-0" />
+                <WhatsAppIcon size={18} className="shrink-0" />
                 <span>Get Wholesale Quote</span>
               </a>
 
@@ -118,31 +122,31 @@ export default function Hero({ onNavigate }) {
                     onNavigate('products');
                   }
                 }}
-                className="shadow-[#1A4C98]/30 bg-[#1A4C98] hover:bg-[#123873]"
+                className="shadow-[#1A4C98]/30 bg-[#1A4C98] hover:bg-[#123873] px-5 sm:px-6 py-2.5 sm:py-3.5 text-xs sm:text-base"
               />
             </div>
 
             {/* Compact 5-Item Trust-Benefit Strip Directly Below Hero CTA Buttons */}
-            <div className="hero-trust-strip mt-6 md:mt-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3 max-w-4xl">
-              <div className="flex items-center gap-1.5 rounded-full bg-white/85 border border-[#1A4C98]/15 px-3.5 py-1.5 text-xs font-bold text-[#081426] shadow-sm backdrop-blur-sm">
-                <ShieldCheck size={15} className="text-emerald-700 shrink-0" />
+            <div className="hero-trust-strip mt-5 sm:mt-8 flex items-center justify-start sm:justify-center gap-2 sm:gap-3 max-w-4xl overflow-x-auto no-scrollbar w-full px-2 py-1 flex-nowrap sm:flex-wrap">
+              <div className="flex items-center gap-1.5 rounded-full bg-white/90 border border-[#1A4C98]/15 px-3 py-1 sm:px-3.5 sm:py-1.5 text-[11px] sm:text-xs font-bold text-[#081426] shadow-2xs backdrop-blur-sm whitespace-nowrap shrink-0">
+                <ShieldCheck size={14} className="text-emerald-700 shrink-0" />
                 <span>Authorized Supply</span>
               </div>
-              <div className="flex items-center gap-1.5 rounded-full bg-white/85 border border-[#1A4C98]/15 px-3.5 py-1.5 text-xs font-bold text-[#081426] shadow-sm backdrop-blur-sm">
-                <FileText size={15} className="text-[#1A4C98] shrink-0" />
+              <div className="flex items-center gap-1.5 rounded-full bg-white/90 border border-[#1A4C98]/15 px-3 py-1 sm:px-3.5 sm:py-1.5 text-[11px] sm:text-xs font-bold text-[#081426] shadow-2xs backdrop-blur-sm whitespace-nowrap shrink-0">
+                <FileText size={14} className="text-[#1A4C98] shrink-0" />
                 <span>GST Billing</span>
               </div>
-              <div className="flex items-center gap-1.5 rounded-full bg-white/85 border border-[#1A4C98]/15 px-3.5 py-1.5 text-xs font-bold text-[#081426] shadow-sm backdrop-blur-sm">
-                <Tag size={15} className="text-emerald-700 shrink-0" />
+              <div className="flex items-center gap-1.5 rounded-full bg-white/90 border border-[#1A4C98]/15 px-3 py-1 sm:px-3.5 sm:py-1.5 text-[11px] sm:text-xs font-bold text-[#081426] shadow-2xs backdrop-blur-sm whitespace-nowrap shrink-0">
+                <Tag size={14} className="text-emerald-700 shrink-0" />
                 <span>Bulk Food-Service Rates</span>
               </div>
-              <div className="flex items-center gap-1.5 rounded-full bg-white/85 border border-[#1A4C98]/15 px-3.5 py-1.5 text-xs font-bold text-[#081426] shadow-sm backdrop-blur-sm">
-                <Truck size={15} className="text-[#1A4C98] shrink-0" />
+              <div className="flex items-center gap-1.5 rounded-full bg-white/90 border border-[#1A4C98]/15 px-3 py-1 sm:px-3.5 sm:py-1.5 text-[11px] sm:text-xs font-bold text-[#081426] shadow-2xs backdrop-blur-sm whitespace-nowrap shrink-0">
+                <Truck size={14} className="text-[#1A4C98] shrink-0" />
                 <span>Kozhikode Delivery</span>
               </div>
-              <div className="flex items-center gap-1.5 rounded-full bg-white/85 border border-[#1A4C98]/15 px-3.5 py-1.5 text-xs font-bold text-[#081426] shadow-sm backdrop-blur-sm">
-                <Store size={15} className="text-emerald-700 shrink-0" />
-                <span>Store Pickup Available</span>
+              <div className="flex items-center gap-1.5 rounded-full bg-white/90 border border-[#1A4C98]/15 px-3 py-1 sm:px-3.5 sm:py-1.5 text-[11px] sm:text-xs font-bold text-[#081426] shadow-2xs backdrop-blur-sm whitespace-nowrap shrink-0">
+                <Store size={14} className="text-emerald-700 shrink-0" />
+                <span>Store Pickup</span>
               </div>
             </div>
           </div>

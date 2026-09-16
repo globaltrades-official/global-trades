@@ -205,7 +205,7 @@ export default function AlternatingText() {
                       </span>
                     </div>
 
-                    <div className="mt-2.5 sm:mt-4 text-xs sm:text-sm md:text-base font-medium text-[#081426]/85 leading-relaxed">
+                    <div className="hidden sm:block mt-2.5 sm:mt-4 text-xs sm:text-sm md:text-base font-medium text-[#081426]/85 leading-relaxed">
                       <p>{item.body}</p>
                     </div>
                   </div>
