@@ -198,14 +198,6 @@ export default function Footer({ onNavigate }) {
           <span>·</span>
           <button
             type="button"
-            onClick={() => onNavigate && onNavigate('home', '#how-to-order')}
-            className="hover:text-[#1A4C98] transition-colors cursor-pointer"
-          >
-            How to Order
-          </button>
-          <span>·</span>
-          <button
-            type="button"
             onClick={() => onNavigate && onNavigate('home', '#benefits')}
             className="hover:text-[#1A4C98] transition-colors cursor-pointer"
           >

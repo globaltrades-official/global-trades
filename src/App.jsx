@@ -8,7 +8,6 @@ import ShopByCategory from './sections/ShopByCategory/ShopByCategory';
 import WhyChooseUs from './sections/WhyChooseUs/WhyChooseUs';
 import BrandsShowcase from './sections/BrandsShowcase/BrandsShowcase';
 import IndustriesWeServe from './sections/IndustriesWeServe/IndustriesWeServe';
-import HowToOrder from './sections/HowToOrder/HowToOrder';
 import AlternatingText from './sections/AlternatingText/AlternatingText';
 import FAQ from './sections/FAQ/FAQ';
 import BigText from './sections/BigText/BigText';
@@ -326,10 +325,7 @@ export default function App() {
           {/* 6. Industries We Serve (Cafes, Bakeries, Restaurants, Caterers, Cloud Kitchens, Hotels, Retail) */}
           <IndustriesWeServe onNavigate={navigateTo} />
 
-          {/* 7. How to Order (3-Step Order Flow + WhatsApp Orders 0495 2765320) */}
-          <HowToOrder onNavigate={navigateTo} />
-
-          {/* 8. Social Proof & Reviews ("Trusted by Kozhikode Food Businesses") */}
+          {/* 7. Social Proof & Reviews ("Trusted by Kozhikode Food Businesses") */}
           <AlternatingText />
 
           {/* 9. Brand Statement */}
