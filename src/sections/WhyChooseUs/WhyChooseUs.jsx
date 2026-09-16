@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ShieldCheck,
   TrendingDown,
@@ -7,6 +7,7 @@ import {
   Store,
   Truck,
   CheckCircle2,
+  ChevronDown,
 } from 'lucide-react';
 
 const REASONS = [
@@ -49,6 +50,8 @@ const REASONS = [
 ];
 
 export default function WhyChooseUs({ onNavigate }) {
+  const [showAllMobile, setShowAllMobile] = useState(false);
+
   return (
     <section
       id="why-global-trades"
@@ -71,45 +74,61 @@ export default function WhyChooseUs({ onNavigate }) {
           </p>
         </div>
 
-        {/* Reasons Grid: Single-column horizontal cards on mobile, 2-3 col on tablet & desktop */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6">
+        {/* 6 Simple Cards: First 4 on mobile by default, all 6 on desktop */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6">
           {REASONS.map((reason, index) => {
             const Icon = reason.icon;
 
             return (
               <div
                 key={reason.title}
-                className="group rounded-2xl sm:rounded-3xl bg-[#F4F8FC] p-4 sm:p-7 border border-[#D0DFEF] hover:border-[#1A4C98]/40 hover:bg-white hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
+                className={`group rounded-2xl sm:rounded-3xl bg-[#F4F8FC] p-3.5 sm:p-7 border border-[#D0DFEF] hover:border-[#1A4C98]/40 hover:bg-white hover:shadow-lg transition-all duration-300 flex flex-col justify-between ${
+                  !showAllMobile && index >= 4 ? 'hidden sm:flex' : 'flex'
+                }`}
               >
                 <div>
-                  {/* Horizontal on mobile (icon left, text right), vertical block on tablet & desktop */}
-                  <div className="flex items-start gap-3.5 sm:block">
-                    <div className="flex items-center justify-between sm:mb-5 shrink-0">
-                      <div className="size-11 sm:size-12 rounded-xl sm:rounded-2xl bg-white text-[#1A4C98] flex items-center justify-center shadow-2xs group-hover:bg-[#1A4C98] group-hover:text-white transition-colors duration-200 border border-[#D0DFEF]">
-                        <Icon size={20} className="sm:w-5 sm:h-5" />
-                      </div>
+                  <div className="flex items-center justify-between mb-2.5 sm:mb-5">
+                    <div className="size-9 sm:size-12 rounded-xl sm:rounded-2xl bg-white text-[#1A4C98] flex items-center justify-center shadow-2xs group-hover:bg-[#1A4C98] group-hover:text-white transition-colors duration-200 border border-[#D0DFEF]">
+                      <Icon size={18} className="sm:w-5 sm:h-5" />
                     </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2 mb-1">
-                        <h3 className="text-sm sm:text-base md:text-lg font-black text-[#081426] group-hover:text-[#1A4C98] transition-colors leading-snug">
-                          {reason.title}
-                        </h3>
-                        <span className="text-[10px] sm:text-xs font-bold text-[#081426]/35 shrink-0">
-                          0{index + 1}
-                        </span>
-                      </div>
-
-                      <p className="text-xs sm:text-sm font-normal text-[#081426]/75 leading-relaxed mt-1">
-                        {reason.description}
-                      </p>
-                    </div>
+                    <span className="text-[10px] sm:text-xs font-bold text-[#081426]/30">
+                      0{index + 1}
+                    </span>
                   </div>
+
+                  <h3 className="text-xs sm:text-base md:text-lg font-black text-[#081426] group-hover:text-[#1A4C98] transition-colors mb-1 sm:mb-2 leading-snug">
+                    {reason.title}
+                  </h3>
+
+                  <p className="text-[11px] sm:text-sm font-normal text-[#081426]/75 leading-relaxed line-clamp-3 sm:line-clamp-none">
+                    {reason.description}
+                  </p>
                 </div>
               </div>
             );
           })}
         </div>
+
+        {/* Mobile Expand Drawer */}
+        {REASONS.length > 4 && (
+          <div className="mt-6 sm:hidden flex justify-center">
+            <button
+              type="button"
+              onClick={() => setShowAllMobile(!showAllMobile)}
+              className="inline-flex items-center gap-2 rounded-full border border-[#1A4C98]/25 bg-[#F4F8FC] hover:bg-[#1A4C98] hover:text-white px-5 py-2.5 text-xs font-bold text-[#1A4C98] shadow-2xs transition-all duration-200 cursor-pointer active:scale-95"
+            >
+              <span>
+                {showAllMobile
+                  ? 'Show Fewer Reasons'
+                  : `View All ${REASONS.length} Reasons (+${REASONS.length - 4} more)`}
+              </span>
+              <ChevronDown
+                size={14}
+                className={`transition-transform duration-200 ${showAllMobile ? 'rotate-180' : ''}`}
+              />
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

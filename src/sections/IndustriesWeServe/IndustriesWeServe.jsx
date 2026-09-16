@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Coffee,
   UtensilsCrossed,
@@ -9,6 +9,7 @@ import {
   Store,
   ArrowRight,
   CheckCircle2,
+  ChevronDown,
 } from 'lucide-react';
 import WhatsAppIcon from '@/components/WhatsAppIcon';
 import { CONTACT } from '@/constants/theme';
@@ -80,6 +81,8 @@ const INDUSTRIES = [
 ];
 
 export default function IndustriesWeServe({ onNavigate }) {
+  const [showAllMobile, setShowAllMobile] = useState(false);
+
   const handleIndustryClick = (category) => {
     if (onNavigate) {
       onNavigate('products', '#products', { category });
@@ -108,8 +111,8 @@ export default function IndustriesWeServe({ onNavigate }) {
           </p>
         </div>
 
-        {/* Industries Grid: Single-column horizontal cards on mobile, 2-4 col on tablet & desktop */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-6">
+        {/* 7-Card Grid: First 4 on mobile by default, all 7 on desktop */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-6">
           {INDUSTRIES.map((industry, index) => {
             const Icon = industry.icon;
             const isLast = index === INDUSTRIES.length - 1;
@@ -117,43 +120,37 @@ export default function IndustriesWeServe({ onNavigate }) {
             return (
               <div
                 key={industry.id}
-                className={`group flex flex-col justify-between rounded-2xl sm:rounded-3xl bg-white p-4 sm:p-6 border border-[#D0DFEF] shadow-2xs hover:shadow-lg hover:border-[#1A4C98]/40 hover:-translate-y-0.5 transition-all duration-300 ${
-                  isLast ? 'sm:col-span-2 lg:col-span-3 xl:col-span-1' : ''
-                }`}
+                className={`group flex flex-col justify-between rounded-2xl sm:rounded-3xl bg-white p-3.5 sm:p-6 border border-[#D0DFEF] shadow-2xs hover:shadow-lg hover:border-[#1A4C98]/40 hover:-translate-y-0.5 transition-all duration-300 ${
+                  isLast ? 'col-span-2 sm:col-span-2 lg:col-span-3 xl:col-span-1' : ''
+                } ${!showAllMobile && index >= 4 ? 'hidden sm:flex' : 'flex'}`}
               >
                 <div>
-                  {/* Horizontal on mobile (icon left, text right), vertical block on tablet & desktop */}
-                  <div className="flex items-start gap-3.5 sm:block">
-                    <div className="size-11 sm:size-12 rounded-xl sm:rounded-2xl bg-[#1A4C98]/10 text-[#1A4C98] flex items-center justify-center group-hover:bg-[#1A4C98] group-hover:text-white transition-colors duration-200 shrink-0 sm:mb-3">
-                      <Icon size={20} className="sm:w-6 sm:h-6" />
+                  <div className="flex items-center justify-between mb-2.5 sm:mb-3">
+                    <div className="size-9 sm:size-12 rounded-xl sm:rounded-2xl bg-[#1A4C98]/10 text-[#1A4C98] flex items-center justify-center group-hover:bg-[#1A4C98] group-hover:text-white transition-colors duration-200">
+                      <Icon size={17} className="sm:w-6 sm:h-6" />
                     </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2 mb-1">
-                        <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#00A3E0] bg-[#00A3E0]/10 px-2 py-0.5 rounded-full">
-                          {industry.tag}
-                        </span>
-                      </div>
-
-                      <h3 className="text-sm sm:text-lg md:text-xl font-black text-[#081426] group-hover:text-[#1A4C98] transition-colors mb-1 leading-snug">
-                        {industry.name}
-                      </h3>
-
-                      <p className="text-xs sm:text-sm font-normal text-[#081426]/75 leading-relaxed">
-                        {industry.description}
-                      </p>
-                    </div>
+                    <span className="text-[9px] sm:text-[11px] font-bold uppercase tracking-wider text-[#00A3E0] bg-[#00A3E0]/10 px-2 py-0.5 rounded-full">
+                      {industry.tag}
+                    </span>
                   </div>
+
+                  <h3 className="text-xs sm:text-lg md:text-xl font-black text-[#081426] group-hover:text-[#1A4C98] transition-colors mb-1 leading-snug">
+                    {industry.name}
+                  </h3>
+
+                  <p className="text-[11px] sm:text-sm font-normal text-[#081426]/75 leading-relaxed line-clamp-3 sm:line-clamp-none">
+                    {industry.description}
+                  </p>
                 </div>
 
-                <div className="mt-3.5 sm:mt-5 pt-2.5 sm:pt-4 border-t border-[#D0DFEF]/60 flex items-center justify-between gap-2">
+                <div className="mt-3 sm:mt-5 pt-2.5 sm:pt-4 border-t border-[#D0DFEF]/60 flex items-center justify-between gap-1">
                   <button
                     type="button"
                     onClick={() => handleIndustryClick(industry.recommendedCategory)}
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1A4C98] hover:text-[#00A3E0] transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-bold text-[#1A4C98] hover:text-[#00A3E0] transition-colors cursor-pointer"
                   >
-                    <span>Browse Catalogue</span>
-                    <ArrowRight size={12} className="transition-transform group-hover:translate-x-1" />
+                    <span>Catalogue</span>
+                    <ArrowRight size={11} className="transition-transform group-hover:translate-x-1" />
                   </button>
 
                   <a
@@ -162,16 +159,37 @@ export default function IndustriesWeServe({ onNavigate }) {
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg border border-emerald-200/60 transition-colors"
+                    className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-bold text-emerald-800 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded-lg border border-emerald-200/60 transition-colors"
                   >
-                    <WhatsAppIcon size={13} />
-                    <span>WhatsApp Quote</span>
+                    <WhatsAppIcon size={11} />
+                    <span>Quote</span>
                   </a>
                 </div>
               </div>
             );
           })}
         </div>
+
+        {/* Mobile Expand Drawer */}
+        {INDUSTRIES.length > 4 && (
+          <div className="mt-6 sm:hidden flex justify-center">
+            <button
+              type="button"
+              onClick={() => setShowAllMobile(!showAllMobile)}
+              className="inline-flex items-center gap-2 rounded-full border border-[#1A4C98]/25 bg-white hover:bg-[#1A4C98] hover:text-white px-5 py-2.5 text-xs font-bold text-[#1A4C98] shadow-2xs transition-all duration-200 cursor-pointer active:scale-95"
+            >
+              <span>
+                {showAllMobile
+                  ? 'Show Fewer Sectors'
+                  : `View All ${INDUSTRIES.length} Sectors (+${INDUSTRIES.length - 4} more)`}
+              </span>
+              <ChevronDown
+                size={14}
+                className={`transition-transform duration-200 ${showAllMobile ? 'rotate-180' : ''}`}
+              />
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   GlassWater,
   CakeSlice,
@@ -9,6 +9,7 @@ import {
   Boxes,
   ArrowRight,
   Sparkles,
+  ChevronDown,
 } from 'lucide-react';
 
 const CATEGORIES = [
@@ -71,6 +72,8 @@ const CATEGORIES = [
 ];
 
 export default function ShopByCategory({ onNavigate }) {
+  const [showAllMobile, setShowAllMobile] = useState(false);
+
   const handleCategoryClick = (category) => {
     if (onNavigate) {
       onNavigate('products', '#products', { category });
@@ -99,8 +102,8 @@ export default function ShopByCategory({ onNavigate }) {
           </p>
         </div>
 
-        {/* Category Cards: Single-column horizontal cards on mobile, 2-4 col grid on tablet & desktop */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-6">
+        {/* 7 Category Cards: First 4 on mobile by default, all on desktop */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-6">
           {CATEGORIES.map((cat, index) => {
             const Icon = cat.icon;
             const isLast = index === CATEGORIES.length - 1;
@@ -109,49 +112,62 @@ export default function ShopByCategory({ onNavigate }) {
               <div
                 key={cat.title}
                 onClick={() => handleCategoryClick(cat.catalogCategory)}
-                className={`group cursor-pointer rounded-2xl sm:rounded-3xl bg-[#F4F8FC] p-4 sm:p-6 border border-[#D0DFEF] hover:border-[#1A4C98]/40 hover:bg-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between ${
-                  isLast ? 'sm:col-span-2 lg:col-span-3 xl:col-span-1' : ''
-                }`}
+                className={`group cursor-pointer rounded-2xl sm:rounded-3xl bg-[#F4F8FC] p-3.5 sm:p-6 border border-[#D0DFEF] hover:border-[#1A4C98]/40 hover:bg-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between ${
+                  isLast ? 'col-span-2 sm:col-span-2 lg:col-span-3 xl:col-span-1' : ''
+                } ${!showAllMobile && index >= 4 ? 'hidden sm:flex' : 'flex'}`}
               >
                 <div>
-                  {/* Horizontal on mobile (icon left, content right), stacked block on tablet/desktop */}
-                  <div className="flex items-start gap-3.5 sm:block">
-                    {/* Icon */}
-                    <div className="size-11 sm:size-12 rounded-xl sm:rounded-2xl bg-white text-[#1A4C98] flex items-center justify-center shadow-2xs group-hover:bg-[#1A4C98] group-hover:text-white transition-colors duration-200 border border-[#D0DFEF] shrink-0 sm:mb-3">
-                      <Icon size={20} className="sm:w-6 sm:h-6" />
+                  <div className="flex items-center justify-between mb-2.5 sm:mb-3">
+                    <div className="size-9 sm:size-12 rounded-xl sm:rounded-2xl bg-white text-[#1A4C98] flex items-center justify-center shadow-2xs group-hover:bg-[#1A4C98] group-hover:text-white transition-colors duration-200 border border-[#D0DFEF]">
+                      <Icon size={17} className="sm:w-6 sm:h-6" />
                     </div>
-
-                    {/* Content */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2 mb-1">
-                        <span className="text-[10px] sm:text-[10px] font-bold uppercase tracking-wider text-[#00A3E0] bg-[#00A3E0]/10 px-2 py-0.5 rounded-full">
-                          {cat.tag}
-                        </span>
-                      </div>
-
-                      <h3 className="text-sm sm:text-base md:text-lg font-black text-[#081426] group-hover:text-[#1A4C98] transition-colors mb-0.5 leading-snug">
-                        {cat.title}
-                      </h3>
-
-                      <p className="text-xs font-semibold text-[#1A4C98]/85 mb-1.5 line-clamp-1">
-                        {cat.brands}
-                      </p>
-
-                      <p className="text-xs sm:text-sm font-normal text-[#081426]/75 leading-relaxed">
-                        {cat.description}
-                      </p>
-                    </div>
+                    <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-[#00A3E0] bg-[#00A3E0]/10 px-2 py-0.5 rounded-full">
+                      {cat.tag}
+                    </span>
                   </div>
+
+                  <h3 className="text-xs sm:text-base md:text-lg font-black text-[#081426] group-hover:text-[#1A4C98] transition-colors mb-1 leading-snug">
+                    {cat.title}
+                  </h3>
+
+                  <p className="text-[10px] sm:text-xs font-semibold text-[#1A4C98]/85 mb-1.5 line-clamp-1">
+                    {cat.brands}
+                  </p>
+
+                  <p className="text-[11px] sm:text-sm font-normal text-[#081426]/75 leading-relaxed line-clamp-2 sm:line-clamp-none">
+                    {cat.description}
+                  </p>
                 </div>
 
-                <div className="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-[#D0DFEF]/60 flex items-center justify-between text-xs font-bold text-[#1A4C98] group-hover:text-[#00A3E0]">
-                  <span>Explore Wholesale Line</span>
-                  <ArrowRight size={13} className="transition-transform group-hover:translate-x-1" />
+                <div className="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-[#D0DFEF]/60 flex items-center justify-between text-[11px] sm:text-xs font-bold text-[#1A4C98] group-hover:text-[#00A3E0]">
+                  <span>Explore</span>
+                  <ArrowRight size={12} className="transition-transform group-hover:translate-x-1" />
                 </div>
               </div>
             );
           })}
         </div>
+
+        {/* Mobile Expand Drawer */}
+        {CATEGORIES.length > 4 && (
+          <div className="mt-6 sm:hidden flex justify-center">
+            <button
+              type="button"
+              onClick={() => setShowAllMobile(!showAllMobile)}
+              className="inline-flex items-center gap-2 rounded-full border border-[#1A4C98]/25 bg-[#F4F8FC] hover:bg-[#1A4C98] hover:text-white px-5 py-2.5 text-xs font-bold text-[#1A4C98] shadow-2xs transition-all duration-200 cursor-pointer active:scale-95"
+            >
+              <span>
+                {showAllMobile
+                  ? 'Show Fewer Categories'
+                  : `View All ${CATEGORIES.length} Categories (+${CATEGORIES.length - 4} more)`}
+              </span>
+              <ChevronDown
+                size={14}
+                className={`transition-transform duration-200 ${showAllMobile ? 'rotate-180' : ''}`}
+              />
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

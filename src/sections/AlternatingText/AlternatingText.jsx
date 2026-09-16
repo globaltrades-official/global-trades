@@ -1,8 +1,9 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import clsx from 'clsx';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ChevronDown } from 'lucide-react';
 import { BRANDING } from '@/constants/theme';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
@@ -32,6 +33,7 @@ const TEXT_GROUP = [
 ];
 
 export default function AlternatingText() {
+  const [showAllMobile, setShowAllMobile] = useState(false);
   const containerRef = useRef(null);
   const logoPinRef = useRef(null);
   const sharedLogoRef = useRef(null);
@@ -168,14 +170,16 @@ export default function AlternatingText() {
           </p>
         </div>
 
-        {/* Review Cards: Grid on Mobile/Tablet matching Why Global Trades, Scroll-pinned on Desktop */}
+        {/* Review Cards: 1 primary on mobile by default, grid on tablet, scroll-pinned on desktop */}
         <div className="mx-auto grid grid-cols-1 md:grid-cols-3 lg:flex lg:flex-col items-stretch lg:items-center px-4 md:px-8 relative z-10 gap-4 sm:gap-6 lg:gap-0">
           {TEXT_GROUP.map((item, index) => {
             const isEven = index % 2 === 0;
             return (
               <div
                 key={item.heading}
-                className="alternating-section relative w-full flex flex-col items-center mb-0 lg:h-screen lg:grid lg:grid-cols-2 lg:gap-x-12 lg:place-items-center lg:py-0"
+                className={`alternating-section relative w-full flex-col items-center mb-0 lg:h-screen lg:grid lg:grid-cols-2 lg:gap-x-12 lg:place-items-center lg:py-0 ${
+                  !showAllMobile && index >= 1 ? 'hidden md:flex' : 'flex'
+                }`}
               >
                 {/* Review Card: Fully Opaque Solid Light Background, Left on Row 1 & 3; Right on Row 2 */}
                 <div
@@ -223,6 +227,27 @@ export default function AlternatingText() {
             );
           })}
         </div>
+
+        {/* Mobile Expand Drawer for Reviews */}
+        {TEXT_GROUP.length > 1 && (
+          <div className="mt-6 md:hidden flex justify-center relative z-20">
+            <button
+              type="button"
+              onClick={() => setShowAllMobile(!showAllMobile)}
+              className="inline-flex items-center gap-2 rounded-full border border-[#1A4C98]/25 bg-white hover:bg-[#1A4C98] hover:text-white px-5 py-2.5 text-xs font-bold text-[#1A4C98] shadow-2xs transition-all duration-200 cursor-pointer active:scale-95"
+            >
+              <span>
+                {showAllMobile
+                  ? 'Show Fewer Reviews'
+                  : `Read All ${TEXT_GROUP.length} Reviews (+${TEXT_GROUP.length - 1} more)`}
+              </span>
+              <ChevronDown
+                size={14}
+                className={`transition-transform duration-200 ${showAllMobile ? 'rotate-180' : ''}`}
+              />
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
