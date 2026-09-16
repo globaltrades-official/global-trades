@@ -8,58 +8,65 @@ export default function BrandsShowcase({
 }) {
   const [failedImages, setFailedImages] = useState({});
 
-  // Dynamic brand logos derived directly from featured products in Admin
+  // Display brands that are actively featured in Admin
   const displayBrands = useMemo(() => {
-    // 1. Get products marked as featured in the Admin portal
-    const featuredProducts = (products || []).filter((p) => Boolean(p.isFeatured));
+    // 1. Brands directly featured in Admin Brands tab
+    const explicitlyFeaturedBrands = (brands || []).filter(
+      (b) => Boolean(b.isFeatured) && b.logo
+    );
 
-    if (featuredProducts.length > 0) {
-      const brandMap = new Map();
+    // 2. Brands from products explicitly featured in Admin (excluding old default IDs)
+    const featuredProducts = (products || []).filter(
+      (p) => Boolean(p.isFeatured) && ![211, 105, 153, 81, 102, 188].includes(p.id)
+    );
 
-      featuredProducts.forEach((p) => {
-        const brandName = (p.brand || '').trim();
-        if (!brandName) return;
-        const brandKey = brandName.toLowerCase();
+    const brandMap = new Map();
 
-        if (!brandMap.has(brandKey)) {
-          // Look up brand in brands catalog (preserves custom logos & metadata from admin)
-          const matched =
-            (brands || []).find(
-              (b) => (b.name || '').toLowerCase().trim() === brandKey
-            ) ||
-            (DEFAULT_TRUSTED_BRANDS || []).find(
-              (b) => (b.name || '').toLowerCase().trim() === brandKey
-            );
-
-          if (matched && matched.logo) {
-            brandMap.set(brandKey, {
-              id: matched.id || `brand-${brandKey}`,
-              name: matched.name || brandName,
-              logo: matched.logo,
-              origin: matched.origin,
-            });
-          } else {
-            // Standard slug path for known catalogue brands
-            const slug = brandKey.replace(/['\s-]+/g, '_').replace(/[^a-z0-9_]/g, '');
-            brandMap.set(brandKey, {
-              id: `brand-${slug}`,
-              name: brandName,
-              logo: `/assets/images/brands/${slug}.png`,
-            });
-          }
-        }
-      });
-
-      const list = Array.from(brandMap.values());
-      if (list.length > 0) {
-        return list;
+    // Prioritize explicitly featured brands from the Brands tab
+    explicitlyFeaturedBrands.forEach((b) => {
+      const key = (b.name || '').toLowerCase().trim();
+      if (key && !brandMap.has(key)) {
+        brandMap.set(key, b);
       }
-    }
+    });
 
-    // No default brands: only display brand logos for products explicitly featured in Admin
-    return [];
+    // Also include any brands from active user-featured products
+    featuredProducts.forEach((p) => {
+      const brandName = (p.brand || '').trim();
+      if (!brandName) return;
+      const brandKey = brandName.toLowerCase();
+
+      if (!brandMap.has(brandKey)) {
+        const matched =
+          (brands || []).find(
+            (b) => (b.name || '').toLowerCase().trim() === brandKey
+          ) ||
+          (DEFAULT_TRUSTED_BRANDS || []).find(
+            (b) => (b.name || '').toLowerCase().trim() === brandKey
+          );
+
+        if (matched && matched.logo) {
+          brandMap.set(brandKey, {
+            id: matched.id || `brand-${brandKey}`,
+            name: matched.name || brandName,
+            logo: matched.logo,
+            origin: matched.origin,
+          });
+        } else {
+          const slug = brandKey.replace(/['\s-]+/g, '_').replace(/[^a-z0-9_]/g, '');
+          brandMap.set(brandKey, {
+            id: `brand-${slug}`,
+            name: brandName,
+            logo: `/assets/images/brands/${slug}.png`,
+          });
+        }
+      }
+    });
+
+    return Array.from(brandMap.values());
   }, [products, brands]);
 
+  // If 0 featured brands in Admin, do not display the section
   if (displayBrands.length === 0) {
     return null;
   }

@@ -97,7 +97,14 @@ export function useProductCatalog() {
       fetchCatalogFromPostgres().then((dbProducts) => {
         if (Array.isArray(dbProducts) && dbProducts.length > 0) {
           setProducts((current) => {
-            const normalized = dbProducts.map(normalizeProduct);
+            const OLD_DEFAULT_FEATURED_IDS = [211, 105, 153, 81, 102, 188];
+            const normalized = dbProducts.map((p) => {
+              const item = normalizeProduct(p);
+              if (OLD_DEFAULT_FEATURED_IDS.includes(item.id) && !localStorage.getItem('gt_custom_featured_' + item.id)) {
+                return { ...item, isFeatured: false };
+              }
+              return item;
+            });
             try {
               localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
               window.dispatchEvent(new Event('catalog-updated'));
@@ -222,6 +229,9 @@ export function useProductCatalog() {
       let toggledItem = null;
       const updated = products.map((p) => {
         if (p.id == id) {
+          try {
+            localStorage.setItem('gt_custom_featured_' + id, 'true');
+          } catch (_) {}
           toggledItem = {
             ...p,
             isFeatured: !p.isFeatured,

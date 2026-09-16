@@ -1095,7 +1095,7 @@ END $$;`;
                 Featured in Showcase
               </span>
               <div className="text-2xl md:text-3xl font-black text-emerald-700 mt-1">
-                {(brands || []).filter((b) => b.isFeatured !== false).length} <span className="text-xs font-bold text-[#081426]/60">Live</span>
+                {(brands || []).filter((b) => Boolean(b.isFeatured)).length} <span className="text-xs font-bold text-[#081426]/60">Live</span>
               </div>
             </div>
 
@@ -1161,7 +1161,7 @@ END $$;`;
                     : 'bg-[#F4F8FC] text-[#081426]/75 hover:bg-[#E8F1FB]'
                 }`}
               >
-                Featured Only ({(brands || []).filter((b) => b.isFeatured !== false).length})
+                Featured Only ({(brands || []).filter((b) => Boolean(b.isFeatured)).length})
               </button>
             </div>
           </div>
@@ -1204,13 +1204,13 @@ END $$;`;
                     <span
                       onClick={() => toggleBrandFeatured && toggleBrandFeatured(brand.id)}
                       className={`absolute top-2 right-2 size-7 rounded-full flex items-center justify-center cursor-pointer transition-transform hover:scale-110 ${
-                        brand.isFeatured !== false
+                        Boolean(brand.isFeatured)
                           ? 'bg-emerald-600 text-white shadow-xs'
                           : 'bg-gray-200 text-gray-400'
                       }`}
-                      title={brand.isFeatured !== false ? 'Featured on Home (Click to toggle)' : 'Hidden from Home (Click to toggle)'}
+                      title={Boolean(brand.isFeatured) ? 'Featured on Home (Click to remove)' : 'Hidden from Home (Click to feature)'}
                     >
-                      <Star size={13} className={brand.isFeatured !== false ? 'fill-white' : ''} />
+                      <Star size={13} className={Boolean(brand.isFeatured) ? 'fill-white' : ''} />
                     </span>
                   </div>
 
@@ -1230,17 +1230,13 @@ END $$;`;
 
                 <div className="mt-4 pt-3 border-t border-[#F0F5FA] flex items-center justify-between">
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                    featuredProductBrands.has((brand.name || '').toLowerCase().trim())
-                      ? 'bg-amber-100 text-amber-900 border border-amber-300 font-black'
-                      : brand.isFeatured !== false
-                      ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                    Boolean(brand.isFeatured)
+                      ? 'bg-emerald-100 text-emerald-900 border border-emerald-300 font-black'
                       : 'bg-gray-100 text-gray-500'
                   }`}>
-                    {featuredProductBrands.has((brand.name || '').toLowerCase().trim())
+                    {Boolean(brand.isFeatured)
                       ? '★ Featured on Home'
-                      : brand.isFeatured !== false
-                      ? '✓ In Showcase'
-                      : '— Inactive'}
+                      : '— Hidden from Home'}
                   </span>
 
                   <div className="flex items-center gap-1.5">
