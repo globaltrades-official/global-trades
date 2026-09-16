@@ -10,7 +10,6 @@ import BrandsShowcase from './sections/BrandsShowcase/BrandsShowcase';
 import IndustriesWeServe from './sections/IndustriesWeServe/IndustriesWeServe';
 import HowToOrder from './sections/HowToOrder/HowToOrder';
 import AlternatingText from './sections/AlternatingText/AlternatingText';
-import HowWeServe from './sections/HowWeServe/HowWeServe';
 import FAQ from './sections/FAQ/FAQ';
 import BigText from './sections/BigText/BigText';
 import { useProductCatalog } from './hooks/useProductCatalog';
@@ -220,13 +219,10 @@ export default function App() {
       const heroEl = document.getElementById('hero');
       const carouselEl = document.getElementById('carousel');
       const benefitsEl = document.getElementById('benefits');
-      const howWeServeEl = document.getElementById('how-we-serve');
       const contactEl = document.getElementById('contact');
 
       if (contactEl && scrollPos >= contactEl.offsetTop) {
         setActiveSection('contact');
-      } else if (howWeServeEl && scrollPos >= howWeServeEl.offsetTop) {
-        setActiveSection('how-we-serve');
       } else if (benefitsEl && scrollPos >= benefitsEl.offsetTop) {
         setActiveSection('benefits');
       } else if (carouselEl && scrollPos >= carouselEl.offsetTop) {
@@ -336,10 +332,7 @@ export default function App() {
           {/* 8. Social Proof & Reviews ("Trusted by Kozhikode Food Businesses") */}
           <AlternatingText />
 
-          {/* 9. How We Serve Businesses */}
-          <HowWeServe onNavigate={navigateTo} />
-
-          {/* 10. Brand Statement */}
+          {/* 9. Brand Statement */}
           <BigText />
 
           {/* 11. FAQ Section (Moved to last) */}

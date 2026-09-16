@@ -55,41 +55,6 @@ export default function Hero({ onNavigate }) {
           y: 10,
           duration: 0.5,
         });
-
-      const scrollTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: '.hero',
-          start: 'top top',
-          end: 'bottom bottom',
-          scrub: 1.5,
-        },
-      });
-
-      scrollTl
-        .fromTo(
-          'body',
-          {
-            backgroundColor: '#F4F8FC',
-          },
-          {
-            backgroundColor: '#E2ECF8',
-            overwrite: 'auto',
-          },
-          1
-        )
-        .from('.text-side-heading .split-char', {
-          scale: 1.15,
-          y: 30,
-          rotate: -12,
-          opacity: 0,
-          stagger: 0.04,
-          ease: 'back.out(2)',
-          duration: 0.5,
-        })
-        .from('.text-side-body', {
-          y: 20,
-          opacity: 0,
-        });
     },
     { dependencies: [isDesktop] }
   );
@@ -180,43 +145,6 @@ export default function Hero({ onNavigate }) {
                 <Store size={15} className="text-emerald-700 shrink-0" />
                 <span>Store Pickup Available</span>
               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Secondary Hero Section: Authorized Network - Full Width */}
-        <div className="text-side relative z-[80] flex flex-col items-center justify-center text-center min-h-[60vh] md:min-h-[75vh] py-14 md:py-20 w-full">
-          <div className="inline-block rounded-lg bg-sky-950/10 px-3.5 py-1 text-xs font-black uppercase tracking-wider text-sky-950 mb-4 border border-sky-950/15">
-            Authorized C&amp;F Network
-          </div>
-          <h2 className="text-side-heading text-balance text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase text-sky-950 leading-tight">
-            <TextSplitter text="Distributing 80+ World-Class Brands" />
-          </h2>
-          <div className="text-side-body mt-4 md:mt-6 max-w-3xl text-balance text-base md:text-lg font-medium text-sky-950/90 leading-relaxed mx-auto">
-            <p>
-              From Monin syrups, gourmet crushes, pasta, and imported culinary sauces to bulk cafe
-              condiments. Delivery available across Kozhikode, and customers from anywhere are welcome
-              to visit our PT Usha Road distribution center for direct purchase and product collection.
-            </p>
-          </div>
-
-          {/* Key Service Highlights - Full Width 4-Card Grid */}
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
-            <div className="flex items-center justify-center gap-2 text-xs md:text-sm font-bold text-sky-950 bg-white/80 backdrop-blur-sm py-4 px-4 rounded-2xl border border-white/80 shadow-sm">
-              <span className="size-2 rounded-full bg-emerald-600 shrink-0"></span>
-              <span>Direct Authorized Sourcing</span>
-            </div>
-            <div className="flex items-center justify-center gap-2 text-xs md:text-sm font-bold text-sky-950 bg-white/80 backdrop-blur-sm py-4 px-4 rounded-2xl border border-white/80 shadow-sm">
-              <span className="size-2 rounded-full bg-emerald-600 shrink-0"></span>
-              <span>Bulk Food Service Rates</span>
-            </div>
-            <div className="flex items-center justify-center gap-2 text-xs md:text-sm font-bold text-sky-950 bg-white/80 backdrop-blur-sm py-4 px-4 rounded-2xl border border-white/80 shadow-sm">
-              <span className="size-2 rounded-full bg-emerald-600 shrink-0"></span>
-              <span>Central Kozhikode Warehouse</span>
-            </div>
-            <div className="flex items-center justify-center gap-2 text-xs md:text-sm font-bold text-sky-950 bg-white/80 backdrop-blur-sm py-4 px-4 rounded-2xl border border-white/80 shadow-sm">
-              <span className="size-2 rounded-full bg-emerald-600 shrink-0"></span>
-              <span>Kozhikode Delivery &amp; Store Pickup</span>
             </div>
           </div>
         </div>
