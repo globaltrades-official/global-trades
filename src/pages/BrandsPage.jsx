@@ -5,7 +5,6 @@ import {
   ArrowRight,
   Search,
   X,
-  ShieldCheck,
   Phone,
   CheckCircle2,
   ExternalLink,
@@ -26,7 +25,6 @@ export default function BrandsPage({
   brands = DEFAULT_TRUSTED_BRANDS,
   onNavigateHome,
   onNavigateProducts,
-  onNavigateAdmin,
 }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
@@ -122,19 +120,6 @@ export default function BrandsPage({
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
-            {onNavigateAdmin && (
-              <button
-                type="button"
-                onClick={onNavigateAdmin}
-                className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold text-[#1A4C98] bg-[#1A4C98]/10 hover:bg-[#1A4C98]/20 px-3 py-1.5 rounded-full transition-colors cursor-pointer"
-                title="Manage Brands in Admin Portal"
-              >
-                <ShieldCheck size={13} />
-                <span className="hidden sm:inline">Manage Brands (Admin)</span>
-                <span className="sm:hidden">Admin</span>
-              </button>
-            )}
-
             {onNavigateProducts && (
               <button
                 type="button"
