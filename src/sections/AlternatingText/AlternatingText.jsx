@@ -36,12 +36,20 @@ export default function AlternatingText() {
       className="relative w-full bg-gradient-to-b from-[#E8F1FB] via-[#EFF6FC] to-[#F4F8FC] py-8 sm:py-10 md:py-12 border-t border-[#1A4C98]/15"
     >
       <div className="mx-auto w-full max-w-6xl px-4 md:px-8 relative z-10">
-        {/* Compact Section Header */}
+        {/* Compact Section Header with Small Company Logo */}
         <div className="mx-auto max-w-2xl text-center mb-5 sm:mb-7">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-200/80 px-3 py-0.5 text-[11px] font-bold uppercase tracking-wider text-amber-900 shadow-2xs mb-2">
+          <div className="inline-flex items-center gap-2 rounded-full bg-white border border-[#1A4C98]/20 px-3 py-1 text-[11px] sm:text-xs font-bold shadow-2xs mb-2.5">
+            <img
+              src={BRANDING.LOGO_PATH}
+              alt="Global Trades Logo"
+              className="size-4.5 sm:size-5 object-contain"
+            />
+            <span className="font-extrabold uppercase tracking-wider text-[#1A4C98]">
+              {BRANDING.COMPANY_NAME}
+            </span>
+            <span className="text-[#081426]/25 font-light">|</span>
             <span className="text-amber-600 font-extrabold">★ {BRANDING.RATING}</span>
-            <span className="text-amber-300">·</span>
-            <span className="text-[#081426]/75">{BRANDING.REVIEWS_COUNT} Google Reviews</span>
+            <span className="text-[#081426]/75 font-medium">({BRANDING.REVIEWS_COUNT} Reviews)</span>
           </div>
 
           <h2 className="text-xl sm:text-2xl md:text-3xl font-black uppercase tracking-tight text-[#081426] leading-tight">
@@ -79,18 +87,24 @@ export default function AlternatingText() {
                 </p>
               </div>
 
-              {/* Reviewer Profile */}
-              <div className="mt-3.5 pt-2.5 border-t border-[#F0F5FA] flex items-center gap-2.5">
-                <div className="size-7 rounded-full bg-[#1A4C98]/10 text-[#1A4C98] font-bold text-[10px] flex items-center justify-center shrink-0 border border-[#1A4C98]/15">
-                  {item.initials}
+              {/* Reviewer Profile with small verified client company logo */}
+              <div className="mt-3.5 pt-2.5 border-t border-[#F0F5FA] flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="size-7 rounded-full bg-[#1A4C98]/10 text-[#1A4C98] font-bold text-[10px] flex items-center justify-center shrink-0 border border-[#1A4C98]/15">
+                    {item.initials}
+                  </div>
+                  <div className="min-w-0">
+                    <span className="block text-xs font-bold text-[#081426] truncate leading-tight">
+                      {item.reviewer}
+                    </span>
+                    <span className="block text-[10px] text-emerald-700 font-semibold truncate leading-tight">
+                      {item.badge}
+                    </span>
+                  </div>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <span className="block text-xs font-bold text-[#081426] truncate leading-tight">
-                    {item.reviewer}
-                  </span>
-                  <span className="block text-[10px] text-emerald-700 font-semibold truncate leading-tight">
-                    {item.badge}
-                  </span>
+
+                <div className="shrink-0 flex items-center opacity-70" title="Verified Global Trades Client">
+                  <img src={BRANDING.LOGO_PATH} alt="Global Trades" className="size-4 object-contain" />
                 </div>
               </div>
             </div>
