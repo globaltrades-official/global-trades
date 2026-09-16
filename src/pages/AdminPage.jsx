@@ -216,13 +216,16 @@ export default function AdminPage({
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (username.trim() === 'admin' && password.trim() === 'admin123') {
+    const validUser = (username.trim() === 'globaltrades');
+    const validPass = (password.trim() === 'gtrades');
+
+    if (validUser && validPass) {
       setAuthed(true);
       sessionStorage.setItem('gt_admin_auth', 'true');
       setAuthError('');
       showToast('Welcome back, Admin!');
     } else {
-      setAuthError('Invalid credentials. Use demo: admin / admin123');
+      setAuthError('Invalid username or password. Please try again.');
     }
   };
 
@@ -508,7 +511,7 @@ END $$;`;
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="admin"
+                placeholder="Enter username"
                 className="w-full rounded-xl border border-[#D0DFEF] bg-[#F4F8FC] px-4 py-2.5 text-sm font-semibold text-[#081426] focus:border-[#1A4C98] focus:bg-white focus:outline-none"
                 required
               />
