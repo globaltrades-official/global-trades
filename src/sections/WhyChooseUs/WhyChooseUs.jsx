@@ -72,17 +72,17 @@ export default function WhyChooseUs({ onNavigate }) {
         </div>
 
         {/* 6 Simple Cards in 2-Column Grid on Mobile, 3-Column on Desktop */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-6">
           {REASONS.map((reason, index) => {
             const Icon = reason.icon;
 
             return (
               <div
                 key={reason.title}
-                className="group rounded-2xl sm:rounded-3xl bg-[#F4F8FC] p-3 sm:p-7 border border-[#D0DFEF] hover:border-[#1A4C98]/40 hover:bg-white hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
+                className="group rounded-2xl sm:rounded-3xl bg-[#F4F8FC] p-3.5 sm:p-7 border border-[#D0DFEF] hover:border-[#1A4C98]/40 hover:bg-white hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-2 sm:mb-5">
+                  <div className="flex items-center justify-between mb-2.5 sm:mb-5">
                     <div className="size-9 sm:size-12 rounded-xl sm:rounded-2xl bg-white text-[#1A4C98] flex items-center justify-center shadow-xs group-hover:bg-[#1A4C98] group-hover:text-white transition-colors duration-200 border border-[#D0DFEF]">
                       <Icon size={18} className="sm:w-5 sm:h-5" />
                     </div>
@@ -91,11 +91,11 @@ export default function WhyChooseUs({ onNavigate }) {
                     </span>
                   </div>
 
-                  <h3 className="text-xs sm:text-lg font-black text-[#081426] group-hover:text-[#1A4C98] transition-colors mb-0.5 sm:mb-2 leading-snug">
+                  <h3 className="text-xs sm:text-lg font-black text-[#081426] group-hover:text-[#1A4C98] transition-colors mb-1 sm:mb-2 leading-snug">
                     {reason.title}
                   </h3>
 
-                  <p className="hidden sm:block text-[11px] sm:text-sm font-medium text-[#081426]/75 leading-relaxed">
+                  <p className="text-[11px] sm:text-sm font-medium text-[#081426]/75 leading-relaxed line-clamp-3 sm:line-clamp-none">
                     {reason.description}
                   </p>
                 </div>

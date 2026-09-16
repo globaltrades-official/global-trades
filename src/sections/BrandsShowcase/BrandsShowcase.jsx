@@ -95,8 +95,8 @@ export default function BrandsShowcase({
           </span>
         </div>
 
-        {/* Pure Logo Grid — Responsive Multi-Column Grid (3 columns on mobile, up to 6 on desktop) */}
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
+        {/* Pure Logo Grid — Responsive Multi-Column Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5 sm:gap-3 md:gap-4">
           {displayBrands.map((brand) => {
             const brandKey = (brand.name || '').toLowerCase().trim();
             const isFailed = failedImages[brandKey];
@@ -110,7 +110,7 @@ export default function BrandsShowcase({
               <div
                 key={brand.id || brand.name}
                 onClick={() => handleBrandClick(brand.name)}
-                className="h-14 sm:h-20 md:h-24 w-full rounded-xl sm:rounded-2xl bg-white border border-[#D0DFEF] shadow-2xs hover:shadow-md hover:border-[#1A4C98]/40 hover:-translate-y-0.5 transition-all duration-300 p-1.5 sm:p-3 flex items-center justify-center cursor-pointer group"
+                className="h-16 sm:h-20 md:h-24 w-full rounded-xl sm:rounded-2xl bg-white border border-[#D0DFEF] shadow-2xs hover:shadow-md hover:border-[#1A4C98]/40 hover:-translate-y-0.5 transition-all duration-300 p-2 sm:p-3 flex items-center justify-center cursor-pointer group"
                 title={`View ${brand.name} Products in Wholesale Catalogue`}
               >
                 {!isFailed && currentSrc ? (

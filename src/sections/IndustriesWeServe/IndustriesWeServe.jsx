@@ -109,7 +109,7 @@ export default function IndustriesWeServe({ onNavigate }) {
         </div>
 
         {/* 7-Card Grid: 2-Column Grid on Mobile matching Why Global Trades, 3-4 Col on Desktop */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-6">
           {INDUSTRIES.map((industry, index) => {
             const Icon = industry.icon;
             const isLast = index === INDUSTRIES.length - 1;
@@ -123,32 +123,31 @@ export default function IndustriesWeServe({ onNavigate }) {
               >
                 <div>
                   <div className="flex items-center justify-between mb-2 sm:mb-3">
-                    <div className="size-9 sm:size-12 rounded-xl sm:rounded-2xl bg-[#1A4C98]/10 text-[#1A4C98] flex items-center justify-center group-hover:bg-[#1A4C98] group-hover:text-white transition-colors duration-200">
-                      <Icon size={18} className="sm:w-6 sm:h-6" />
+                    <div className="size-8 sm:size-12 rounded-xl sm:rounded-2xl bg-[#1A4C98]/10 text-[#1A4C98] flex items-center justify-center group-hover:bg-[#1A4C98] group-hover:text-white transition-colors duration-200">
+                      <Icon size={16} className="sm:w-6 sm:h-6" />
                     </div>
-                    <span className="hidden sm:inline-block text-[8px] sm:text-[11px] font-extrabold uppercase tracking-wider text-[#00A3E0] bg-[#00A3E0]/10 px-2 py-0.5 rounded-full">
+                    <span className="text-[8px] sm:text-[11px] font-extrabold uppercase tracking-wider text-[#00A3E0] bg-[#00A3E0]/10 px-2 py-0.5 rounded-full">
                       {industry.tag}
                     </span>
                   </div>
 
-                  <h3 className="text-xs sm:text-xl font-black text-[#081426] group-hover:text-[#1A4C98] transition-colors mb-0.5 sm:mb-1 leading-snug">
+                  <h3 className="text-xs sm:text-xl font-black text-[#081426] group-hover:text-[#1A4C98] transition-colors mb-1 leading-snug">
                     {industry.name}
                   </h3>
 
-                  <p className="hidden sm:block text-[11px] sm:text-sm font-medium text-[#081426]/75 leading-relaxed">
+                  <p className="text-[11px] sm:text-sm font-medium text-[#081426]/75 leading-relaxed line-clamp-3 sm:line-clamp-none">
                     {industry.description}
                   </p>
                 </div>
 
-                <div className="mt-2 sm:mt-6 pt-1.5 sm:pt-4 border-t border-[#F0F5FA] flex items-center justify-between gap-1">
+                <div className="mt-2.5 sm:mt-6 pt-2 sm:pt-4 border-t border-[#F0F5FA] flex items-center justify-between gap-1">
                   <button
                     type="button"
                     onClick={() => handleIndustryClick(industry.recommendedCategory)}
                     className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-bold text-[#1A4C98] hover:text-[#00A3E0] transition-colors cursor-pointer"
                   >
-                    <span className="hidden sm:inline">Catalogue</span>
-                    <span className="sm:hidden text-[10px] font-bold text-[#081426]/50">View Line</span>
-                    <ArrowRight size={11} className="transition-transform group-hover:translate-x-1 text-[#1A4C98]" />
+                    <span>Catalogue</span>
+                    <ArrowRight size={11} className="transition-transform group-hover:translate-x-1" />
                   </button>
 
                   <a
@@ -157,7 +156,7 @@ export default function IndustriesWeServe({ onNavigate }) {
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-extrabold text-emerald-800 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 sm:py-1 rounded-lg border border-emerald-200/60 transition-colors"
+                    className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-extrabold text-emerald-800 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded-lg border border-emerald-200/60 transition-colors"
                   >
                     <WhatsAppIcon size={11} />
                     <span>Quote</span>

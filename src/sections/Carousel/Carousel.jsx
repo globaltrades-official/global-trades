@@ -244,7 +244,7 @@ export default function Carousel({ products = [], onNavigate }) {
   return (
     <section
       id="carousel"
-      className="carousel relative min-h-[65vh] sm:min-h-[75vh] overflow-hidden bg-white py-8 sm:py-12 md:py-18 text-white w-full transition-colors duration-700"
+      className="carousel relative min-h-[75vh] overflow-hidden bg-white py-12 md:py-18 text-white w-full transition-colors duration-700"
     >
       <div
         className="carousel-background pointer-events-none absolute inset-0 opacity-90 transition-colors duration-700"
@@ -258,45 +258,45 @@ export default function Carousel({ products = [], onNavigate }) {
 
       <div className="mx-auto flex w-full max-w-7xl flex-col items-center px-4 md:px-8 relative z-10">
         {/* Section Header */}
-        <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-4 sm:mb-8">
-          <span className="inline-block rounded-full bg-white/20 px-3.5 py-1 sm:px-4 sm:py-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-2 sm:mb-3 backdrop-blur-sm border border-white/25">
+        <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-6 md:mb-8">
+          <span className="inline-block rounded-full bg-white/20 px-4 py-1.5 text-xs font-bold uppercase tracking-wider mb-3 backdrop-blur-sm border border-white/25">
             Wholesale Lines &amp; C&amp;F Distribution
           </span>
-          <h2 className="text-2xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight drop-shadow-md">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight drop-shadow-md">
             Featured Wholesale Lines
           </h2>
-          <p className="text-xs sm:text-base md:text-lg font-medium opacity-90 mt-1.5 sm:mt-2 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base md:text-lg font-medium opacity-90 mt-2 max-w-2xl mx-auto leading-relaxed">
             Curated commercial food service products distributed directly to Kozhikode kitchens, cafes, and bakeries.
           </p>
         </div>
 
         {/* Product Showcase Hero Card */}
         <div className="showcase-card w-full max-w-5xl transition-transform duration-300">
-          <div className="rounded-3xl bg-white/15 backdrop-blur-md p-4 sm:p-8 md:p-10 border border-white/30 shadow-2xl relative overflow-hidden">
+          <div className="rounded-3xl bg-white/15 backdrop-blur-md p-6 sm:p-8 md:p-10 border border-white/30 shadow-2xl relative overflow-hidden">
             {/* Quick Navigation Arrows overlay */}
             {featuredProducts.length > 1 && (
               <>
                 <button
                   onClick={() => changeProduct(safeIndex - 1)}
-                  className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-20 size-9 sm:size-11 md:size-13 rounded-full bg-black/30 hover:bg-white hover:text-[#081426] text-white border border-white/30 flex items-center justify-center backdrop-blur-md shadow-lg transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 z-20 size-11 md:size-13 rounded-full bg-black/25 hover:bg-white hover:text-[#081426] text-white border border-white/30 flex items-center justify-center backdrop-blur-md shadow-lg transition-all hover:scale-110 active:scale-95 cursor-pointer"
                   aria-label="Previous Product"
                 >
-                  <ChevronLeft size={20} className="sm:w-6 sm:h-6" />
+                  <ChevronLeft size={24} />
                 </button>
                 <button
                   onClick={() => changeProduct(safeIndex + 1)}
-                  className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-20 size-9 sm:size-11 md:size-13 rounded-full bg-black/30 hover:bg-white hover:text-[#081426] text-white border border-white/30 flex items-center justify-center backdrop-blur-md shadow-lg transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 z-20 size-11 md:size-13 rounded-full bg-black/25 hover:bg-white hover:text-[#081426] text-white border border-white/30 flex items-center justify-center backdrop-blur-md shadow-lg transition-all hover:scale-110 active:scale-95 cursor-pointer"
                   aria-label="Next Product"
                 >
-                  <ChevronRight size={20} className="sm:w-6 sm:h-6" />
+                  <ChevronRight size={24} />
                 </button>
               </>
             )}
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-10 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
               {/* Studio Packshot Photo (lg:col-span-4) */}
               <div className="lg:col-span-4 flex justify-center">
-                <div className="size-44 sm:size-64 md:size-72 rounded-2xl sm:rounded-3xl overflow-hidden bg-white p-3 sm:p-4 shadow-2xl border-2 sm:border-4 border-white/90 flex items-center justify-center group">
+                <div className="size-56 sm:size-64 md:size-72 rounded-3xl overflow-hidden bg-white p-4 shadow-2xl border-4 border-white/90 flex items-center justify-center group">
                   <img
                     src={activeProduct.image}
                     alt={activeProduct.name}

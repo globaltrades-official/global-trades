@@ -99,8 +99,8 @@ export default function ShopByCategory({ onNavigate }) {
           </p>
         </div>
 
-        {/* 7 Category Cards: Responsive Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-6">
+        {/* 7 Category Cards: 2-Column Grid on Mobile matching Why Global Trades, 3-4 Col on Desktop */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-6">
           {CATEGORIES.map((cat, index) => {
             const Icon = cat.icon;
             const isLast = index === CATEGORIES.length - 1;
@@ -115,10 +115,10 @@ export default function ShopByCategory({ onNavigate }) {
               >
                 <div>
                   <div className="flex items-center justify-between mb-2 sm:mb-3">
-                    <div className="size-9 sm:size-12 rounded-xl sm:rounded-2xl bg-white text-[#1A4C98] flex items-center justify-center shadow-xs group-hover:bg-[#1A4C98] group-hover:text-white transition-colors duration-200 border border-[#D0DFEF]">
-                      <Icon size={18} className="sm:w-6 sm:h-6" />
+                    <div className="size-8 sm:size-12 rounded-xl sm:rounded-2xl bg-white text-[#1A4C98] flex items-center justify-center shadow-xs group-hover:bg-[#1A4C98] group-hover:text-white transition-colors duration-200 border border-[#D0DFEF]">
+                      <Icon size={16} className="sm:w-6 sm:h-6" />
                     </div>
-                    <span className="hidden sm:inline-block text-[8px] sm:text-[10px] font-extrabold uppercase tracking-wider text-[#00A3E0] bg-[#00A3E0]/10 px-2 py-0.5 rounded-full">
+                    <span className="text-[8px] sm:text-[10px] font-extrabold uppercase tracking-wider text-[#00A3E0] bg-[#00A3E0]/10 px-2 py-0.5 rounded-full">
                       {cat.tag}
                     </span>
                   </div>
@@ -127,19 +127,18 @@ export default function ShopByCategory({ onNavigate }) {
                     {cat.title}
                   </h3>
 
-                  <p className="hidden sm:block text-[10px] sm:text-xs font-bold text-[#1A4C98]/80 mb-1 line-clamp-1">
+                  <p className="text-[10px] sm:text-xs font-bold text-[#1A4C98]/80 mb-1 line-clamp-1">
                     {cat.brands}
                   </p>
 
-                  <p className="hidden sm:block text-[11px] sm:text-sm font-medium text-[#081426]/75 leading-relaxed">
+                  <p className="text-[11px] sm:text-sm font-medium text-[#081426]/75 leading-relaxed line-clamp-2 sm:line-clamp-none">
                     {cat.description}
                   </p>
                 </div>
 
-                <div className="mt-2 sm:mt-4 pt-1.5 sm:pt-3 border-t border-[#D0DFEF]/50 flex items-center justify-between text-[10px] sm:text-xs font-black text-[#1A4C98] group-hover:text-[#00A3E0]">
-                  <span className="hidden sm:inline">Explore</span>
-                  <span className="sm:hidden text-[10px] font-bold text-[#081426]/50 uppercase tracking-wider">Catalogue</span>
-                  <ArrowRight size={12} className="transition-transform group-hover:translate-x-1 text-[#1A4C98]" />
+                <div className="mt-2.5 sm:mt-4 pt-2 sm:pt-3 border-t border-[#D0DFEF]/60 flex items-center justify-between text-[10px] sm:text-xs font-black text-[#1A4C98] group-hover:text-[#00A3E0]">
+                  <span>Explore</span>
+                  <ArrowRight size={12} className="transition-transform group-hover:translate-x-1" />
                 </div>
               </div>
             );
