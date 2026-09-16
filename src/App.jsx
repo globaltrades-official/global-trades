@@ -7,6 +7,7 @@ import Carousel from './sections/Carousel/Carousel';
 import ShopByCategory from './sections/ShopByCategory/ShopByCategory';
 import WhyChooseUs from './sections/WhyChooseUs/WhyChooseUs';
 import BrandsShowcase from './sections/BrandsShowcase/BrandsShowcase';
+import FeaturedBridge from './sections/FeaturedBridge/FeaturedBridge';
 import IndustriesWeServe from './sections/IndustriesWeServe/IndustriesWeServe';
 import HowToOrder from './sections/HowToOrder/HowToOrder';
 import AlternatingText from './sections/AlternatingText/AlternatingText';
@@ -318,7 +319,10 @@ export default function App() {
           {/* 2. Featured Brands (Logos Only, Derived from Admin Portal) */}
           <BrandsShowcase brands={brands} products={products} onNavigate={navigateTo} />
 
-          {/* 3. 3D Product Carousel Showcase (Featured Products) */}
+          {/* 3. Wholesale Value Proposition & Transition Bridge */}
+          <FeaturedBridge onNavigate={navigateTo} />
+
+          {/* 4. 3D Product Carousel Showcase (Featured Products) */}
           <Carousel products={products} onNavigate={navigateTo} />
 
           {/* 4. Shop by Category (Linked directly to catalogue filters) */}
