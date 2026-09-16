@@ -178,11 +178,16 @@ export default function AlternatingText() {
 
       <div className="relative w-full pt-12 md:pt-16">
         {/* Section Header */}
-        <div className="mx-auto max-w-3xl text-center px-4 mb-10 sm:mb-14 relative z-10">
-          <div className="inline-flex items-center gap-2 rounded-full bg-amber-50 border border-amber-200 px-4 py-1.5 text-xs font-black uppercase tracking-wider text-amber-900 mb-4 shadow-2xs">
-            <span className="text-amber-600 font-extrabold">★ {BRANDING.RATING} on Google Maps</span>
-            <span className="text-amber-300">·</span>
-            <span className="text-[#081426]/80">{BRANDING.REVIEWS_COUNT} Verified Reviews</span>
+        <div className="mx-auto max-w-3xl text-center px-4 mb-6 sm:mb-14 relative z-10">
+          <div className="flex items-center justify-between sm:justify-center mb-3">
+            <div className="inline-flex items-center gap-2 rounded-full bg-amber-50 border border-amber-200 px-3.5 py-1 text-xs font-black uppercase tracking-wider text-amber-900 shadow-2xs">
+              <span className="text-amber-600 font-extrabold">★ {BRANDING.RATING}</span>
+              <span className="text-amber-300">·</span>
+              <span className="text-[#081426]/80">{BRANDING.REVIEWS_COUNT} Reviews</span>
+            </div>
+            <span className="text-[10px] font-bold text-[#1A4C98]/80 lg:hidden">
+              Swipe Reviews →
+            </span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-[#081426] leading-tight">
@@ -194,14 +199,14 @@ export default function AlternatingText() {
           </p>
         </div>
 
-        {/* Alternating Review Rows */}
-        <div className="mx-auto flex w-full max-w-7xl flex-col items-center px-4 md:px-8 relative z-10">
+        {/* Review Cards: Horizontal swipeable carousel on mobile, scroll-pinned desktop flow */}
+        <div className="mx-auto flex w-full max-w-7xl flex-row lg:flex-col items-stretch lg:items-center px-4 md:px-8 relative z-10 overflow-x-auto lg:overflow-visible gap-4 lg:gap-0 pb-4 lg:pb-0 scrollbar-none snap-x snap-mandatory">
           {TEXT_GROUP.map((item, index) => {
             const isEven = index % 2 === 0;
             return (
               <div
                 key={item.heading}
-                className="alternating-section relative w-full flex flex-col items-center mb-12 sm:mb-16 last:mb-0 lg:mb-0 lg:h-screen lg:grid lg:grid-cols-2 lg:gap-x-12 lg:place-items-center lg:py-0"
+                className="alternating-section relative w-full flex flex-col items-center mb-0 lg:mb-0 lg:h-screen lg:grid lg:grid-cols-2 lg:gap-x-12 lg:place-items-center lg:py-0 min-w-[85vw] sm:min-w-[420px] lg:min-w-0 snap-center shrink-0 lg:shrink"
               >
                 {/* Review Card: Fully Opaque Solid Light Background, Left on Row 1 & 3; Right on Row 2 */}
                 <div
@@ -209,46 +214,31 @@ export default function AlternatingText() {
                     isEven
                       ? 'lg:order-1 lg:col-start-1 lg:mr-auto'
                       : 'lg:order-2 lg:col-start-2 lg:ml-auto',
-                    'relative z-10 rounded-3xl p-6 sm:p-8 md:p-10 bg-white shadow-2xl border border-[#1A4C98]/10 w-full max-w-full sm:max-w-lg lg:max-w-xl transition-all duration-300 hover:shadow-[0_25px_50px_-12px_rgba(26,76,152,0.18)]'
+                    'relative z-10 rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-10 bg-white shadow-xl lg:shadow-2xl border border-[#1A4C98]/10 w-full max-w-full sm:max-w-lg lg:max-w-xl transition-all duration-300 flex flex-col justify-between'
                   )}
                 >
-                  <span className="inline-block rounded-full bg-emerald-900/10 px-3.5 py-1 text-xs font-black uppercase tracking-wider text-emerald-900 mb-3 border border-emerald-900/15">
-                    {item.tag}
-                  </span>
-
-                  <h2 className="text-balance text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-[#081426] tracking-tight leading-tight">
-                    {item.heading}
-                  </h2>
-
-                  {/* Google Review Quote Highlight */}
-                  <div className="mt-4 rounded-2xl bg-amber-500/10 p-4 border-l-4 border-amber-600 bg-amber-50/50 shadow-sm">
-                    <p className="text-sm md:text-base font-bold italic text-[#081426] leading-relaxed">
-                      {item.reviewQuote}
-                    </p>
-                    <span className="block mt-2 text-xs font-black text-amber-800">
-                      ★ 5.0 — {item.reviewer}
+                  <div>
+                    <span className="inline-block rounded-full bg-emerald-900/10 px-3 py-0.5 sm:px-3.5 sm:py-1 text-[11px] sm:text-xs font-black uppercase tracking-wider text-emerald-900 mb-2 sm:mb-3 border border-emerald-900/15">
+                      {item.tag}
                     </span>
-                  </div>
 
-                  <div className="mt-4 text-sm sm:text-base md:text-lg font-medium text-[#081426]/85 leading-relaxed">
-                    <p>{item.body}</p>
-                  </div>
-                </div>
+                    <h3 className="text-balance text-lg sm:text-2xl md:text-3xl lg:text-5xl font-black text-[#081426] tracking-tight leading-snug">
+                      {item.heading}
+                    </h3>
 
-                {/* Mobile/Tablet Decorative Logo: Displayed fully and cleanly below each review card */}
-                <div className="lg:hidden flex flex-col items-center justify-center my-8 sm:my-10 py-2 w-full relative z-10">
-                  <div className="mobile-review-logo will-change-transform relative flex items-center justify-center w-[180px] sm:w-[220px] aspect-square">
-                    {/* Soft Ambient Radial Glow */}
-                    <div
-                      className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#00A3E0]/15 via-[#1A4C98]/10 to-transparent blur-2xl pointer-events-none"
-                      aria-hidden="true"
-                    />
-                    <img
-                      src={BRANDING.LOGO_PATH}
-                      alt="Global Trades Decorative Logo"
-                      className="size-full object-contain drop-shadow-[0_16px_36px_rgba(26,76,152,0.22)] select-none pointer-events-none relative z-10"
-                      loading="lazy"
-                    />
+                    {/* Google Review Quote Highlight */}
+                    <div className="mt-3 sm:mt-4 rounded-xl sm:rounded-2xl bg-amber-50/70 p-3 sm:p-4 border-l-4 border-amber-600 shadow-2xs">
+                      <p className="text-xs sm:text-sm md:text-base font-bold italic text-[#081426] leading-relaxed">
+                        {item.reviewQuote}
+                      </p>
+                      <span className="block mt-1.5 text-[11px] sm:text-xs font-black text-amber-800">
+                        ★ 5.0 — {item.reviewer}
+                      </span>
+                    </div>
+
+                    <div className="mt-3 sm:mt-4 text-xs sm:text-sm md:text-base font-medium text-[#081426]/85 leading-relaxed">
+                      <p>{item.body}</p>
+                    </div>
                   </div>
                 </div>
 

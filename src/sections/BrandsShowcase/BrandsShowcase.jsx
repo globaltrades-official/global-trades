@@ -22,22 +22,25 @@ export default function BrandsShowcase({ brands = DEFAULT_TRUSTED_BRANDS, onNavi
   };
 
   return (
-    <section className="relative w-full bg-gradient-to-b from-[#F4F8FC] via-white to-[#F4F8FC] py-12 md:py-16 border-y border-[#D0DFEF]">
+    <section className="relative w-full bg-gradient-to-b from-[#F4F8FC] via-white to-[#F4F8FC] py-8 sm:py-12 md:py-16 border-y border-[#D0DFEF]">
       <div className="mx-auto w-full max-w-7xl px-4 md:px-8">
-        {/* Subtle Eyebrow Title */}
-        <div className="text-center mb-8 md:mb-10">
-          <span className="inline-block text-[11px] sm:text-xs font-black uppercase tracking-widest text-[#1A4C98] bg-[#1A4C98]/10 px-4 py-1.5 rounded-full border border-[#1A4C98]/15">
+        {/* Subtle Eyebrow Title with swipe hint on mobile */}
+        <div className="flex items-center justify-between sm:justify-center mb-4 sm:mb-8">
+          <span className="inline-block text-[10px] sm:text-xs font-black uppercase tracking-widest text-[#1A4C98] bg-[#1A4C98]/10 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full border border-[#1A4C98]/15">
             Brands Trusted by Food Businesses
+          </span>
+          <span className="text-[10px] font-bold text-[#1A4C98]/70 sm:hidden">
+            Swipe →
           </span>
         </div>
 
-        {/* Pure Logo Grid — Logo Only, No Company Name or Clutter */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 md:gap-5 items-center justify-items-center">
+        {/* Pure Logo Grid — Compact 2-Row Horizontal Scroll on Mobile, Grid on Desktop */}
+        <div className="grid grid-rows-2 grid-flow-col auto-cols-[115px] sm:grid-rows-none sm:grid-flow-row sm:auto-cols-auto sm:grid-cols-4 md:grid-cols-6 gap-2 sm:gap-3 md:gap-4 overflow-x-auto sm:overflow-visible pb-2 sm:pb-0 scrollbar-none snap-x snap-mandatory">
           {displayBrands.map((brand) => (
             <div
               key={brand.id || brand.name}
               onClick={() => handleBrandClick(brand.name)}
-              className="h-20 sm:h-24 w-full rounded-2xl bg-white border border-[#D0DFEF] shadow-2xs hover:shadow-lg hover:border-[#1A4C98]/40 hover:-translate-y-1 transition-all duration-300 p-3.5 flex items-center justify-center cursor-pointer group"
+              className="h-16 sm:h-20 md:h-24 w-full rounded-xl sm:rounded-2xl bg-white border border-[#D0DFEF] shadow-2xs hover:shadow-md hover:border-[#1A4C98]/40 hover:-translate-y-0.5 transition-all duration-300 p-2 sm:p-3 flex items-center justify-center cursor-pointer group snap-start shrink-0"
               title={`View ${brand.name} Products`}
             >
               <img

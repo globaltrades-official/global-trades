@@ -40,21 +40,21 @@ export default function FAQ() {
   return (
     <section
       id="faq"
-      className="relative w-full bg-[#F4F8FC] py-16 md:py-24 border-t border-[#1A4C98]/15"
+      className="relative w-full bg-[#F4F8FC] py-8 sm:py-12 md:py-20 border-t border-[#1A4C98]/15"
     >
       <div className="mx-auto w-full max-w-4xl px-4 md:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-12 md:mb-16">
-          <div className="inline-flex items-center gap-2 rounded-full bg-[#1A4C98]/10 border border-[#1A4C98]/20 px-4 py-1.5 text-xs font-black uppercase tracking-wider text-[#1A4C98] mb-4">
-            <HelpCircle size={14} className="text-[#00A3E0]" />
+        <div className="text-center mb-6 sm:mb-10 md:mb-14">
+          <div className="inline-flex items-center gap-2 rounded-full bg-[#1A4C98]/10 border border-[#1A4C98]/20 px-3.5 py-1 text-xs font-black uppercase tracking-wider text-[#1A4C98] mb-3">
+            <HelpCircle size={13} className="text-[#00A3E0]" />
             <span>Frequently Asked Questions</span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-[#081426] leading-tight">
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-[#081426] leading-tight">
             Frequently Asked Questions
           </h2>
 
-          <p className="mt-4 text-base sm:text-lg text-[#081426]/80 font-medium leading-relaxed">
+          <p className="mt-2 sm:mt-4 text-xs sm:text-base text-[#081426]/80 font-medium leading-relaxed">
             Essential information on wholesale pricing, store pickup in Vellayil, and Kozhikode delivery.
           </p>
         </div>
