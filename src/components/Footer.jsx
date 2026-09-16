@@ -230,10 +230,10 @@ export default function Footer({ onNavigate }) {
           <span>·</span>
           <button
             type="button"
-            onClick={() => onNavigate && onNavigate('home', '#brands')}
+            onClick={() => onNavigate && onNavigate('brands')}
             className="hover:text-[#1A4C98] transition-colors cursor-pointer"
           >
-            Our Brands
+            Trusted Brands
           </button>
           <span>·</span>
           <button

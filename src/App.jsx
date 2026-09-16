@@ -20,6 +20,7 @@ import { useMediaQuery } from './hooks/useMediaQuery';
 
 // Code-split pages so initial load is feather-light (< 200KB)
 const ProductsPage = lazy(() => import('./pages/ProductsPage'));
+const BrandsPage = lazy(() => import('./pages/BrandsPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 
@@ -68,6 +69,7 @@ export default function App() {
       }
       return 'admin';
     }
+    if (hash === '#brands' || hash === '#brands-page' || (hash.includes('brand') && !hash.includes('admin')) || path.includes('/brands')) return 'brands';
     if (hash.includes('products') || path.includes('/products')) return 'products';
     if (hash.includes('contact') || path.includes('/contact')) return 'contact';
     return 'home';
@@ -82,6 +84,8 @@ export default function App() {
     let targetHash = '#';
     if (page === 'admin') {
       targetHash = state?.tab === 'brands' ? '#admin-brands' : '#admin';
+    } else if (page === 'brands') {
+      targetHash = '#brands';
     } else if (page === 'products') {
       targetHash = '#products';
     } else if (page === 'contact') {
@@ -162,6 +166,9 @@ export default function App() {
       if (href === '#products' || href === '/products') {
         e.preventDefault();
         navigateTo('products');
+      } else if (href === '#brands' || href === '/brands' || href === '#brands-page') {
+        e.preventDefault();
+        navigateTo('brands');
       } else if (href === '#admin' || href === '/admin') {
         e.preventDefault();
         navigateTo('admin');
@@ -244,6 +251,17 @@ export default function App() {
               initialTab={adminTab}
               onNavigateHome={() => navigateTo('home')}
               onNavigateProducts={() => navigateTo('products')}
+            />
+          </Suspense>
+        </main>
+      ) : currentPage === 'brands' ? (
+        <main className="relative z-10">
+          <Suspense fallback={<PageFallback />}>
+            <BrandsPage
+              brands={brands}
+              onNavigateHome={() => navigateTo('home')}
+              onNavigateProducts={(brand) => navigateTo('products', '#products', brand ? { brand } : undefined)}
+              onNavigateAdmin={() => navigateTo('admin', null, { tab: 'brands' })}
             />
           </Suspense>
         </main>

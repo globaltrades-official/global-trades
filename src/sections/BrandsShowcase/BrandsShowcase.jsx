@@ -143,12 +143,21 @@ export default function BrandsShowcase({ brands = DEFAULT_TRUSTED_BRANDS, onNavi
           </div>
         </div>
 
-        {/* CTA Button */}
-        <div className="mt-12 text-center">
+        {/* CTA Buttons */}
+        <div className="mt-12 flex flex-wrap items-center justify-center gap-4 text-center">
+          <button
+            type="button"
+            onClick={() => onNavigate && onNavigate('brands')}
+            className="inline-flex items-center gap-2 rounded-xl bg-[#1A4C98] hover:bg-[#123873] text-white font-black px-7 py-3.5 text-xs sm:text-sm uppercase tracking-wider shadow-lg shadow-[#1A4C98]/20 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+          >
+            <Sparkles size={15} />
+            <span>View All Trusted Brands</span>
+          </button>
+
           <button
             type="button"
             onClick={handleExploreAll}
-            className="inline-flex items-center gap-2 rounded-xl bg-[#1A4C98] hover:bg-[#123873] text-white font-black px-7 py-3.5 text-xs sm:text-sm uppercase tracking-wider shadow-lg shadow-[#1A4C98]/20 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+            className="inline-flex items-center gap-2 rounded-xl bg-white hover:bg-[#F4F8FC] text-[#1A4C98] border border-[#D0DFEF] font-black px-7 py-3.5 text-xs sm:text-sm uppercase tracking-wider shadow-sm transition-all hover:scale-105 active:scale-95 cursor-pointer"
           >
             <span>Explore Products by Brand</span>
             <ArrowRight size={15} />
