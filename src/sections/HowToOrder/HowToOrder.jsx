@@ -1,7 +1,6 @@
 import React from 'react';
-import { Search, MessageSquare, Truck, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Search, Truck, CheckCircle2 } from 'lucide-react';
 import WhatsAppIcon from '@/components/WhatsAppIcon';
-import { CONTACT } from '@/constants/theme';
 
 export default function HowToOrder({ onNavigate }) {
   const steps = [
@@ -93,32 +92,6 @@ export default function HowToOrder({ onNavigate }) {
               </div>
             );
           })}
-        </div>
-
-        {/* WhatsApp Orders CTA Box */}
-        <div className="rounded-2xl sm:rounded-3xl bg-gradient-to-r from-emerald-900 via-[#1A4C98] to-[#081426] text-white p-4 sm:p-8 md:p-10 shadow-xl border border-white/10 flex flex-col lg:flex-row items-center justify-between gap-4 sm:gap-6">
-          <div className="space-y-1.5 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/20 px-3 py-0.5 sm:py-1 text-[11px] sm:text-xs font-bold text-emerald-300 border border-emerald-400/30">
-              <WhatsAppIcon size={13} />
-              <span>WhatsApp Orders: {CONTACT.WHATSAPP_DISPLAY}</span>
-            </div>
-            <h3 className="text-lg sm:text-2xl md:text-3xl font-black">
-              Ready to place or enquire about a wholesale order?
-            </h3>
-            <p className="text-xs sm:text-sm text-white/80 max-w-2xl font-medium">
-              Send your order requirements directly to our Kozhikode team for immediate confirmation, trade invoice, and delivery coordination.
-            </p>
-          </div>
-
-          <a
-            href={CONTACT.WHATSAPP_ORDER_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-black px-6 py-3 text-xs sm:text-sm uppercase tracking-wider shadow-lg shadow-emerald-950/40 transition-all hover:scale-105 active:scale-95 shrink-0 cursor-pointer"
-          >
-            <WhatsAppIcon size={16} />
-            <span>Open WhatsApp Orders</span>
-          </a>
         </div>
       </div>
     </section>

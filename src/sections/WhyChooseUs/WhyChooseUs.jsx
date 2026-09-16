@@ -8,8 +8,6 @@ import {
   Truck,
   CheckCircle2,
 } from 'lucide-react';
-import WhatsAppIcon from '@/components/WhatsAppIcon';
-import { CONTACT } from '@/constants/theme';
 
 const REASONS = [
   {
@@ -104,27 +102,6 @@ export default function WhyChooseUs({ onNavigate }) {
               </div>
             );
           })}
-        </div>
-
-        {/* Bottom Fast Contact Strip */}
-        <div className="mt-8 sm:mt-12 rounded-2xl bg-gradient-to-r from-[#1A4C98] to-[#123873] text-white p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
-          <div>
-            <p className="text-xs sm:text-sm font-bold text-white">
-              Direct store pickup at PT Usha Road, Vellayil or scheduled Kozhikode delivery.
-            </p>
-            <p className="text-[10px] sm:text-xs text-white/70 mt-0.5">
-              Wholesale pricing desk: <strong className="text-white">{CONTACT.WHATSAPP_DISPLAY}</strong>
-            </p>
-          </div>
-          <a
-            href={CONTACT.WHATSAPP_ORDER_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 px-4 py-2 text-xs font-black text-white shadow-md transition-all shrink-0 cursor-pointer"
-          >
-            <WhatsAppIcon size={14} />
-            <span>WhatsApp Rates</span>
-          </a>
         </div>
       </div>
     </section>

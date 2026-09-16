@@ -4,7 +4,6 @@ import {
   Receipt,
   MapPin,
   Truck,
-  HelpCircle,
   ArrowRight,
   CheckCircle2,
 } from 'lucide-react';
@@ -157,31 +156,6 @@ export default function HowWeServe({ onNavigate }) {
               )}
             </div>
           </div>
-        </div>
-
-        {/* Small "Need help choosing products?" CTA linked to WhatsApp order number */}
-        <div className="mt-8 sm:mt-12 mx-auto max-w-2xl rounded-2xl bg-white/85 border border-[#1A4C98]/20 p-3.5 sm:p-5 shadow-sm backdrop-blur-sm flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
-          <div className="flex items-center gap-2.5 sm:gap-3 text-center sm:text-left">
-            <div className="size-9 sm:size-10 rounded-xl bg-[#1A4C98]/10 text-[#1A4C98] flex items-center justify-center shrink-0">
-              <HelpCircle size={20} />
-            </div>
-            <div>
-              <p className="text-xs sm:text-sm font-bold text-[#081426]">
-                Need guidance selecting products for your cafe, restaurant, or bakery?
-              </p>
-              <p className="text-[11px] sm:text-xs text-[#081426]/70">
-                Call for Enquiries: <strong className="text-[#1A4C98]">{CONTACT.ENQUIRY_PHONE}</strong>
-              </p>
-            </div>
-          </div>
-
-          <a
-            href={`tel:${CONTACT.ENQUIRY_PHONE_RAW}`}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-[#1A4C98]/30 bg-white hover:bg-[#F4F8FC] px-3.5 py-2 text-xs font-black uppercase tracking-wider text-[#1A4C98] transition-colors shadow-2xs shrink-0 cursor-pointer"
-          >
-            <span>Call Now</span>
-            <ArrowRight size={12} />
-          </a>
         </div>
       </div>
     </section>

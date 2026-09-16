@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, HelpCircle, Phone } from 'lucide-react';
-import WhatsAppIcon from '@/components/WhatsAppIcon';
-import { CONTACT } from '@/constants/theme';
+import { ChevronDown, HelpCircle } from 'lucide-react';
 
 const FAQS = [
   {
@@ -97,38 +95,6 @@ export default function FAQ() {
               </div>
             );
           })}
-        </div>
-
-        {/* Additional Questions Card */}
-        <div className="mt-12 rounded-2xl bg-white p-6 border border-[#D0DFEF] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>
-            <h3 className="text-base font-black text-[#081426]">
-              Have a question about products or pricing?
-            </h3>
-            <p className="text-xs text-[#081426]/70 mt-0.5">
-              Contact our sales desk on WhatsApp or call our office.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2.5 shrink-0">
-            <a
-              href={CONTACT.WHATSAPP_ORDER_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-black px-4 py-2.5 text-xs uppercase tracking-wider shadow-sm transition-all hover:scale-105 active:scale-95"
-            >
-              <WhatsAppIcon size={14} />
-              <span>WhatsApp: {CONTACT.WHATSAPP_DISPLAY}</span>
-            </a>
-
-            <a
-              href={`tel:${CONTACT.ENQUIRY_PHONE_RAW}`}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#1A4C98] hover:bg-[#123873] text-white font-black px-4 py-2.5 text-xs uppercase tracking-wider shadow-sm transition-all hover:scale-105 active:scale-95"
-            >
-              <Phone size={13} />
-              <span>Call: {CONTACT.ENQUIRY_PHONE}</span>
-            </a>
-          </div>
         </div>
       </div>
     </section>

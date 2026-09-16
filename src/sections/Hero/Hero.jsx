@@ -2,14 +2,13 @@ import React, { lazy, Suspense } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ShieldCheck, FileText, Tag, Truck, Store, HelpCircle } from 'lucide-react';
+import { ShieldCheck, FileText, Tag, Truck, Store } from 'lucide-react';
 import WhatsAppIcon from '@/components/WhatsAppIcon';
 
 import Button from '@/components/Button';
 import { TextSplitter } from '@/components/TextSplitter';
 import MobileHeroWatermark from './MobileHeroWatermark';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { BRANDING, CONTACT } from '@/constants/theme';
 
 // Lazy load the desktop 3D WebGL scene so mobile devices load instantly without Three.js
 const Desktop3DHero = lazy(() => import('./Desktop3DHero'));
@@ -180,19 +179,6 @@ export default function Hero({ onNavigate }) {
                 <Store size={15} className="text-emerald-700 shrink-0" />
                 <span>Store Pickup Available</span>
               </div>
-            </div>
-
-            {/* Small 'Need help choosing products?' consultation CTA */}
-            <div className="mt-4 flex items-center justify-center">
-              <a
-                href={CONTACT.WHATSAPP_HELP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1A4C98] hover:text-[#00A3E0] transition-colors underline underline-offset-4"
-              >
-                <WhatsAppIcon size={15} className="shrink-0 text-emerald-600" />
-                <span>Need help choosing products? Order on WhatsApp: 0495 2765320</span>
-              </a>
             </div>
           </div>
         </div>
