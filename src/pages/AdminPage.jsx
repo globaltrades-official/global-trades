@@ -172,6 +172,16 @@ export default function AdminPage({
     }
   };
 
+  const featuredProductBrands = useMemo(() => {
+    const set = new Set();
+    (products || []).forEach((p) => {
+      if (p.isFeatured && p.brand) {
+        set.add(p.brand.toLowerCase().trim());
+      }
+    });
+    return set;
+  }, [products]);
+
   const filteredBrands = useMemo(() => {
     return (brands || []).filter((b) => {
       if (brandFilter === 'featured' && !b.isFeatured) return false;
@@ -946,8 +956,8 @@ END $$;`;
                             }
                             showToast(
                               p.isFeatured
-                                ? `Removed "${p.name}" from Home Showcase`
-                                : `Added "${p.name}" to Home Showcase!`
+                                ? `Removed "${p.name}" & "${p.brand}" brand logo from Home`
+                                : `Featured "${p.name}" & "${p.brand}" brand logo on Home!`
                             );
                           }}
                           className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer active:scale-95 ${
@@ -955,7 +965,7 @@ END $$;`;
                               ? 'bg-amber-100 text-amber-900 border border-amber-300 shadow-sm hover:bg-amber-200'
                               : 'bg-gray-100 text-gray-500 border border-gray-200 hover:bg-amber-50 hover:text-amber-800 hover:border-amber-200'
                           }`}
-                          title={p.isFeatured ? 'Click to remove from Home showcase' : 'Click to feature on Home showcase'}
+                          title={p.isFeatured ? 'Click to remove product and brand logo from Home' : 'Click to feature product and show brand logo on Home'}
                         >
                           <Star size={13} className={p.isFeatured ? 'fill-amber-500 text-amber-500' : 'text-gray-400'} />
                           <span>{p.isFeatured ? 'Featured' : 'Feature'}</span>
@@ -1219,8 +1229,18 @@ END $$;`;
                 </div>
 
                 <div className="mt-4 pt-3 border-t border-[#F0F5FA] flex items-center justify-between">
-                  <span className="text-[10px] font-bold text-[#081426]/60">
-                    {brand.isFeatured !== false ? '✓ In Showcase' : '— Inactive'}
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                    featuredProductBrands.has((brand.name || '').toLowerCase().trim())
+                      ? 'bg-amber-100 text-amber-900 border border-amber-300 font-black'
+                      : brand.isFeatured !== false
+                      ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                      : 'bg-gray-100 text-gray-500'
+                  }`}>
+                    {featuredProductBrands.has((brand.name || '').toLowerCase().trim())
+                      ? '★ Featured on Home'
+                      : brand.isFeatured !== false
+                      ? '✓ In Showcase'
+                      : '— Inactive'}
                   </span>
 
                   <div className="flex items-center gap-1.5">
@@ -1419,7 +1439,7 @@ END $$;`;
                     <span>Feature on Home Page</span>
                   </span>
                   <p className="text-[11px] font-medium text-amber-900/75 mt-0.5">
-                    Includes this product in the Flagship Wholesale Showcase on the home overview.
+                    Includes this product in the Flagship Showcase and features its brand logo ({formData.brand || 'brand'}) in the Trusted Brands section on Home.
                   </p>
                 </div>
               </label>

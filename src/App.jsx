@@ -326,8 +326,8 @@ export default function App() {
           {/* 4. Why Global Trades (6 Simple Cards) */}
           <WhyChooseUs onNavigate={navigateTo} />
 
-          {/* 5. Featured Brands (Logos Only, Managed from Admin) */}
-          <BrandsShowcase brands={brands} onNavigate={navigateTo} />
+          {/* 5. Featured Brands (Logos Only, Derived from Featured Products in Admin) */}
+          <BrandsShowcase brands={brands} products={products} onNavigate={navigateTo} />
 
           {/* 6. Industries We Serve (Cafes, Bakeries, Restaurants, Caterers, Cloud Kitchens, Hotels, Retail) */}
           <IndustriesWeServe onNavigate={navigateTo} />
