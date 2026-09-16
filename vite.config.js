@@ -10,8 +10,7 @@ export default defineConfig({
     },
   },
   server: {
-    host: true,
-    allowedHosts: true,
+    host: false,
     port: 3000,
     open: false,
     watch: {
