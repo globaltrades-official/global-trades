@@ -6,7 +6,6 @@ import Hero from './sections/Hero/Hero';
 import Carousel from './sections/Carousel/Carousel';
 import ShopByCategory from './sections/ShopByCategory/ShopByCategory';
 import WhyChooseUs from './sections/WhyChooseUs/WhyChooseUs';
-import BrandsShowcase from './sections/BrandsShowcase/BrandsShowcase';
 import IndustriesWeServe from './sections/IndustriesWeServe/IndustriesWeServe';
 import HowToOrder from './sections/HowToOrder/HowToOrder';
 import AlternatingText from './sections/AlternatingText/AlternatingText';
@@ -306,10 +305,7 @@ export default function App() {
           {/* 4. Why Global Trades (6 Simple Cards) */}
           <WhyChooseUs onNavigate={navigateTo} />
 
-          {/* 5. Brands Showcase (Authorized Brands & Explore CTA) */}
-          <BrandsShowcase brands={brands} onNavigate={navigateTo} />
-
-          {/* 6. Industries We Serve (Cafes, Bakeries, Restaurants, Caterers, Cloud Kitchens, Hotels, Retail) */}
+          {/* 5. Industries We Serve (Cafes, Bakeries, Restaurants, Caterers, Cloud Kitchens, Hotels, Retail) */}
           <IndustriesWeServe onNavigate={navigateTo} />
 
           {/* 7. How to Order (3-Step Order Flow + WhatsApp Orders 0495 2765320) */}
