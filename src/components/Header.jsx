@@ -29,7 +29,7 @@ export default function Header({ currentPage = 'home', activeSection = 'hero', o
             />
           </div>
           <div className="flex flex-col">
-            <span className="text-xl md:text-2xl font-black tracking-tight text-[#1A4C98] uppercase leading-none">
+            <span className="text-xl md:text-2xl font-black tracking-tight text-[#1A4C98] uppercase leading-none font-heading">
               {BRANDING.COMPANY_NAME}
             </span>
             <div className="flex items-center gap-2 mt-1">

@@ -73,7 +73,7 @@ export default function FAQ() {
                   className="w-full text-left p-4 sm:p-6 flex items-center justify-between gap-4 cursor-pointer hover:bg-[#F8FAFD] transition-colors"
                   aria-expanded={isOpen}
                 >
-                  <span className="text-sm sm:text-lg font-black text-[#081426] leading-snug">
+                  <span className="text-sm sm:text-lg font-black text-[#081426] leading-snug font-heading">
                     {faq.q}
                   </span>
                   <div

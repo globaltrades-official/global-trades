@@ -4,7 +4,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Times New Roman"', 'Times', '"Liberation Serif"', 'serif'],
+        sans: ['Alpino', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
+        heading: ['"Times New Roman"', 'Times', '"Liberation Serif"', 'serif'],
         serif: ['"Times New Roman"', 'Times', '"Liberation Serif"', 'serif'],
       },
       keyframes: {
