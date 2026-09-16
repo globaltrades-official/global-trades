@@ -20,13 +20,30 @@ export default function ProductsPage({
   onNavigateAdmin,
   products = CATALOG_PRODUCTS,
   isEmbedded = false,
+  initialCategory = 'All',
+  initialBrand = 'All',
 }) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [selectedBrand, setSelectedBrand] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState(initialCategory);
+  const [selectedBrand, setSelectedBrand] = useState(initialBrand);
   const [sortBy, setSortBy] = useState('default');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 24;
+
+  // Sync category or brand when passed from parent / external link
+  useEffect(() => {
+    if (initialCategory) {
+      setSelectedCategory(initialCategory);
+      setCurrentPage(1);
+    }
+  }, [initialCategory]);
+
+  useEffect(() => {
+    if (initialBrand) {
+      setSelectedBrand(initialBrand);
+      setCurrentPage(1);
+    }
+  }, [initialBrand]);
 
   // Scroll to top on standalone page mount only
   useEffect(() => {
@@ -160,18 +177,18 @@ export default function ProductsPage({
 
       {/* Main Catalog Content */}
       <div className="mx-auto max-w-7xl px-4 md:px-8">
-        {/* Wholesale Price & Live Stock Notice */}
-        <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-blue-50 border border-emerald-200/80 p-4 sm:px-6 sm:py-3.5 shadow-sm text-xs sm:text-sm text-[#081426]">
-          <div className="flex items-center gap-3">
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-xs">
+        {/* Stock and Price Expectation Notes */}
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-blue-50 border border-emerald-200/80 p-4 sm:px-6 sm:py-4 shadow-sm text-xs sm:text-sm text-[#081426]">
+          <div className="flex items-start sm:items-center gap-3">
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-emerald-800 text-white shadow-xs mt-0.5 sm:mt-0">
               <WhatsAppIcon size={18} />
             </span>
-            <div>
+            <div className="space-y-1">
               <p className="font-bold text-[#081426] leading-tight">
-                Wholesale pricing and live stock availability are shared on WhatsApp.
+                Wholesale prices and live stock availability are shared on WhatsApp.
               </p>
-              <p className="text-xs text-[#081426]/70 mt-0.5">
-                Institutional billing, crate trade discounts &amp; delivery status sent directly by our sales desk.
+              <p className="text-xs text-[#081426]/75 font-semibold">
+                ℹ️ For direct store purchase, please confirm availability before visiting.
               </p>
             </div>
           </div>
@@ -179,7 +196,7 @@ export default function ProductsPage({
             href={CONTACT.WHATSAPP_ORDER_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold px-4 py-2 text-xs uppercase tracking-wider transition-all shadow-sm shadow-emerald-950/20 shrink-0 self-start sm:self-auto cursor-pointer"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-800 hover:bg-emerald-900 active:scale-95 text-white font-bold px-4 py-2.5 text-xs uppercase tracking-wider transition-all shadow-sm shadow-emerald-950/20 shrink-0 self-start sm:self-auto cursor-pointer"
           >
             <span>Ask for Pricing</span>
             <ArrowRight size={13} />

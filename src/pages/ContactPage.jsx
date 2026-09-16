@@ -14,6 +14,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import WhatsAppIcon from '@/components/WhatsAppIcon';
+import StoreDeliveryInfoCard from '@/components/StoreDeliveryInfoCard';
 import { BRANDING, CONTACT } from '@/constants/theme';
 
 export default function ContactPage({ onNavigateHome, onNavigateProducts }) {
@@ -503,6 +504,11 @@ export default function ContactPage({ onNavigateHome, onNavigateProducts }) {
               )}
             </div>
           </div>
+        </div>
+
+        {/* Store Pickup & Kozhikode Delivery Information Card */}
+        <div className="mt-12">
+          <StoreDeliveryInfoCard />
         </div>
       </div>
     </div>

@@ -4,8 +4,17 @@ import Footer from './components/Footer';
 import MobileFloatingWhatsApp from './components/MobileFloatingWhatsApp';
 import Hero from './sections/Hero/Hero';
 import Carousel from './sections/Carousel/Carousel';
+import ShopByCategory from './sections/ShopByCategory/ShopByCategory';
+import WhyChooseUs from './sections/WhyChooseUs/WhyChooseUs';
+import BrandsShowcase from './sections/BrandsShowcase/BrandsShowcase';
+import IndustriesWeServe from './sections/IndustriesWeServe/IndustriesWeServe';
+import HowToOrder from './sections/HowToOrder/HowToOrder';
 import AlternatingText from './sections/AlternatingText/AlternatingText';
 import HowWeServe from './sections/HowWeServe/HowWeServe';
+import SupplyPromise from './sections/SupplyPromise/SupplyPromise';
+import FAQ from './sections/FAQ/FAQ';
+import LocalSEOHubs from './sections/LocalSEOHubs/LocalSEOHubs';
+import StoreDeliveryInfoCard from './components/StoreDeliveryInfoCard';
 import BigText from './sections/BigText/BigText';
 import { useProductCatalog } from './hooks/useProductCatalog';
 import { useMediaQuery } from './hooks/useMediaQuery';
@@ -49,8 +58,9 @@ export default function App() {
   const isDesktop = useMediaQuery('(min-width: 768px)', true);
   const [currentPage, setCurrentPage] = useState(getPageFromLocation);
   const [activeSection, setActiveSection] = useState('hero');
+  const [productFilter, setProductFilter] = useState({ category: 'All', brand: 'All' });
 
-  const navigateTo = useCallback((page, anchor) => {
+  const navigateTo = useCallback((page, anchor, state) => {
     let targetHash = '#';
     if (page === 'admin') {
       targetHash = '#admin';
@@ -60,6 +70,13 @@ export default function App() {
       targetHash = '#contact';
     } else if (anchor && anchor !== '#') {
       targetHash = anchor;
+    }
+
+    if (state) {
+      setProductFilter({
+        category: state.category || 'All',
+        brand: state.brand || 'All',
+      });
     }
 
     if (window.location.hash !== targetHash) {
@@ -207,6 +224,8 @@ export default function App() {
             <ProductsPage
               products={products}
               isEmbedded={false}
+              initialCategory={productFilter.category}
+              initialBrand={productFilter.brand}
               onNavigateHome={() => navigateTo('home')}
               onNavigateAdmin={() => navigateTo('admin')}
             />
@@ -234,13 +253,42 @@ export default function App() {
           {/* 2. 3D Product Carousel Showcase */}
           <Carousel products={products} onNavigate={navigateTo} />
 
-          {/* 3. Social Proof & Institutional Strengths (Google Reviews) */}
+          {/* 3. Shop by Category (Linked directly to catalogue filters) */}
+          <ShopByCategory onNavigate={navigateTo} />
+
+          {/* 4. Why Choose Global Trades (7 Verified Supportable Points) */}
+          <WhyChooseUs onNavigate={navigateTo} />
+
+          {/* 5. Brands Showcase (Authorized Brands & Explore CTA) */}
+          <BrandsShowcase onNavigate={navigateTo} />
+
+          {/* 6. Industries We Serve (Cafes, Bakeries, Restaurants, Caterers, Cloud Kitchens, Hotels, Retail) */}
+          <IndustriesWeServe onNavigate={navigateTo} />
+
+          {/* 7. How to Order (3-Step Order Flow + WhatsApp Orders 0495 2765320) */}
+          <HowToOrder onNavigate={navigateTo} />
+
+          {/* 8. Social Proof & Reviews ("Trusted by Kozhikode Food Businesses") */}
           <AlternatingText />
 
-          {/* 4. How We Serve Businesses */}
+          {/* 9. How We Serve Businesses */}
           <HowWeServe onNavigate={navigateTo} />
 
-          {/* 5. Brand Statement */}
+          {/* 10. Our Supply Promise (5 Core Trust Statements) */}
+          <SupplyPromise />
+
+          {/* 11. FAQ Section (7 Core Wholesale & Delivery Questions) */}
+          <FAQ />
+
+          {/* 12. Local SEO Foodservice Distribution Hubs (6 Local Niches) */}
+          <LocalSEOHubs onNavigate={navigateTo} />
+
+          {/* 13. Store Pickup & Kozhikode Delivery Information Visibility Card */}
+          <div className="mx-auto max-w-7xl px-4 md:px-8 py-10">
+            <StoreDeliveryInfoCard />
+          </div>
+
+          {/* 14. Brand Statement */}
           <BigText />
         </main>
       )}

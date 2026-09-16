@@ -210,8 +210,83 @@ export default function Footer({ onNavigate }) {
           </div>
         </div>
 
+        {/* B2B Navigation Quick Links */}
+        <div className="py-6 border-b border-[#1A4C98]/15 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-bold text-[#081426]/75">
+          <button
+            type="button"
+            onClick={() => onNavigate && onNavigate('home', '#shop-by-category')}
+            className="hover:text-[#1A4C98] transition-colors cursor-pointer"
+          >
+            Shop by Category
+          </button>
+          <span>·</span>
+          <button
+            type="button"
+            onClick={() => onNavigate && onNavigate('home', '#why-choose-us')}
+            className="hover:text-[#1A4C98] transition-colors cursor-pointer"
+          >
+            Why Choose Us
+          </button>
+          <span>·</span>
+          <button
+            type="button"
+            onClick={() => onNavigate && onNavigate('home', '#brands')}
+            className="hover:text-[#1A4C98] transition-colors cursor-pointer"
+          >
+            Our Brands
+          </button>
+          <span>·</span>
+          <button
+            type="button"
+            onClick={() => onNavigate && onNavigate('home', '#industries')}
+            className="hover:text-[#1A4C98] transition-colors cursor-pointer"
+          >
+            Industries We Serve
+          </button>
+          <span>·</span>
+          <button
+            type="button"
+            onClick={() => onNavigate && onNavigate('home', '#how-to-order')}
+            className="hover:text-[#1A4C98] transition-colors cursor-pointer"
+          >
+            How to Order
+          </button>
+          <span>·</span>
+          <button
+            type="button"
+            onClick={() => onNavigate && onNavigate('home', '#benefits')}
+            className="hover:text-[#1A4C98] transition-colors cursor-pointer"
+          >
+            Reviews
+          </button>
+          <span>·</span>
+          <button
+            type="button"
+            onClick={() => onNavigate && onNavigate('home', '#supply-promise')}
+            className="hover:text-[#1A4C98] transition-colors cursor-pointer"
+          >
+            Our Supply Promise
+          </button>
+          <span>·</span>
+          <button
+            type="button"
+            onClick={() => onNavigate && onNavigate('home', '#faq')}
+            className="hover:text-[#1A4C98] transition-colors cursor-pointer"
+          >
+            FAQ
+          </button>
+          <span>·</span>
+          <button
+            type="button"
+            onClick={() => onNavigate && onNavigate('home', '#local-supply-hubs')}
+            className="hover:text-[#1A4C98] transition-colors cursor-pointer"
+          >
+            Kozhikode Supply Hubs
+          </button>
+        </div>
+
         {/* Bottom Bar with perfect horizontal alignment */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 text-xs font-semibold text-[#081426]/65">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 text-xs font-semibold text-[#081426]/65">
           <p>© {new Date().getFullYear()} Global Trades. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <button

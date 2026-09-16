@@ -154,7 +154,7 @@ export default function HowWeServe({ onNavigate }) {
                   onClick={() => onNavigate('products')}
                   className="w-full inline-flex items-center justify-center gap-1.5 text-xs font-bold text-white/90 hover:text-white transition-colors py-1 cursor-pointer"
                 >
-                  <span>Browse 400+ Product Lines</span>
+                  <span>Browse Product Catalogue</span>
                   <ArrowRight size={13} />
                 </button>
               )}

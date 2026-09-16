@@ -20,7 +20,7 @@ const TEXT_GROUP = [
     heading: 'Bulk Purchase for Cafes & Restaurants',
     reviewer: 'Irshad Kallan · Google Local Guide',
     reviewQuote: '“Best place to purchase bulk for cafe and restaurant. A lot of products Indian and imported.”',
-    body: 'Wholesale crate and carton pricing designed for food service margins. Providing consistent supply to over 500+ premier commercial kitchens, bakeries, and fine-dining establishments.',
+    body: 'Wholesale crate and carton pricing designed for food service margins. Providing consistent supply to commercial kitchens, cafes, bakeries, and food establishments across Kozhikode.',
   },
   {
     tag: 'Centrally Located in Kozhikode',
@@ -176,7 +176,24 @@ export default function AlternatingText() {
         </div>
       </div>
 
-      <div className="relative w-full">
+      <div className="relative w-full pt-12 md:pt-16">
+        {/* Section Header */}
+        <div className="mx-auto max-w-3xl text-center px-4 mb-10 sm:mb-14 relative z-10">
+          <div className="inline-flex items-center gap-2 rounded-full bg-amber-50 border border-amber-200 px-4 py-1.5 text-xs font-black uppercase tracking-wider text-amber-900 mb-4 shadow-2xs">
+            <span className="text-amber-600 font-extrabold">★ {BRANDING.RATING} on Google Maps</span>
+            <span className="text-amber-300">·</span>
+            <span className="text-[#081426]/80">{BRANDING.REVIEWS_COUNT} Verified Reviews</span>
+          </div>
+
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-[#081426] leading-tight">
+            Trusted by Kozhikode Food Businesses
+          </h2>
+
+          <p className="mt-3 text-base sm:text-lg text-[#081426]/80 font-medium leading-relaxed">
+            What cafes, restaurants, and bakery customers say about Global Trades.
+          </p>
+        </div>
+
         {/* Alternating Review Rows */}
         <div className="mx-auto flex w-full max-w-7xl flex-col items-center px-4 md:px-8 relative z-10">
           {TEXT_GROUP.map((item, index) => {
