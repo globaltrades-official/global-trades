@@ -12,7 +12,6 @@ import HowToOrder from './sections/HowToOrder/HowToOrder';
 import AlternatingText from './sections/AlternatingText/AlternatingText';
 import HowWeServe from './sections/HowWeServe/HowWeServe';
 import FAQ from './sections/FAQ/FAQ';
-import StoreDeliveryInfoCard from './components/StoreDeliveryInfoCard';
 import BigText from './sections/BigText/BigText';
 import { useProductCatalog } from './hooks/useProductCatalog';
 import { useBrandCatalog } from './hooks/useBrandCatalog';
@@ -378,15 +377,10 @@ export default function App() {
           {/* 9. How We Serve Businesses */}
           <HowWeServe onNavigate={navigateTo} />
 
-          {/* 10. Store Pickup & Kozhikode Delivery Information Visibility Card */}
-          <div className="mx-auto max-w-7xl px-4 md:px-8 py-10">
-            <StoreDeliveryInfoCard />
-          </div>
-
-          {/* 11. Brand Statement */}
+          {/* 10. Brand Statement */}
           <BigText />
 
-          {/* 12. FAQ Section (Moved to last) */}
+          {/* 11. FAQ Section (Moved to last) */}
           <FAQ />
         </main>
       )}

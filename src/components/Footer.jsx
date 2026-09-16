@@ -5,56 +5,8 @@ import WhatsAppIcon from './WhatsAppIcon';
 
 export default function Footer({ onNavigate }) {
   return (
-    <footer id="contact-footer" className="bg-gradient-to-b from-[#E8F1FB] via-[#E2EEF9] to-[#D7E8F7] text-[#081426] relative z-20 border-t border-[#1A4C98]/15 pt-14 pb-12">
+    <footer id="contact-footer" className="bg-gradient-to-b from-[#E8F1FB] via-[#E2EEF9] to-[#D7E8F7] text-[#081426] relative z-20 border-t border-[#1A4C98]/15 pt-10 pb-12">
       <div className="mx-auto w-full max-w-7xl px-4 md:px-8 relative">
-        {/* Top Standout Wholesale CTA Banner */}
-        <div className="mb-12 relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1A4C98] via-[#123670] to-[#0A1D3D] text-white p-6 sm:p-8 lg:p-10 shadow-2xl shadow-[#1A4C98]/20 border border-white/10">
-          <div
-            className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-[#00A3E0]/15 blur-3xl"
-            aria-hidden="true"
-          />
-          <div
-            className="pointer-events-none absolute -left-20 -bottom-20 h-72 w-72 rounded-full bg-emerald-500/15 blur-3xl"
-            aria-hidden="true"
-          />
-
-          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            <div className="space-y-3 max-w-2xl">
-              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/20 px-3.5 py-1 text-xs font-bold text-emerald-300 border border-emerald-400/30">
-                <span className="inline-block size-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Delivery within Kozhikode &amp; Direct Store Pickup</span>
-              </div>
-              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white leading-tight">
-                Need wholesale supply? Contact Global Trades.
-              </h3>
-              <p className="text-sm sm:text-base font-medium text-white/80 leading-relaxed">
-                Visit our store for direct purchase or contact us for delivery within Kozhikode. Get institutional GST billing, bulk trade rates, and authorized brand freshness for your business.
-              </p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row items-stretch sm:items-center gap-3 shrink-0">
-              <a
-                href={CONTACT.WHATSAPP_ORDER_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-[#081426] font-black px-5 py-3.5 text-xs sm:text-sm uppercase tracking-wider shadow-lg shadow-emerald-950/30 transition-all hover:scale-105 active:scale-95 cursor-pointer"
-              >
-                <WhatsAppIcon size={16} />
-                <span>WhatsApp Orders: 0495 2765320</span>
-              </a>
-
-              <button
-                type="button"
-                onClick={() => onNavigate && onNavigate('contact')}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-black px-5 py-3.5 text-xs sm:text-sm uppercase tracking-wider border border-white/20 backdrop-blur-sm transition-all hover:scale-105 active:scale-95 cursor-pointer"
-              >
-                <span>Contact Us</span>
-                <ArrowRight size={15} />
-              </button>
-            </div>
-          </div>
-        </div>
-
         {/* 3 Balanced, Left-Aligned Columns */}
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-12 items-start pb-12 border-b border-[#1A4C98]/15">
           {/* Column 1: Brand & Ratings */}
