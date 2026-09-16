@@ -38,109 +38,83 @@ export default function AlternatingText() {
 
   useGSAP(
     () => {
-      const sections = gsap.utils.toArray('.alternating-section');
-      const bgColors = ['#E2ECF8', '#DBEAFE', '#F0F5FA'];
-
-      sections.forEach((section, index) => {
-        if (index === 0) return;
-        ScrollTrigger.create({
-          trigger: section,
-          start: 'top 60%',
-          end: 'bottom 60%',
-          onEnter: () => {
-            gsap.to('.alternating-text-container', {
-              backgroundColor: bgColors[index % bgColors.length],
-              duration: 0.8,
-              overwrite: 'auto',
-            });
-          },
-          onEnterBack: () => {
-            gsap.to('.alternating-text-container', {
-              backgroundColor: bgColors[(index - 1) % bgColors.length],
-              duration: 0.8,
-              overwrite: 'auto',
-            });
-          },
-        });
-      });
-
       // Desktop: Scroll-driven continuous transition across all review rows with one shared logo
-      if (containerRef.current && sections.length > 0) {
+      if (containerRef.current) {
         const mm = gsap.matchMedia(containerRef);
 
         mm.add(
           {
             isDesktop: '(min-width: 1024px)',
-            isMobile: '(max-width: 1023px)',
             reduceMotion: '(prefers-reduced-motion: reduce)',
           },
           (context) => {
-            const { isDesktop, isMobile, reduceMotion } = context.conditions;
+            const { isDesktop, reduceMotion } = context.conditions;
 
             // Desktop only (min-width: 1024px):
-            if (isDesktop && sharedLogoRef.current) {
-              const desktopDistance = Math.min(window.innerWidth * 0.25, 340);
-              const xTarget = desktopDistance;
+            if (isDesktop) {
+              const sections = gsap.utils.toArray('.alternating-section');
+              const bgColors = ['#E2ECF8', '#DBEAFE', '#F0F5FA'];
 
-              // Position 1: Start beside Review 1 (on the right side)
-              gsap.set(sharedLogoRef.current, {
-                x: xTarget,
-                y: 0,
-                scale: 1,
-              });
-
-              if (!reduceMotion && logoPinRef.current) {
-                // Unified ScrollTrigger timeline: pins the shared logo viewport container
-                // and continuously animates the logo across rows without disappearing
-                const scrollTl = gsap.timeline({
-                  scrollTrigger: {
-                    trigger: containerRef.current,
-                    pin: logoPinRef.current,
-                    start: 'top top',
-                    end: 'bottom bottom',
-                    scrub: 0.8,
-                    pinSpacing: false,
-                    invalidateOnRefresh: true,
+              sections.forEach((section, index) => {
+                if (index === 0) return;
+                ScrollTrigger.create({
+                  trigger: section,
+                  start: 'top 60%',
+                  end: 'bottom 60%',
+                  onEnter: () => {
+                    gsap.to('.alternating-text-container', {
+                      backgroundColor: bgColors[index % bgColors.length],
+                      duration: 0.8,
+                      overwrite: 'auto',
+                    });
+                  },
+                  onEnterBack: () => {
+                    gsap.to('.alternating-text-container', {
+                      backgroundColor: bgColors[(index - 1) % bgColors.length],
+                      duration: 0.8,
+                      overwrite: 'auto',
+                    });
                   },
                 });
-
-                // Continuous animation:
-                // Review 1 (right) -> Review 2 (left) -> Review 3 (right)
-                scrollTl
-                  .to(sharedLogoRef.current, {
-                    x: -xTarget,
-                    ease: 'sine.inOut',
-                    duration: 1,
-                  })
-                  .to(sharedLogoRef.current, {
-                    x: xTarget,
-                    ease: 'sine.inOut',
-                    duration: 1,
-                  });
-              }
-            }
-
-            // Mobile only (max-width: 767px):
-            // Very subtle scroll-driven horizontal movement only (12–18px left/right, no rotation or scale)
-            if (isMobile && !reduceMotion) {
-              const mobileLogos = gsap.utils.toArray('.mobile-review-logo');
-              mobileLogos.forEach((logo, idx) => {
-                const travelDistance = idx % 2 === 0 ? 15 : -15;
-                gsap.fromTo(
-                  logo,
-                  { x: -travelDistance },
-                  {
-                    x: travelDistance,
-                    ease: 'power1.out',
-                    scrollTrigger: {
-                      trigger: logo,
-                      start: 'top 95%',
-                      end: 'bottom 20%',
-                      scrub: 1.0,
-                    },
-                  }
-                );
               });
+
+              if (sharedLogoRef.current) {
+                const desktopDistance = Math.min(window.innerWidth * 0.25, 340);
+                const xTarget = desktopDistance;
+
+                // Position 1: Start beside Review 1 (on the right side)
+                gsap.set(sharedLogoRef.current, {
+                  x: xTarget,
+                  y: 0,
+                  scale: 1,
+                });
+
+                if (!reduceMotion && logoPinRef.current) {
+                  const scrollTl = gsap.timeline({
+                    scrollTrigger: {
+                      trigger: containerRef.current,
+                      pin: logoPinRef.current,
+                      start: 'top top',
+                      end: 'bottom bottom',
+                      scrub: 0.8,
+                      pinSpacing: false,
+                      invalidateOnRefresh: true,
+                    },
+                  });
+
+                  scrollTl
+                    .to(sharedLogoRef.current, {
+                      x: -xTarget,
+                      ease: 'sine.inOut',
+                      duration: 1,
+                    })
+                    .to(sharedLogoRef.current, {
+                      x: xTarget,
+                      ease: 'sine.inOut',
+                      duration: 1,
+                    });
+                }
+              }
             }
           }
         );
@@ -179,34 +153,29 @@ export default function AlternatingText() {
       <div className="relative w-full pt-12 md:pt-16">
         {/* Section Header */}
         <div className="mx-auto max-w-3xl text-center px-4 mb-6 sm:mb-14 relative z-10">
-          <div className="flex items-center justify-between sm:justify-center mb-3">
-            <div className="inline-flex items-center gap-2 rounded-full bg-amber-50 border border-amber-200 px-3.5 py-1 text-xs font-black uppercase tracking-wider text-amber-900 shadow-2xs">
-              <span className="text-amber-600 font-extrabold">★ {BRANDING.RATING}</span>
-              <span className="text-amber-300">·</span>
-              <span className="text-[#081426]/80">{BRANDING.REVIEWS_COUNT} Reviews</span>
-            </div>
-            <span className="text-[10px] font-bold text-[#1A4C98]/80 lg:hidden">
-              Swipe Reviews →
-            </span>
+          <div className="inline-flex items-center gap-2 rounded-full bg-amber-50 border border-amber-200 px-3.5 py-1 text-xs font-black uppercase tracking-wider text-amber-900 shadow-2xs mb-3">
+            <span className="text-amber-600 font-extrabold">★ {BRANDING.RATING}</span>
+            <span className="text-amber-300">·</span>
+            <span className="text-[#081426]/80">{BRANDING.REVIEWS_COUNT} Reviews</span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-[#081426] leading-tight">
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-[#081426] leading-tight">
             Trusted by Kozhikode Food Businesses
           </h2>
 
-          <p className="mt-3 text-base sm:text-lg text-[#081426]/80 font-medium leading-relaxed">
+          <p className="mt-2 sm:mt-3 text-xs sm:text-base text-[#081426]/80 font-medium leading-relaxed">
             What cafes, restaurants, and bakery customers say about Global Trades.
           </p>
         </div>
 
-        {/* Review Cards: Horizontal swipeable carousel on mobile, scroll-pinned desktop flow */}
-        <div className="mx-auto flex w-full max-w-7xl flex-row lg:flex-col items-stretch lg:items-center px-4 md:px-8 relative z-10 overflow-x-auto lg:overflow-visible gap-4 lg:gap-0 pb-4 lg:pb-0 scrollbar-none snap-x snap-mandatory">
+        {/* Review Cards: Grid on Mobile/Tablet matching Why Global Trades, Scroll-pinned on Desktop */}
+        <div className="mx-auto grid grid-cols-1 md:grid-cols-3 lg:flex lg:flex-col items-stretch lg:items-center px-4 md:px-8 relative z-10 gap-3 sm:gap-6 lg:gap-0">
           {TEXT_GROUP.map((item, index) => {
             const isEven = index % 2 === 0;
             return (
               <div
                 key={item.heading}
-                className="alternating-section relative w-full flex flex-col items-center mb-0 lg:mb-0 lg:h-screen lg:grid lg:grid-cols-2 lg:gap-x-12 lg:place-items-center lg:py-0 min-w-[85vw] sm:min-w-[420px] lg:min-w-0 snap-center shrink-0 lg:shrink"
+                className="alternating-section relative w-full flex flex-col items-center mb-0 lg:h-screen lg:grid lg:grid-cols-2 lg:gap-x-12 lg:place-items-center lg:py-0"
               >
                 {/* Review Card: Fully Opaque Solid Light Background, Left on Row 1 & 3; Right on Row 2 */}
                 <div
@@ -214,29 +183,29 @@ export default function AlternatingText() {
                     isEven
                       ? 'lg:order-1 lg:col-start-1 lg:mr-auto'
                       : 'lg:order-2 lg:col-start-2 lg:ml-auto',
-                    'relative z-10 rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-10 bg-white shadow-xl lg:shadow-2xl border border-[#1A4C98]/10 w-full max-w-full sm:max-w-lg lg:max-w-xl transition-all duration-300 flex flex-col justify-between'
+                    'relative z-10 rounded-2xl sm:rounded-3xl p-4 sm:p-7 md:p-8 bg-white shadow-2xs hover:shadow-lg border border-[#D0DFEF] w-full transition-all duration-300 flex flex-col justify-between'
                   )}
                 >
                   <div>
-                    <span className="inline-block rounded-full bg-emerald-900/10 px-3 py-0.5 sm:px-3.5 sm:py-1 text-[11px] sm:text-xs font-black uppercase tracking-wider text-emerald-900 mb-2 sm:mb-3 border border-emerald-900/15">
+                    <span className="inline-block rounded-full bg-emerald-900/10 px-2.5 py-0.5 sm:px-3.5 sm:py-1 text-[10px] sm:text-xs font-black uppercase tracking-wider text-emerald-900 mb-2 sm:mb-3 border border-emerald-900/15">
                       {item.tag}
                     </span>
 
-                    <h3 className="text-balance text-lg sm:text-2xl md:text-3xl lg:text-5xl font-black text-[#081426] tracking-tight leading-snug">
+                    <h3 className="text-base sm:text-xl lg:text-3xl font-black text-[#081426] tracking-tight leading-snug">
                       {item.heading}
                     </h3>
 
                     {/* Google Review Quote Highlight */}
-                    <div className="mt-3 sm:mt-4 rounded-xl sm:rounded-2xl bg-amber-50/70 p-3 sm:p-4 border-l-4 border-amber-600 shadow-2xs">
+                    <div className="mt-2.5 sm:mt-4 rounded-xl sm:rounded-2xl bg-amber-50/70 p-3 sm:p-4 border-l-4 border-amber-600 shadow-2xs">
                       <p className="text-xs sm:text-sm md:text-base font-bold italic text-[#081426] leading-relaxed">
                         {item.reviewQuote}
                       </p>
-                      <span className="block mt-1.5 text-[11px] sm:text-xs font-black text-amber-800">
+                      <span className="block mt-1 sm:mt-1.5 text-[10px] sm:text-xs font-black text-amber-800">
                         ★ 5.0 — {item.reviewer}
                       </span>
                     </div>
 
-                    <div className="mt-3 sm:mt-4 text-xs sm:text-sm md:text-base font-medium text-[#081426]/85 leading-relaxed">
+                    <div className="mt-2.5 sm:mt-4 text-xs sm:text-sm md:text-base font-medium text-[#081426]/85 leading-relaxed">
                       <p>{item.body}</p>
                     </div>
                   </div>

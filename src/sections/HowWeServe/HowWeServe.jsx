@@ -63,14 +63,9 @@ export default function HowWeServe({ onNavigate }) {
       <div className="mx-auto w-full max-w-7xl px-4 md:px-8 relative z-10">
         {/* Section Header */}
         <div className="mx-auto max-w-3xl text-center mb-6 sm:mb-10 md:mb-14">
-          <div className="flex items-center justify-between sm:justify-center mb-3">
-            <div className="inline-flex items-center gap-2 rounded-full bg-[#1A4C98]/10 border border-[#1A4C98]/20 px-3.5 py-1 text-xs font-black uppercase tracking-wider text-[#1A4C98]">
-              <CheckCircle2 size={13} className="text-emerald-700" />
-              <span>Dedicated B2B Food Distribution</span>
-            </div>
-            <span className="text-[10px] font-bold text-[#1A4C98]/70 md:hidden">
-              Swipe Services →
-            </span>
+          <div className="inline-flex items-center gap-2 rounded-full bg-[#1A4C98]/10 border border-[#1A4C98]/20 px-3.5 py-1 text-xs font-black uppercase tracking-wider text-[#1A4C98] mb-3">
+            <CheckCircle2 size={13} className="text-emerald-700" />
+            <span>Dedicated B2B Food Distribution</span>
           </div>
 
           <h2 className="text-2xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-[#081426] leading-tight">
@@ -82,43 +77,41 @@ export default function HowWeServe({ onNavigate }) {
           </p>
         </div>
 
-        {/* 5-Item Responsive Strip / Grid */}
-        <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6 overflow-x-auto md:overflow-visible pb-3 md:pb-0 scrollbar-none snap-x snap-mandatory">
+        {/* 6 Cards: 2-Column Grid on Mobile matching Why Global Trades, 3-Column on Desktop */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-6">
           {steps.map((step, index) => {
             const Icon = step.icon;
 
             return (
               <div
                 key={step.title}
-                className={`group flex flex-col justify-between rounded-2xl sm:rounded-3xl bg-white p-4 sm:p-7 border border-[#D0DFEF] shadow-sm hover:shadow-xl hover:border-[#1A4C98]/30 transition-all duration-300 min-w-[270px] md:min-w-0 snap-center shrink-0 md:shrink ${
-                  index === 4 ? 'lg:col-span-1 md:col-span-2 lg:col-start-auto' : ''
-                }`}
+                className="group flex flex-col justify-between rounded-2xl sm:rounded-3xl bg-white p-3 sm:p-7 border border-[#D0DFEF] shadow-2xs hover:shadow-lg hover:border-[#1A4C98]/30 transition-all duration-300"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-3 sm:mb-5">
-                    <div className="size-10 sm:size-12 rounded-xl sm:rounded-2xl bg-[#1A4C98]/10 text-[#1A4C98] flex items-center justify-center group-hover:bg-[#1A4C98] group-hover:text-white transition-colors duration-200">
-                      <Icon size={20} className="sm:w-6 sm:h-6" />
+                  <div className="flex items-center justify-between mb-2 sm:mb-5">
+                    <div className="size-8 sm:size-12 rounded-xl sm:rounded-2xl bg-[#1A4C98]/10 text-[#1A4C98] flex items-center justify-center group-hover:bg-[#1A4C98] group-hover:text-white transition-colors duration-200">
+                      <Icon size={16} className="sm:w-6 sm:h-6" />
                     </div>
                     <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-[#081426]/40">
                       0{index + 1}
                     </span>
                   </div>
 
-                  <h3 className="text-base sm:text-lg font-black text-[#081426] group-hover:text-[#1A4C98] transition-colors leading-snug mb-1">
+                  <h3 className="text-xs sm:text-lg font-black text-[#081426] group-hover:text-[#1A4C98] transition-colors leading-snug mb-0.5 sm:mb-1">
                     {step.title}
                   </h3>
 
-                  <p className="text-[11px] sm:text-xs font-bold text-[#00A3E0] uppercase tracking-wider mb-2 sm:mb-3">
+                  <p className="text-[9px] sm:text-xs font-bold text-[#00A3E0] uppercase tracking-wider mb-1 sm:mb-3">
                     {step.subtitle}
                   </p>
 
-                  <p className="text-xs sm:text-sm font-medium text-[#081426]/75 leading-relaxed line-clamp-3 sm:line-clamp-none">
+                  <p className="text-[11px] sm:text-sm font-medium text-[#081426]/75 leading-relaxed line-clamp-3 sm:line-clamp-none">
                     {step.description}
                   </p>
                 </div>
 
-                <div className="mt-4 sm:mt-5 pt-3 sm:pt-4 border-t border-[#E8F1FB]">
-                  <span className="text-[10px] sm:text-[11px] font-extrabold text-[#1A4C98] bg-[#F4F8FC] px-2.5 sm:px-3 py-1 rounded-full inline-block border border-[#D0DFEF]">
+                <div className="mt-2.5 sm:mt-5 pt-2 sm:pt-4 border-t border-[#E8F1FB]">
+                  <span className="text-[9px] sm:text-[11px] font-extrabold text-[#1A4C98] bg-[#F4F8FC] px-2 sm:px-3 py-0.5 sm:py-1 rounded-full inline-block border border-[#D0DFEF] line-clamp-1">
                     {step.highlight}
                   </span>
                 </div>
@@ -127,39 +120,39 @@ export default function HowWeServe({ onNavigate }) {
           })}
 
           {/* Quick Action Card in Grid */}
-          <div className="flex flex-col justify-between rounded-2xl sm:rounded-3xl bg-gradient-to-br from-[#1A4C98] via-[#153F80] to-[#081426] p-4 sm:p-7 text-white shadow-lg border border-[#1A4C98] min-w-[270px] md:min-w-0 snap-center shrink-0 md:shrink">
+          <div className="flex flex-col justify-between rounded-2xl sm:rounded-3xl bg-gradient-to-br from-[#1A4C98] via-[#153F80] to-[#081426] p-3 sm:p-7 text-white shadow-lg border border-[#1A4C98]">
             <div>
-              <div className="inline-block rounded-lg bg-white/20 px-2.5 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-white mb-2 sm:mb-4">
-                Fast Wholesale Turnaround
+              <div className="inline-block rounded-lg bg-white/20 px-2 sm:px-3 py-0.5 sm:py-1 text-[9px] sm:text-[11px] font-black uppercase tracking-wider text-white mb-1.5 sm:mb-4">
+                Wholesale Desk
               </div>
 
-              <h3 className="text-base sm:text-xl font-black uppercase tracking-tight text-white mb-1.5 sm:mb-2 leading-snug">
-                Ready to Order or Request Volume Rates?
+              <h3 className="text-xs sm:text-xl font-black uppercase tracking-tight text-white mb-1 sm:mb-2 leading-snug">
+                Volume Rates & Delivery
               </h3>
 
-              <p className="text-xs sm:text-sm text-white/85 font-medium leading-relaxed">
-                Bulk orders, product availability, and Kozhikode delivery can be confirmed on WhatsApp.
+              <p className="text-[10px] sm:text-sm text-white/85 font-medium leading-relaxed">
+                Bulk trade rates and Kozhikode delivery confirmed fast on WhatsApp.
               </p>
             </div>
 
-            <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-white/20 flex flex-col gap-2">
+            <div className="mt-2.5 sm:mt-6 pt-2 sm:pt-4 border-t border-white/20 flex flex-col gap-1.5">
               <a
                 href={CONTACT.WHATSAPP_ORDER_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-800 hover:bg-emerald-900 px-3 sm:px-4 py-2.5 sm:py-3 text-[11px] sm:text-xs font-black uppercase tracking-wider text-white shadow-md transition-transform hover:scale-105 active:scale-95"
+                className="w-full inline-flex items-center justify-center gap-1 rounded-xl bg-emerald-800 hover:bg-emerald-900 px-2.5 sm:px-4 py-2 sm:py-3 text-[10px] sm:text-xs font-black uppercase tracking-wider text-white shadow-md transition-transform hover:scale-105 active:scale-95"
               >
-                <WhatsAppIcon size={14} />
-                <span>WhatsApp Orders: 0495 2765320</span>
+                <WhatsAppIcon size={12} />
+                <span>WhatsApp Rates</span>
               </a>
 
               {onNavigate && (
                 <button
                   onClick={() => onNavigate('products')}
-                  className="w-full inline-flex items-center justify-center gap-1.5 text-xs font-bold text-white/90 hover:text-white transition-colors py-1 cursor-pointer"
+                  className="w-full inline-flex items-center justify-center gap-1 text-[10px] sm:text-xs font-bold text-white/90 hover:text-white transition-colors py-0.5 cursor-pointer"
                 >
-                  <span>Browse Product Catalogue</span>
-                  <ArrowRight size={13} />
+                  <span>View Products</span>
+                  <ArrowRight size={11} />
                 </button>
               )}
             </div>

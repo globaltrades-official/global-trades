@@ -39,14 +39,9 @@ export default function HowToOrder({ onNavigate }) {
       <div className="mx-auto w-full max-w-7xl px-4 md:px-8 relative z-10">
         {/* Section Header */}
         <div className="mx-auto max-w-3xl text-center mb-6 sm:mb-10 md:mb-14">
-          <div className="flex items-center justify-between sm:justify-center mb-3">
-            <div className="inline-flex items-center gap-2 rounded-full bg-[#1A4C98]/10 border border-[#1A4C98]/20 px-3.5 py-1 text-xs font-black uppercase tracking-wider text-[#1A4C98]">
-              <CheckCircle2 size={13} className="text-emerald-700" />
-              <span>Ordering Process</span>
-            </div>
-            <span className="text-[10px] font-bold text-[#1A4C98]/70 md:hidden">
-              Swipe Steps →
-            </span>
+          <div className="inline-flex items-center gap-2 rounded-full bg-[#1A4C98]/10 border border-[#1A4C98]/20 px-3.5 py-1 text-xs font-black uppercase tracking-wider text-[#1A4C98] mb-3">
+            <CheckCircle2 size={13} className="text-emerald-700" />
+            <span>Ordering Process</span>
           </div>
 
           <h2 className="text-2xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight text-[#081426] leading-tight">
@@ -58,37 +53,40 @@ export default function HowToOrder({ onNavigate }) {
           </p>
         </div>
 
-        {/* 3-Step Flow Layout: Horizontal Swipeable on Mobile, 3-Column on Desktop */}
-        <div className="flex md:grid md:grid-cols-3 gap-3.5 sm:gap-6 md:gap-8 mb-8 sm:mb-12 overflow-x-auto md:overflow-visible pb-3 md:pb-0 scrollbar-none snap-x snap-mandatory">
-          {steps.map((step) => {
+        {/* 3-Step Grid: 2-Column on Mobile matching Why Global Trades, 3-Column on Desktop */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-6 mb-8 sm:mb-12">
+          {steps.map((step, index) => {
             const Icon = step.icon;
+            const isLast = index === steps.length - 1;
 
             return (
               <div
                 key={step.number}
-                className="relative rounded-2xl sm:rounded-3xl bg-white p-4 sm:p-7 md:p-8 border border-[#D0DFEF] shadow-sm hover:shadow-xl hover:border-[#1A4C98]/40 transition-all duration-300 flex flex-col justify-between min-w-[260px] md:min-w-0 snap-center shrink-0 md:shrink"
+                className={`relative rounded-2xl sm:rounded-3xl bg-white p-3 sm:p-7 border border-[#D0DFEF] shadow-2xs hover:shadow-lg hover:border-[#1A4C98]/40 transition-all duration-300 flex flex-col justify-between ${
+                  isLast ? 'col-span-2 sm:col-span-2 lg:col-span-1' : ''
+                }`}
               >
                 <div>
-                  <div className="flex items-center justify-between mb-4 sm:mb-6">
-                    <span className="text-2xl sm:text-4xl font-black text-[#1A4C98]/20">
+                  <div className="flex items-center justify-between mb-2.5 sm:mb-6">
+                    <span className="text-xl sm:text-4xl font-black text-[#1A4C98]/20">
                       {step.number}
                     </span>
-                    <div className="size-11 sm:size-14 rounded-xl sm:rounded-2xl bg-[#1A4C98]/10 text-[#1A4C98] flex items-center justify-center shadow-xs">
-                      <Icon size={22} className="sm:w-6 sm:h-6" />
+                    <div className="size-8 sm:size-14 rounded-xl sm:rounded-2xl bg-[#1A4C98]/10 text-[#1A4C98] flex items-center justify-center shadow-xs">
+                      <Icon size={16} className="sm:w-6 sm:h-6" />
                     </div>
                   </div>
 
-                  <h3 className="text-base sm:text-xl font-black text-[#081426] mb-2 sm:mb-3 leading-snug">
+                  <h3 className="text-xs sm:text-xl font-black text-[#081426] mb-1 sm:mb-3 leading-snug">
                     {step.title}
                   </h3>
 
-                  <p className="text-xs sm:text-sm font-medium text-[#081426]/75 leading-relaxed line-clamp-3 sm:line-clamp-none">
+                  <p className="text-[11px] sm:text-sm font-medium text-[#081426]/75 leading-relaxed line-clamp-3 sm:line-clamp-none">
                     {step.description}
                   </p>
                 </div>
 
-                <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-[#F0F5FA]">
-                  <span className="inline-block text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider text-[#1A4C98] bg-[#F4F8FC] px-2.5 sm:px-3 py-1 rounded-full border border-[#D0DFEF]">
+                <div className="mt-2.5 sm:mt-6 pt-2 sm:pt-4 border-t border-[#F0F5FA]">
+                  <span className="inline-block text-[9px] sm:text-[11px] font-extrabold uppercase tracking-wider text-[#1A4C98] bg-[#F4F8FC] px-2 sm:px-3 py-0.5 sm:py-1 rounded-full border border-[#D0DFEF] line-clamp-1">
                     {step.tip}
                   </span>
                 </div>
