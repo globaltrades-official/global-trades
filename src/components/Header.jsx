@@ -65,17 +65,6 @@ export default function Header({ currentPage = 'home', activeSection = 'hero', o
             Products
           </button>
 
-          <button
-            onClick={() => handleNavClick('home', '#carousel')}
-            className={`transition-all duration-200 cursor-pointer px-3.5 py-1.5 rounded-full text-xs lg:text-sm font-bold ${
-              activeSection === 'showcase' && currentPage === 'home'
-                ? 'text-white bg-[#1A4C98] shadow-sm font-black'
-                : 'text-[#081426]/75 hover:text-[#1A4C98] hover:bg-[#1A4C98]/10'
-            }`}
-          >
-            Showcase
-          </button>
-
           {/* Dedicated Brands Page Tab */}
           <button
             onClick={() => handleNavClick('brands')}
@@ -173,15 +162,6 @@ export default function Header({ currentPage = 'home', activeSection = 'hero', o
             }`}
           >
             Products
-          </button>
-
-          <button
-            onClick={() => handleNavClick('home', '#carousel')}
-            className={`text-left py-2 px-3 rounded-lg text-sm font-bold ${
-              activeSection === 'showcase' && currentPage === 'home' ? 'bg-[#1A4C98] text-white' : 'text-[#081426]'
-            }`}
-          >
-            Featured Showcase
           </button>
 
           <button
