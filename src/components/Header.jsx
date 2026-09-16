@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { BRANDING, CONTACT } from '@/constants/theme';
-import { Menu, X, Package, Phone, Sparkles } from 'lucide-react';
+import { Menu, X, Phone } from 'lucide-react';
 import WhatsAppIcon from './WhatsAppIcon';
 
 export default function Header({ currentPage = 'home', activeSection = 'hero', onNavigate }) {
@@ -56,14 +56,13 @@ export default function Header({ currentPage = 'home', activeSection = 'hero', o
           {/* Dedicated Products Page Tab */}
           <button
             onClick={() => handleNavClick('products')}
-            className={`transition-all duration-200 cursor-pointer flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs lg:text-sm font-bold ${
+            className={`transition-all duration-200 cursor-pointer px-3.5 py-1.5 rounded-full text-xs lg:text-sm font-bold ${
               currentPage === 'products'
                 ? 'text-white bg-[#1A4C98] shadow-sm font-black'
                 : 'text-[#081426]/75 hover:text-[#1A4C98] hover:bg-[#1A4C98]/10'
             }`}
           >
-            <Package size={14} />
-            <span>Products</span>
+            Products
           </button>
 
           <button
@@ -80,14 +79,13 @@ export default function Header({ currentPage = 'home', activeSection = 'hero', o
           {/* Dedicated Brands Page Tab */}
           <button
             onClick={() => handleNavClick('brands')}
-            className={`transition-all duration-200 cursor-pointer flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs lg:text-sm font-bold ${
+            className={`transition-all duration-200 cursor-pointer px-3.5 py-1.5 rounded-full text-xs lg:text-sm font-bold ${
               currentPage === 'brands'
                 ? 'text-white bg-[#1A4C98] shadow-sm font-black'
                 : 'text-[#081426]/75 hover:text-[#1A4C98] hover:bg-[#1A4C98]/10'
             }`}
           >
-            <Sparkles size={14} />
-            <span>Brands</span>
+            Brands
           </button>
 
           {/* Dedicated Contact Page Tab */}
@@ -170,12 +168,11 @@ export default function Header({ currentPage = 'home', activeSection = 'hero', o
 
           <button
             onClick={() => handleNavClick('products')}
-            className={`text-left py-2.5 px-3 rounded-lg text-sm font-bold flex items-center gap-2.5 ${
+            className={`text-left py-2.5 px-3 rounded-lg text-sm font-bold ${
               currentPage === 'products' ? 'bg-[#1A4C98] text-white' : 'text-[#1A4C98] bg-[#1A4C98]/10'
             }`}
           >
-            <Package size={16} />
-            <span>Products</span>
+            Products
           </button>
 
           <button
@@ -189,12 +186,11 @@ export default function Header({ currentPage = 'home', activeSection = 'hero', o
 
           <button
             onClick={() => handleNavClick('brands')}
-            className={`text-left py-2.5 px-3 rounded-lg text-sm font-bold flex items-center gap-2.5 ${
+            className={`text-left py-2.5 px-3 rounded-lg text-sm font-bold ${
               currentPage === 'brands' ? 'bg-[#1A4C98] text-white' : 'text-[#1A4C98] bg-[#1A4C98]/10'
             }`}
           >
-            <Sparkles size={16} />
-            <span>Trusted Brands</span>
+            Trusted Brands
           </button>
 
           <button

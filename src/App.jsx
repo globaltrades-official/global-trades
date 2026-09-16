@@ -58,7 +58,36 @@ export default function App() {
     return hash.includes('brand') ? 'brands' : 'products';
   });
 
+  // Detect if page was refreshed/reloaded
+  const isReload = useCallback(() => {
+    if (typeof window === 'undefined') return false;
+    try {
+      const navEntries = performance.getEntriesByType('navigation');
+      if (navEntries && navEntries.length > 0 && navEntries[0].type === 'reload') {
+        return true;
+      }
+      if (window.performance && window.performance.navigation && window.performance.navigation.type === 1) {
+        return true;
+      }
+      if (sessionStorage.getItem('gt_page_reloaded') === 'true') {
+        return true;
+      }
+    } catch (e) {}
+    return false;
+  }, []);
+
   const getPageFromLocation = useCallback(() => {
+    // If the user refreshed the page, automatically redirect to home page
+    if (isReload()) {
+      try {
+        sessionStorage.removeItem('gt_page_reloaded');
+        if (window.location.hash && window.location.hash !== '#' && window.location.hash !== '#hero') {
+          window.history.replaceState(null, '', window.location.pathname);
+        }
+      } catch (e) {}
+      return 'home';
+    }
+
     const hash = (window.location.hash || '').toLowerCase();
     const path = (window.location.pathname || '').toLowerCase();
 
@@ -72,7 +101,7 @@ export default function App() {
     if (hash.includes('products') || path.includes('/products')) return 'products';
     if (hash.includes('contact') || path.includes('/contact')) return 'contact';
     return 'home';
-  }, []);
+  }, [isReload]);
 
   const isDesktop = useMediaQuery('(min-width: 768px)', true);
   const [currentPage, setCurrentPage] = useState(getPageFromLocation);
@@ -133,6 +162,34 @@ export default function App() {
       }, 100);
     }
   }, []);
+
+  // On page refresh/reload, automatically redirect to home and clear hash
+  useEffect(() => {
+    const markReload = () => {
+      try {
+        sessionStorage.setItem('gt_page_reloaded', 'true');
+      } catch (e) {}
+    };
+
+    window.addEventListener('beforeunload', markReload);
+    window.addEventListener('pagehide', markReload);
+
+    if (isReload()) {
+      try {
+        sessionStorage.removeItem('gt_page_reloaded');
+        if (window.location.hash && window.location.hash !== '#' && window.location.hash !== '#hero') {
+          window.history.replaceState(null, '', window.location.pathname);
+        }
+        setCurrentPage('home');
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      } catch (e) {}
+    }
+
+    return () => {
+      window.removeEventListener('beforeunload', markReload);
+      window.removeEventListener('pagehide', markReload);
+    };
+  }, [isReload]);
 
   // Synchronize route state with URL hash and popstate
   useEffect(() => {
