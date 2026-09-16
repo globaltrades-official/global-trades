@@ -58,50 +58,17 @@ export default function App() {
     return hash.includes('brand') ? 'brands' : 'products';
   });
 
-  // Detect if page was refreshed/reloaded
-  const isReload = useCallback(() => {
-    if (typeof window === 'undefined') return false;
-    try {
-      const navEntries = performance.getEntriesByType('navigation');
-      if (navEntries && navEntries.length > 0 && navEntries[0].type === 'reload') {
-        return true;
-      }
-      if (window.performance && window.performance.navigation && window.performance.navigation.type === 1) {
-        return true;
-      }
-      if (sessionStorage.getItem('gt_page_reloaded') === 'true') {
-        return true;
-      }
-    } catch (e) {}
-    return false;
-  }, []);
-
   const getPageFromLocation = useCallback(() => {
-    // If the user refreshed the page, automatically redirect to home page
-    if (isReload()) {
-      try {
-        sessionStorage.removeItem('gt_page_reloaded');
-        if (window.location.hash && window.location.hash !== '#' && window.location.hash !== '#hero') {
-          window.history.replaceState(null, '', window.location.pathname);
-        }
-      } catch (e) {}
-      return 'home';
-    }
-
+    if (typeof window === 'undefined') return 'home';
     const hash = (window.location.hash || '').toLowerCase();
     const path = (window.location.pathname || '').toLowerCase();
 
-    if (hash.includes('admin') || path.includes('/admin')) {
-      if (hash.includes('brand')) {
-        setAdminTab('brands');
-      }
-      return 'admin';
-    }
+    if (hash.includes('admin') || path.includes('/admin')) return 'admin';
     if (hash === '#brands' || hash === '#brands-page' || (hash.includes('brand') && !hash.includes('admin')) || path.includes('/brands')) return 'brands';
     if (hash.includes('products') || path.includes('/products')) return 'products';
     if (hash.includes('contact') || path.includes('/contact')) return 'contact';
     return 'home';
-  }, [isReload]);
+  }, []);
 
   const isDesktop = useMediaQuery('(min-width: 768px)', true);
   const [currentPage, setCurrentPage] = useState(getPageFromLocation);
@@ -165,31 +132,26 @@ export default function App() {
 
   // On page refresh/reload, automatically redirect to home and clear hash
   useEffect(() => {
-    const markReload = () => {
-      try {
-        sessionStorage.setItem('gt_page_reloaded', 'true');
-      } catch (e) {}
-    };
+    try {
+      let isReloaded = false;
+      const navEntries = performance.getEntriesByType('navigation');
+      if (navEntries && navEntries.length > 0 && navEntries[0].type === 'reload') {
+        isReloaded = true;
+      } else if (window.performance && window.performance.navigation && window.performance.navigation.type === 1) {
+        isReloaded = true;
+      }
 
-    window.addEventListener('beforeunload', markReload);
-    window.addEventListener('pagehide', markReload);
-
-    if (isReload()) {
-      try {
-        sessionStorage.removeItem('gt_page_reloaded');
+      if (isReloaded) {
         if (window.location.hash && window.location.hash !== '#' && window.location.hash !== '#hero') {
           window.history.replaceState(null, '', window.location.pathname);
         }
         setCurrentPage('home');
         window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-      } catch (e) {}
+      }
+    } catch (e) {
+      console.warn('Reload check warning:', e);
     }
-
-    return () => {
-      window.removeEventListener('beforeunload', markReload);
-      window.removeEventListener('pagehide', markReload);
-    };
-  }, [isReload]);
+  }, []);
 
   // Synchronize route state with URL hash and popstate
   useEffect(() => {
@@ -345,10 +307,12 @@ export default function App() {
         </main>
       ) : (
         <main className="relative">
-          {/* 3D Animated Background Logo Canvas: Asynchronously loaded */}
-          <Suspense fallback={null}>
-            <ViewCanvas />
-          </Suspense>
+          {/* 3D Animated Background Logo Canvas: Desktop only */}
+          {isDesktop && (
+            <Suspense fallback={null}>
+              <ViewCanvas />
+            </Suspense>
+          )}
 
           {/* 1. Hero Section */}
           <Hero onNavigate={navigateTo} />

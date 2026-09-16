@@ -4,6 +4,7 @@ import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ShieldCheck, FileText, Tag, Truck, Store } from 'lucide-react';
 import WhatsAppIcon from '@/components/WhatsAppIcon';
+import { CONTACT } from '@/constants/theme';
 
 import Button from '@/components/Button';
 import { TextSplitter } from '@/components/TextSplitter';
@@ -98,10 +99,14 @@ export default function Hero({ onNavigate }) {
       id="hero"
       className="hero relative w-full overflow-hidden bg-gradient-to-b from-[#EBF3FC] via-[#F4F8FC] to-[#DDEAF8]"
     >
-      {/* Background Medallion: 3D WebGL on all devices with seamless fallback */}
-      <Suspense fallback={<MobileHeroWatermark />}>
-        <Desktop3DHero isDesktop={isDesktop} />
-      </Suspense>
+      {/* Background Medallion: 3D WebGL on desktop, fast lightweight 2D watermark on mobile */}
+      {isDesktop ? (
+        <Suspense fallback={<MobileHeroWatermark />}>
+          <Desktop3DHero isDesktop={isDesktop} />
+        </Suspense>
+      ) : (
+        <MobileHeroWatermark />
+      )}
 
       <div className="mx-auto flex w-full max-w-7xl flex-col items-center px-4 md:px-8 relative z-10">
         {/* First Fold: Hero Banner with Clean Hierarchy */}
