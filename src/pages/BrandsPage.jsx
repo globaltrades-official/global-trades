@@ -30,6 +30,7 @@ export default function BrandsPage({
 }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const [imageErrors, setImageErrors] = useState({});
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -258,11 +259,14 @@ export default function BrandsPage({
                 <div>
                   {/* Brand Logo Box */}
                   <div className="h-28 w-full rounded-2xl bg-[#F8FAFD] border border-[#E2ECF8] flex items-center justify-center p-3 mb-4 relative overflow-hidden group-hover:bg-white group-hover:border-[#1A4C98]/20 transition-all">
-                    {brand.logo ? (
+                    {brand.logo && !imageErrors[brand.id || brand.name] ? (
                       <img
                         src={brand.logo}
                         alt={`${brand.name} official logo`}
                         className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                        onError={() =>
+                          setImageErrors((prev) => ({ ...prev, [brand.id || brand.name]: true }))
+                        }
                       />
                     ) : (
                       <div className="flex items-center gap-3">

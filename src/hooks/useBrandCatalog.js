@@ -1,23 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
+import { DEFAULT_WHOLESALE_BRANDS } from '@/data/wholesaleBrands';
 
-export const DEFAULT_TRUSTED_BRANDS = [
-  { id: 'brand-1', name: 'Monin', category: 'Syrups, Purees & Frappes', origin: 'Imported (France)', logo: '', isFeatured: true },
-  { id: 'brand-2', name: 'Callebaut', category: 'Belgian Couverture & Cocoa', origin: 'Imported (Belgium)', logo: '', isFeatured: true },
-  { id: 'brand-3', name: 'Veeba', category: 'Sauces, Dressings & Dips', origin: 'Institutional Foodservice', logo: '', isFeatured: true },
-  { id: 'brand-4', name: 'Del Monte', category: 'Canned Fruits & Condiments', origin: 'Commercial Packs', logo: '', isFeatured: true },
-  { id: 'brand-5', name: 'American Garden', category: 'Hot Sauces, BBQ & Dressings', origin: 'Imported', logo: '', isFeatured: true },
-  { id: 'brand-6', name: 'Kikkoman', category: 'Naturally Brewed Soy Sauces', origin: 'Imported', logo: '', isFeatured: true },
-  { id: 'brand-7', name: 'Lee Kum Kee', category: 'Asian Sauces & Seasonings', origin: 'Imported', logo: '', isFeatured: true },
-  { id: 'brand-8', name: 'Fruitomans', category: 'Bulk Sauces (1kg - 25kg)', origin: 'Institutional Supply', logo: '', isFeatured: true },
-  { id: 'brand-9', name: 'Morton', category: 'Canned Mushrooms & Produce', origin: 'Commercial Cans', logo: '', isFeatured: true },
-  { id: 'brand-10', name: 'Golden Crown', category: 'Gourmet Canned Fruits', origin: 'Hotel & Cafe Supply', logo: '', isFeatured: true },
-  { id: 'brand-11', name: "D'lecta", category: 'Cheese Slices & Dairy', origin: 'Foodservice Dairy', logo: '', isFeatured: true },
-  { id: 'brand-12', name: 'HyFun Foods', category: 'Frozen Fries & Burger Patties', origin: 'Commercial Frozen', logo: '', isFeatured: true },
-  { id: 'brand-13', name: 'Amul', category: 'Cheese Blocks & Dairy', origin: 'Bulk Dairy', logo: '', isFeatured: true },
-  { id: 'brand-14', name: 'Western', category: 'Frozen Chicken Nuggets & Patties', origin: 'Foodservice Line', logo: '', isFeatured: true },
-  { id: 'brand-15', name: 'Fortune', category: 'Imported Specialty Cheeses', origin: 'Gourmet Kitchens', logo: '', isFeatured: true },
-  { id: 'brand-16', name: 'Tetley', category: 'Tea Bags & Envelopes', origin: 'Hotel & Cafe Sachets', logo: '', isFeatured: true },
-];
+export const DEFAULT_TRUSTED_BRANDS = DEFAULT_WHOLESALE_BRANDS;
 
 const STORAGE_KEY = 'gt_trusted_brands_catalog';
 
@@ -28,6 +12,14 @@ export function useBrandCatalog() {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
+          // If previous version had only 16 items, merge with full 47 catalogue brands
+          if (parsed.length < DEFAULT_WHOLESALE_BRANDS.length) {
+            const existingNames = new Set(parsed.map((b) => b.name.toLowerCase()));
+            const missing = DEFAULT_WHOLESALE_BRANDS.filter(
+              (b) => !existingNames.has(b.name.toLowerCase())
+            );
+            return [...parsed, ...missing];
+          }
           return parsed;
         }
       }

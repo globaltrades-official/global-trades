@@ -5,6 +5,7 @@ import { CATALOG_BRANDS } from '@/data/catalogProducts';
 
 export default function BrandsShowcase({ brands = DEFAULT_TRUSTED_BRANDS, onNavigate }) {
   const [hoveredBrand, setHoveredBrand] = useState(null);
+  const [imageErrors, setImageErrors] = useState({});
 
   const displayBrands = brands && brands.length > 0
     ? brands.filter((b) => b.isFeatured !== false)
@@ -77,12 +78,15 @@ export default function BrandsShowcase({ brands = DEFAULT_TRUSTED_BRANDS, onNavi
             >
               <div>
                 {/* Brand Logo Container */}
-                {brand.logo ? (
+                {brand.logo && !imageErrors[brand.id || brand.name] ? (
                   <div className="h-16 w-full flex items-center justify-center p-2 rounded-xl bg-[#F8FAFD] border border-[#E2ECF8] mb-3 overflow-hidden group-hover:bg-white group-hover:border-[#1A4C98]/20 transition-colors">
                     <img
                       src={brand.logo}
                       alt={`${brand.name} logo`}
                       className="max-h-full max-w-full object-contain"
+                      onError={() =>
+                        setImageErrors((prev) => ({ ...prev, [brand.id || brand.name]: true }))
+                      }
                     />
                   </div>
                 ) : (
