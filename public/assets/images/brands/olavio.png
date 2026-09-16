@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 120" width="320" height="120">
+  <rect x="8" y="16" width="304" height="88" rx="20" fill="#386641" stroke="#A7C957" stroke-width="2" />
+  <circle cx="50" cy="60" r="22" fill="#A7C957" />
+  <!-- Olive branch -->
+  <ellipse cx="46" cy="58" rx="5" ry="8" fill="#386641" transform="rotate(-30 46 58)" />
+  <ellipse cx="54" cy="62" rx="5" ry="8" fill="#386641" transform="rotate(30 54 62)" />
+  <text x="180" y="60" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="3">OLAVIO</text>
+  <text x="180" y="78" font-family="Arial, sans-serif" font-size="9" font-weight="bold" fill="#F2E8CF" text-anchor="middle" letter-spacing="2">MEDITERRANEAN OLIVE OIL</text>
+</svg>

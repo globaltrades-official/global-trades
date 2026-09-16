@@ -264,9 +264,13 @@ export default function BrandsPage({
                         src={brand.logo}
                         alt={`${brand.name} official logo`}
                         className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
-                        onError={() =>
-                          setImageErrors((prev) => ({ ...prev, [brand.id || brand.name]: true }))
-                        }
+                        onError={(e) => {
+                          if (brand.logo && brand.logo.endsWith('.png')) {
+                            e.currentTarget.src = brand.logo.replace(/\.png$/, '.svg');
+                          } else {
+                            setImageErrors((prev) => ({ ...prev, [brand.id || brand.name]: true }));
+                          }
+                        }}
                       />
                     ) : (
                       <div className="flex items-center gap-3">

@@ -72,15 +72,70 @@ export const getBrandFileSlug = (brandName) => {
   return brandName.toLowerCase().replace(/[^a-z0-9]/g, "_");
 };
 
+// Exact high-quality logo mapping for each brand (authentic PNG or vector SVG)
+export const BRAND_LOGO_FILES = {
+  1: 'monin.png',
+  2: 'barry_callebaut.png',
+  3: 'veeba.png',
+  4: 'del_monte.png',
+  5: 'american_garden.svg',
+  6: 'kikkoman.png',
+  7: 'lee_kum_kee.png',
+  8: 'fruitomans.png',
+  9: 'morton.svg',
+  10: 'golden_crown.svg',
+  11: 'd_lecta.png',
+  12: 'hyfun_foods.png',
+  13: 'amul.png',
+  14: 'western.svg',
+  15: 'fortune.svg',
+  16: 'tetley.png',
+  17: 'malas.png',
+  18: 'manama.svg',
+  19: 'bru.svg',
+  20: 'nestle.svg',
+  21: 'nova.svg',
+  22: 'cacao_barry.svg',
+  23: 'cadbury.png',
+  24: 'ferrero.svg',
+  25: 'bush.svg',
+  26: 'delta.svg',
+  27: 'mothers_maid.svg',
+  28: 'celebre.png',
+  29: 'woh_hup.svg',
+  30: 'pouchung.svg',
+  31: 'thaichung.svg',
+  32: 'hp_sauce.png',
+  33: 'mae_pranom.svg',
+  34: 'sriraja_panich.svg',
+  35: 'weikfield.png',
+  36: 'druk.svg',
+  37: 'kissan.png',
+  38: 'maggi.png',
+  39: 'knorr.png',
+  40: 'chua_hah_seng.png',
+  41: 'namjai.svg',
+  42: 'milky_mist.png',
+  43: 'figaro.png',
+  44: 'due_vittori.svg',
+  45: 'pietro.svg',
+  46: 'olavio.svg',
+  47: 'spighe_di_campo.svg'
+};
+
+export const getBrandLogoFileName = (brandId, brandName) => {
+  return BRAND_LOGO_FILES[brandId] || `${getBrandFileSlug(brandName)}.png`;
+};
+
 // Function to map brands with their standardized image paths
 export const getBrandsWithImages = () => {
   return wholesaleBrands.map((brand) => {
-    const fileSlug = getBrandFileSlug(brand.name);
+    const fileName = getBrandLogoFileName(brand.id, brand.name);
     return {
       ...brand,
       image: {
-        filename: `${fileSlug}.png`,
-        path: `/assets/images/brands/${fileSlug}.png`,
+        filename: fileName,
+        path: `/assets/images/brands/${fileName}`,
         specs: imageSpecs
       }
     };
@@ -89,13 +144,13 @@ export const getBrandsWithImages = () => {
 
 // Default formatted brands for the brand catalog hook
 export const DEFAULT_WHOLESALE_BRANDS = wholesaleBrands.map((b) => {
-  const fileSlug = getBrandFileSlug(b.name);
+  const fileName = getBrandLogoFileName(b.id, b.name);
   return {
     id: `brand-${b.id}`,
     name: b.name,
     category: b.specialty,
     origin: b.origin,
-    logo: `/assets/images/brands/${fileSlug}.png`,
+    logo: `/assets/images/brands/${fileName}`,
     isFeatured: b.category === "Priority 1"
   };
 });
@@ -103,6 +158,7 @@ export const DEFAULT_WHOLESALE_BRANDS = wholesaleBrands.map((b) => {
 export default {
   wholesaleBrands,
   imageSpecs,
+  BRAND_LOGO_FILES,
   getBrandsWithImages,
   DEFAULT_WHOLESALE_BRANDS
 };

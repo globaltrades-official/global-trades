@@ -12,15 +12,35 @@ export function useBrandCatalog() {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // If previous version had only 16 items, merge with full 47 catalogue brands
-          if (parsed.length < DEFAULT_WHOLESALE_BRANDS.length) {
-            const existingNames = new Set(parsed.map((b) => b.name.toLowerCase()));
-            const missing = DEFAULT_WHOLESALE_BRANDS.filter(
-              (b) => !existingNames.has(b.name.toLowerCase())
-            );
-            return [...parsed, ...missing];
-          }
-          return parsed;
+          const defaultByName = new Map(
+            DEFAULT_WHOLESALE_BRANDS.map((b) => [b.name.toLowerCase().trim(), b])
+          );
+
+          // Merge saved brands with default specifications; auto-fill logo if empty or missing
+          const updated = parsed.map((brand) => {
+            const defaultBrand = defaultByName.get((brand.name || '').toLowerCase().trim());
+            const hasValidLogo =
+              brand.logo &&
+              typeof brand.logo === 'string' &&
+              brand.logo.trim() !== '' &&
+              !brand.logo.endsWith('undefined');
+
+            return {
+              ...(defaultBrand || {}),
+              ...brand,
+              logo: hasValidLogo ? brand.logo : (defaultBrand?.logo || ''),
+            };
+          });
+
+          // Include any missing catalog brands
+          const existingNames = new Set(
+            updated.map((b) => (b.name || '').toLowerCase().trim())
+          );
+          const missing = DEFAULT_WHOLESALE_BRANDS.filter(
+            (b) => !existingNames.has(b.name.toLowerCase().trim())
+          );
+
+          return [...updated, ...missing];
         }
       }
     } catch (e) {

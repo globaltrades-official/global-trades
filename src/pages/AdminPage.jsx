@@ -1168,6 +1168,11 @@ END $$;`;
                         src={brand.logo}
                         alt={`${brand.name} logo`}
                         className="max-h-full max-w-full object-contain"
+                        onError={(e) => {
+                          if (brand.logo && brand.logo.endsWith('.png')) {
+                            e.currentTarget.src = brand.logo.replace(/\.png$/, '.svg');
+                          }
+                        }}
                       />
                     ) : (
                       <div className="flex items-center gap-2.5">

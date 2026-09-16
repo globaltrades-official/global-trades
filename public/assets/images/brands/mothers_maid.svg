@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 120" width="320" height="120">
+  <rect x="8" y="16" width="304" height="88" rx="44" fill="#C41230" stroke="#FFFFFF" stroke-width="3" />
+  <circle cx="52" cy="60" r="22" fill="#FFFFFF" />
+  <!-- Cherry / fruit vector -->
+  <circle cx="48" cy="63" r="6" fill="#C41230" />
+  <circle cx="56" cy="62" r="6" fill="#C41230" />
+  <path d="M 50 58 Q 52 48 57 52" fill="none" stroke="#2E7D32" stroke-width="2" />
+  <text x="180" y="58" font-family="Georgia, serif" font-size="22" font-weight="bold" fill="#FFFFFF" text-anchor="middle" letter-spacing="2">MOTHER'S MAID</text>
+  <text x="180" y="76" font-family="Arial, sans-serif" font-size="9" font-weight="bold" fill="#FFDF73" text-anchor="middle" letter-spacing="2">FRUIT PIE FILLINGS &amp; COMPOTES</text>
+</svg>
