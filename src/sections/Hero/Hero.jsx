@@ -1,7 +1,6 @@
 import React, { lazy, Suspense } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ShieldCheck, FileText, Tag, Truck, Store } from 'lucide-react';
 import WhatsAppIcon from '@/components/WhatsAppIcon';
 import { CONTACT } from '@/constants/theme';
@@ -14,7 +13,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 // Lazy load the desktop 3D WebGL scene so mobile devices load instantly without Three.js
 const Desktop3DHero = lazy(() => import('./Desktop3DHero'));
 
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+gsap.registerPlugin(useGSAP);
 
 export default function Hero({ onNavigate }) {
   const isDesktop = useMediaQuery('(min-width: 768px)', true);
