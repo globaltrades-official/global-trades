@@ -18,7 +18,7 @@ export const wholesaleBrands = [
   { id: 11, name: "D'lecta", specialty: "Processed Cheese Slices, Mozzarella & Cheese Sauces", origin: "Foodservice Dairy", category: "Priority 1" },
   { id: 12, name: "HyFun Foods", specialty: "Frozen French Fries (6mm / 9mm), Aloo Tikki & Burger Patties", origin: "Commercial Frozen", category: "Priority 1" },
   { id: 13, name: "Amul", specialty: "Commercial Cheese Blocks, Butter & Bulk Dairy Products", origin: "Dairy Staple", category: "Priority 1" },
-  { id: 14, name: "Western", specialty: "Frozen Chicken Burger Patties, Nuggets & Finger Foods", origin: "Foodservice Line", category: "Priority 1" },
+  { id: 14, name: "Western", specialty: "Frozen Chicken Burger Patties, Nuggets & Finger Foods", origin: "Foodservice Line", category: "Priority 1" },//This Website Project was Created by Rijul Rojan
   { id: 15, name: "Fortune", specialty: "Imported Specialty Cheeses (Parmesan, Cheddar, Feta, Cream Cheese)", origin: "Gourmet Kitchens", category: "Priority 1" },
   { id: 16, name: "Tetley", specialty: "Commercial Envelope Tea Bags, Green Tea & Masala Tea Sachets", origin: "Hotel & Cafe Sachets", category: "Priority 1" },
 
