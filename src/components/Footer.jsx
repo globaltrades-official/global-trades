@@ -203,14 +203,6 @@ export default function Footer({ onNavigate }) {
           >
             Reviews
           </button>
-          <span>·</span>
-          <button
-            type="button"
-            onClick={() => onNavigate && onNavigate('home', '#faq')}
-            className="hover:text-[#1A4C98] transition-colors cursor-pointer"
-          >
-            FAQ
-          </button>
         </div>
 
         {/* Bottom Bar with perfect horizontal alignment */}

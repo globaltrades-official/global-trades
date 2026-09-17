@@ -9,7 +9,6 @@ import WhyChooseUs from './sections/WhyChooseUs/WhyChooseUs';
 import BrandsShowcase from './sections/BrandsShowcase/BrandsShowcase';
 import IndustriesWeServe from './sections/IndustriesWeServe/IndustriesWeServe';
 import AlternatingText from './sections/AlternatingText/AlternatingText';
-import FAQ from './sections/FAQ/FAQ';
 import BigText from './sections/BigText/BigText';
 import { useProductCatalog } from './hooks/useProductCatalog';
 import { useBrandCatalog } from './hooks/useBrandCatalog';
@@ -330,9 +329,6 @@ export default function App() {
 
           {/* 9. Brand Statement */}
           <BigText />
-
-          {/* 11. FAQ Section (Moved to last) */}
-          <FAQ />
         </main>
       )}
 
