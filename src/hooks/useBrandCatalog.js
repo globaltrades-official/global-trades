@@ -60,7 +60,7 @@ export function useBrandCatalog() {
     if (!isSupabaseConfigured()) return;
 
     fetchFeaturedBrandNamesFromPostgres().then((brandNames) => {
-      if (Array.isArray(brandNames) && brandNames.length > 0) {
+      if (Array.isArray(brandNames)) {
         const featuredSet = new Set(brandNames.map((n) => n.toLowerCase().trim()));
         setBrands((current) =>
           current.map((b) => ({

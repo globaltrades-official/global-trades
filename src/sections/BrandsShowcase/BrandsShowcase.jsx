@@ -63,20 +63,10 @@ export default function BrandsShowcase({
         }
       }
     });
-
-    if (brandMap.size === 0) {
-      const defaultFeatured = (DEFAULT_TRUSTED_BRANDS || []).filter(
-        (b) => Boolean(b.isFeatured) && b.logo
-      );
-      return defaultFeatured.length > 0
-        ? defaultFeatured
-        : (DEFAULT_TRUSTED_BRANDS || []).filter((b) => b.logo).slice(0, 16);
-    }
-
     return Array.from(brandMap.values());
   }, [products, brands]);
 
-  // If 0 featured brands, do not display the section
+  // If 0 featured brands are selected in Admin, do not display the section
   if (displayBrands.length === 0) {
     return null;
   }
