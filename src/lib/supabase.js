@@ -188,10 +188,11 @@ export function subscribeToPostgresCatalog(onRowChange, onReloadNeeded) {
         { event: '*', schema: 'public', table: 'products' },
         (payload) => {
           if (payload.eventType === 'UPDATE' || payload.eventType === 'INSERT') {
+            if (payload.new && payload.new.id >= 900000) return;
             const transformed = transformPostgresRow(payload.new);
             if (transformed) onRowChange(transformed);
           } else if (payload.eventType === 'DELETE') {
-            if (payload.old?.id && onReloadNeeded) {
+            if (payload.old?.id && payload.old.id < 900000 && onReloadNeeded) {
               onReloadNeeded(payload.old.id);
             }
           }
@@ -222,6 +223,7 @@ export function fetchCatalogFromPostgres() {
   return client
     .from('products')
     .select('*')
+    .lt('id', 900000)
     .order('id', { ascending: true })
     .then(({ data, error }) => {
       if (error) {
@@ -267,7 +269,8 @@ export async function saveCatalogToPostgres(products) {
   const client = getSupabaseClient();
   if (!client) return false;
 
-  const rows = products.map(transformProductToRow);
+  const filteredProducts = (products || []).filter((p) => Number(p.id) < 900000);
+  const rows = filteredProducts.map(transformProductToRow);
   const CHUNK_SIZE = 50;
 
   try {
@@ -283,5 +286,83 @@ export async function saveCatalogToPostgres(products) {
   } catch (e) {
     console.error('Failed to batch save catalog to PostgreSQL:', e);
     return false;
+  }
+}
+
+/**
+ * Fetch list of featured brand names from Supabase (system config row 999999).
+ */
+export async function fetchFeaturedBrandNamesFromPostgres() {
+  const client = getSupabaseClient();
+  if (!client) return null;
+  try {
+    const { data, error } = await client
+      .from('products')
+      .select('features')
+      .eq('id', 999999)
+      .single();
+
+    if (error || !data || !Array.isArray(data.features)) return null;
+    return data.features;
+  } catch (e) {
+    return null;
+  }
+}
+
+/**
+ * Save list of featured brand names to Supabase (system config row 999999).
+ */
+export async function saveFeaturedBrandNamesToPostgres(brandNames) {
+  const client = getSupabaseClient();
+  if (!client) return false;
+  try {
+    const { error } = await client.from('products').upsert([
+      {
+        id: 999999,
+        name: '__SYSTEM_FEATURED_BRANDS__',
+        brand: '__SYSTEM__',
+        category: '__CONFIG__',
+        features: brandNames,
+        is_featured: false,
+        updated_at: new Date().toISOString(),
+      },
+    ]);
+    if (error) {
+      console.warn('Failed to save featured brands to PostgreSQL:', error);
+      return false;
+    }
+    return true;
+  } catch (e) {
+    console.warn('saveFeaturedBrandNamesToPostgres error:', e);
+    return false;
+  }
+}
+
+/**
+ * Subscribe to realtime updates for featured brands.
+ */
+export function subscribeToFeaturedBrands(onFeaturedBrandsChange) {
+  const client = getSupabaseClient();
+  if (!client) return () => {};
+
+  try {
+    const channel = client
+      .channel('realtime:public:system_brands')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'products', filter: 'id=eq.999999' },
+        (payload) => {
+          if (payload.new && Array.isArray(payload.new.features)) {
+            onFeaturedBrandsChange(payload.new.features);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      client.removeChannel(channel);
+    };
+  } catch (e) {
+    return () => {};
   }
 }

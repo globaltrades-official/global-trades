@@ -1,5 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { DEFAULT_WHOLESALE_BRANDS } from '@/data/wholesaleBrands';
+import {
+  fetchFeaturedBrandNamesFromPostgres,
+  saveFeaturedBrandNamesToPostgres,
+  subscribeToFeaturedBrands,
+  isSupabaseConfigured,
+} from '@/lib/supabase';
 
 export const DEFAULT_TRUSTED_BRANDS = DEFAULT_WHOLESALE_BRANDS;
 
@@ -7,17 +13,11 @@ const STORAGE_KEY = 'gt_trusted_brands_catalog';
 
 export function useBrandCatalog() {
   const [brands, setBrands] = useState(() => {
-    const CLEANUP_KEY = 'gt_default_brands_featured_cleared_v1';
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         let parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          if (!localStorage.getItem(CLEANUP_KEY)) {
-            parsed = parsed.map((b) => ({ ...b, isFeatured: false }));
-            localStorage.setItem(CLEANUP_KEY, 'true');
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
-          }
           const defaultByName = new Map(
             DEFAULT_WHOLESALE_BRANDS.map((b) => [b.name.toLowerCase().trim(), b])
           );
@@ -55,6 +55,37 @@ export function useBrandCatalog() {
     return DEFAULT_TRUSTED_BRANDS;
   });
 
+  // Sync featured brands from Supabase so mobile phones and computers stay in 100% lockstep
+  useEffect(() => {
+    if (!isSupabaseConfigured()) return;
+
+    fetchFeaturedBrandNamesFromPostgres().then((brandNames) => {
+      if (Array.isArray(brandNames) && brandNames.length > 0) {
+        const featuredSet = new Set(brandNames.map((n) => n.toLowerCase().trim()));
+        setBrands((current) =>
+          current.map((b) => ({
+            ...b,
+            isFeatured: featuredSet.has((b.name || '').toLowerCase().trim()),
+          }))
+        );
+      }
+    });
+
+    const unsubscribe = subscribeToFeaturedBrands((brandNames) => {
+      if (Array.isArray(brandNames)) {
+        const featuredSet = new Set(brandNames.map((n) => n.toLowerCase().trim()));
+        setBrands((current) =>
+          current.map((b) => ({
+            ...b,
+            isFeatured: featuredSet.has((b.name || '').toLowerCase().trim()),
+          }))
+        );
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   // Save to localStorage whenever brands change
   useEffect(() => {
     try {
@@ -63,6 +94,16 @@ export function useBrandCatalog() {
       console.warn('Failed to persist brands to localStorage:', e);
     }
   }, [brands]);
+
+  // Helper to persist featured brand names to Supabase
+  const syncFeaturedToCloud = useCallback((brandList) => {
+    if (isSupabaseConfigured()) {
+      const featuredNames = brandList
+        .filter((b) => Boolean(b.isFeatured))
+        .map((b) => b.name);
+      saveFeaturedBrandNamesToPostgres(featuredNames).catch(console.warn);
+    }
+  }, []);
 
   // Add brand
   const addBrand = useCallback((brandData) => {
@@ -76,38 +117,53 @@ export function useBrandCatalog() {
       isFeatured: brandData.isFeatured !== false,
     };
 
-    setBrands((prev) => [newBrand, ...prev]);
+    setBrands((prev) => {
+      const next = [newBrand, ...prev];
+      syncFeaturedToCloud(next);
+      return next;
+    });
     return newBrand;
-  }, []);
+  }, [syncFeaturedToCloud]);
 
   // Update brand
   const updateBrand = useCallback((id, updatedData) => {
-    setBrands((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, ...updatedData } : b))
-    );
-  }, []);
+    setBrands((prev) => {
+      const next = prev.map((b) => (b.id === id ? { ...b, ...updatedData } : b));
+      if (updatedData.isFeatured !== undefined) {
+        syncFeaturedToCloud(next);
+      }
+      return next;
+    });
+  }, [syncFeaturedToCloud]);
 
   // Toggle featured status
   const toggleBrandFeatured = useCallback((id) => {
-    setBrands((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, isFeatured: !b.isFeatured } : b))
-    );
-  }, []);
+    setBrands((prev) => {
+      const next = prev.map((b) => (b.id === id ? { ...b, isFeatured: !b.isFeatured } : b));
+      syncFeaturedToCloud(next);
+      return next;
+    });
+  }, [syncFeaturedToCloud]);
 
   // Delete brand
   const deleteBrand = useCallback((id) => {
-    setBrands((prev) => prev.filter((b) => b.id !== id));
-  }, []);
+    setBrands((prev) => {
+      const next = prev.filter((b) => b.id !== id);
+      syncFeaturedToCloud(next);
+      return next;
+    });
+  }, [syncFeaturedToCloud]);
 
   // Reset to defaults
   const resetToDefaultBrands = useCallback(() => {
     setBrands(DEFAULT_TRUSTED_BRANDS);
+    syncFeaturedToCloud(DEFAULT_TRUSTED_BRANDS);
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch (e) {
       // ignore
     }
-  }, []);
+  }, [syncFeaturedToCloud]);
 
   return {
     brands,
