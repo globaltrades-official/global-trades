@@ -111,7 +111,7 @@ export default function AdminPage({
       category: brand.category || '',
       origin: brand.origin || '',
       logo: brand.logo || '',
-      isFeatured: brand.isFeatured !== false,
+      isFeatured: Boolean(brand.isFeatured),
     });
     setIsBrandModalOpen(true);
   };
@@ -172,19 +172,24 @@ export default function AdminPage({
     }
   };
 
-  const featuredProductBrands = useMemo(() => {
-    const set = new Set();
-    (products || []).forEach((p) => {
-      if (p && p.isFeatured && p.brand) {
-        set.add(String(p.brand).toLowerCase().trim());
-      }
-    });
-    return set;
-  }, [products]);
+  const handleToggleBrandFeatured = (brand) => {
+    if (!brand) return;
+    const willBeFeatured = !brand.isFeatured;
+    if (toggleBrandFeatured) {
+      toggleBrandFeatured(brand.id);
+    } else if (updateBrand) {
+      updateBrand(brand.id, { isFeatured: willBeFeatured });
+    }
+    showToast(
+      willBeFeatured
+        ? `Featured "${brand.name}" on Home showcase!`
+        : `Removed "${brand.name}" from Home showcase.`
+    );
+  };
 
   const isBrandLiveOnHome = useCallback(
-    (b) => Boolean(b?.isFeatured) || featuredProductBrands.has(String(b?.name || '').toLowerCase().trim()),
-    [featuredProductBrands]
+    (b) => Boolean(b?.isFeatured),
+    []
   );
 
   const filteredBrands = useMemo(() => {
@@ -968,8 +973,8 @@ END $$;`;
                             }
                             showToast(
                               p.isFeatured
-                                ? `Removed "${p.name}" & "${p.brand}" brand logo from Home`
-                                : `Featured "${p.name}" & "${p.brand}" brand logo on Home!`
+                                ? `Removed "${p.name}" from Home showcase`
+                                : `Featured "${p.name}" in Home showcase!`
                             );
                           }}
                           className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer active:scale-95 ${
@@ -977,7 +982,7 @@ END $$;`;
                               ? 'bg-amber-100 text-amber-900 border border-amber-300 shadow-sm hover:bg-amber-200'
                               : 'bg-gray-100 text-gray-500 border border-gray-200 hover:bg-amber-50 hover:text-amber-800 hover:border-amber-200'
                           }`}
-                          title={p.isFeatured ? 'Click to remove product and brand logo from Home' : 'Click to feature product and show brand logo on Home'}
+                          title={p.isFeatured ? 'Click to remove product from Home showcase' : 'Click to feature product in Home showcase'}
                         >
                           <Star size={13} className={p.isFeatured ? 'fill-amber-500 text-amber-500' : 'text-gray-400'} />
                           <span>{p.isFeatured ? 'Featured' : 'Feature'}</span>
@@ -1213,17 +1218,21 @@ END $$;`;
                       </div>
                     )}
 
-                    <span
-                      onClick={() => toggleBrandFeatured && toggleBrandFeatured(brand.id)}
-                      className={`absolute top-2 right-2 size-7 rounded-full flex items-center justify-center cursor-pointer transition-transform hover:scale-110 ${
-                        isBrandLiveOnHome(brand)
-                          ? 'bg-emerald-600 text-white shadow-xs'
-                          : 'bg-gray-200 text-gray-400'
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleToggleBrandFeatured(brand);
+                      }}
+                      className={`absolute top-2 right-2 size-7 rounded-full flex items-center justify-center cursor-pointer transition-all hover:scale-110 shadow-xs ${
+                        brand.isFeatured
+                          ? 'bg-emerald-600 text-white hover:bg-red-600'
+                          : 'bg-white/90 text-gray-400 hover:text-emerald-700 hover:bg-white border border-gray-200'
                       }`}
-                      title={isBrandLiveOnHome(brand) ? 'Featured on Home (Click to toggle)' : 'Hidden from Home (Click to feature)'}
+                      title={brand.isFeatured ? 'Featured on Home (Click to remove)' : 'Click to feature on Home'}
                     >
-                      <Star size={13} className={isBrandLiveOnHome(brand) ? 'fill-white' : ''} />
-                    </span>
+                      <Star size={13} className={brand.isFeatured ? 'fill-white' : ''} />
+                    </button>
                   </div>
 
                   <div className="flex items-center justify-between gap-2 mb-1">
@@ -1241,15 +1250,19 @@ END $$;`;
                 </div>
 
                 <div className="mt-4 pt-3 border-t border-[#F0F5FA] flex items-center justify-between">
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                    isBrandLiveOnHome(brand)
-                      ? 'bg-emerald-100 text-emerald-900 border border-emerald-300 font-black'
-                      : 'bg-gray-100 text-gray-500'
-                  }`}>
-                    {isBrandLiveOnHome(brand)
-                      ? '★ Featured on Home'
-                      : '— Hidden from Home'}
-                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleToggleBrandFeatured(brand)}
+                    className={`text-[10px] font-bold px-2.5 py-1 rounded-full transition-all cursor-pointer inline-flex items-center gap-1 active:scale-95 ${
+                      brand.isFeatured
+                        ? 'bg-emerald-100 text-emerald-900 border border-emerald-300 font-black hover:bg-red-50 hover:text-red-700 hover:border-red-300'
+                        : 'bg-gray-100 text-gray-500 border border-gray-200 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-300'
+                    }`}
+                    title={brand.isFeatured ? 'Click to remove from Home showcase' : 'Click to feature on Home showcase'}
+                  >
+                    <Star size={11} className={brand.isFeatured ? 'fill-emerald-600 text-emerald-600' : 'text-gray-400'} />
+                    <span>{brand.isFeatured ? 'Featured on Home' : 'Feature on Home'}</span>
+                  </button>
 
                   <div className="flex items-center gap-1.5">
                     <button

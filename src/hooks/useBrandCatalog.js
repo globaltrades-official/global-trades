@@ -10,6 +10,7 @@ import {
 export const DEFAULT_TRUSTED_BRANDS = DEFAULT_WHOLESALE_BRANDS;
 
 const STORAGE_KEY = 'gt_trusted_brands_catalog';
+const DELETED_KEY = 'gt_deleted_brand_ids';
 
 export function useBrandCatalog() {
   const [brands, setBrands] = useState(() => {
@@ -18,32 +19,40 @@ export function useBrandCatalog() {
       if (saved) {
         let parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
+          const deletedIds = new Set(
+            JSON.parse(localStorage.getItem(DELETED_KEY) || '[]')
+          );
           const defaultByName = new Map(
             DEFAULT_WHOLESALE_BRANDS.map((b) => [b.name.toLowerCase().trim(), b])
           );
 
           // Merge saved brands with default specifications; auto-fill logo if empty or missing
-          const updated = parsed.map((brand) => {
-            const defaultBrand = defaultByName.get((brand.name || '').toLowerCase().trim());
-            const hasValidLogo =
-              brand.logo &&
-              typeof brand.logo === 'string' &&
-              brand.logo.trim() !== '' &&
-              !brand.logo.endsWith('undefined');
+          const updated = parsed
+            .filter((b) => !deletedIds.has(b.id) && !deletedIds.has(String(b.name || '').toLowerCase().trim()))
+            .map((brand) => {
+              const defaultBrand = defaultByName.get((brand.name || '').toLowerCase().trim());
+              const hasValidLogo =
+                brand.logo &&
+                typeof brand.logo === 'string' &&
+                brand.logo.trim() !== '' &&
+                !brand.logo.endsWith('undefined');
 
-            return {
-              ...(defaultBrand || {}),
-              ...brand,
-              logo: hasValidLogo ? brand.logo : (defaultBrand?.logo || ''),
-            };
-          });
+              return {
+                ...(defaultBrand || {}),
+                ...brand,
+                logo: hasValidLogo ? brand.logo : (defaultBrand?.logo || ''),
+              };
+            });
 
-          // Include any missing catalog brands
+          // Include any missing catalog brands, EXCEPT those deleted by user
           const existingNames = new Set(
             updated.map((b) => (b.name || '').toLowerCase().trim())
           );
           const missing = DEFAULT_WHOLESALE_BRANDS.filter(
-            (b) => !existingNames.has(b.name.toLowerCase().trim())
+            (b) =>
+              !existingNames.has(b.name.toLowerCase().trim()) &&
+              !deletedIds.has(b.id) &&
+              !deletedIds.has(b.name.toLowerCase().trim())
           );
 
           return [...updated, ...missing];
@@ -148,7 +157,14 @@ export function useBrandCatalog() {
   // Delete brand
   const deleteBrand = useCallback((id) => {
     setBrands((prev) => {
+      const target = prev.find((b) => b.id === id);
       const next = prev.filter((b) => b.id !== id);
+      try {
+        const deleted = JSON.parse(localStorage.getItem(DELETED_KEY) || '[]');
+        if (id) deleted.push(id);
+        if (target?.name) deleted.push(target.name.toLowerCase().trim());
+        localStorage.setItem(DELETED_KEY, JSON.stringify([...new Set(deleted)]));
+      } catch (e) {}
       syncFeaturedToCloud(next);
       return next;
     });
@@ -156,13 +172,12 @@ export function useBrandCatalog() {
 
   // Reset to defaults
   const resetToDefaultBrands = useCallback(() => {
-    setBrands(DEFAULT_TRUSTED_BRANDS);
-    syncFeaturedToCloud(DEFAULT_TRUSTED_BRANDS);
     try {
       localStorage.removeItem(STORAGE_KEY);
-    } catch (e) {
-      // ignore
-    }
+      localStorage.removeItem(DELETED_KEY);
+    } catch (e) {}
+    setBrands(DEFAULT_TRUSTED_BRANDS);
+    syncFeaturedToCloud(DEFAULT_TRUSTED_BRANDS);
   }, [syncFeaturedToCloud]);
 
   return {

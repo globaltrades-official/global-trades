@@ -9,62 +9,10 @@ export default function BrandsShowcase({
 }) {
   const [failedImages, setFailedImages] = useState({});
 
-  // Display brands that are actively featured in Admin
+  // Display only brands that are actively featured in the Admin Brands portal
   const displayBrands = useMemo(() => {
-    // 1. Brands directly featured in Admin Brands tab
-    const explicitlyFeaturedBrands = (brands || []).filter(
-      (b) => Boolean(b.isFeatured) && b.logo
-    );
-
-    // 2. Brands from products explicitly featured in Admin
-    const featuredProducts = (products || []).filter(
-      (p) => Boolean(p.isFeatured)
-    );
-
-    const brandMap = new Map();
-
-    // Prioritize explicitly featured brands from the Brands tab
-    explicitlyFeaturedBrands.forEach((b) => {
-      const key = (b.name || '').toLowerCase().trim();
-      if (key && !brandMap.has(key)) {
-        brandMap.set(key, b);
-      }
-    });
-
-    // Also include any brands from active user-featured products
-    featuredProducts.forEach((p) => {
-      const brandName = (p.brand || '').trim();
-      if (!brandName) return;
-      const brandKey = brandName.toLowerCase();
-
-      if (!brandMap.has(brandKey)) {
-        const matched =
-          (brands || []).find(
-            (b) => (b.name || '').toLowerCase().trim() === brandKey
-          ) ||
-          (DEFAULT_TRUSTED_BRANDS || []).find(
-            (b) => (b.name || '').toLowerCase().trim() === brandKey
-          );
-
-        if (matched && matched.logo) {
-          brandMap.set(brandKey, {
-            id: matched.id || `brand-${brandKey}`,
-            name: matched.name || brandName,
-            logo: matched.logo,
-            origin: matched.origin,
-          });
-        } else {
-          const slug = brandKey.replace(/['\s-]+/g, '_').replace(/[^a-z0-9_]/g, '');
-          brandMap.set(brandKey, {
-            id: `brand-${slug}`,
-            name: brandName,
-            logo: `/assets/images/brands/${slug}.png`,
-          });
-        }
-      }
-    });
-    return Array.from(brandMap.values());
-  }, [products, brands]);
+    return (brands || []).filter((b) => Boolean(b.isFeatured) && b.logo);
+  }, [brands]);
 
   // If 0 featured brands are selected in Admin, do not display the section
   if (displayBrands.length === 0) {
