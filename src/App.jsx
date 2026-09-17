@@ -7,7 +7,6 @@ import Carousel from './sections/Carousel/Carousel';
 import ShopByCategory from './sections/ShopByCategory/ShopByCategory';
 import WhyChooseUs from './sections/WhyChooseUs/WhyChooseUs';
 import BrandsShowcase from './sections/BrandsShowcase/BrandsShowcase';
-import IndustriesWeServe from './sections/IndustriesWeServe/IndustriesWeServe';
 import AlternatingText from './sections/AlternatingText/AlternatingText';
 import BigText from './sections/BigText/BigText';
 import { useProductCatalog } from './hooks/useProductCatalog';
@@ -321,10 +320,7 @@ export default function App() {
           {/* 5. Why Global Trades (6 Simple Cards) */}
           <WhyChooseUs onNavigate={navigateTo} />
 
-          {/* 6. Industries We Serve (Cafes, Bakeries, Restaurants, Caterers, Cloud Kitchens, Hotels, Retail) */}
-          <IndustriesWeServe onNavigate={navigateTo} />
-
-          {/* 7. Social Proof & Reviews ("Trusted by Kozhikode Food Businesses") */}
+          {/* 6. Social Proof & Reviews ("Trusted by Kozhikode Food Businesses") */}
           <AlternatingText />
 
           {/* 9. Brand Statement */}
