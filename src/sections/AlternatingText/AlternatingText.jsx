@@ -77,20 +77,15 @@ export default function AlternatingText() {
       </div>
 
       <div className="mx-auto w-full max-w-6xl px-4 md:px-8 relative z-10">
-        {/* Compact Section Header with Small Company Logo */}
+        {/* Compact Section Header */}
         <div className="mx-auto max-w-2xl text-center mb-5 sm:mb-7">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white border border-[#1A4C98]/20 px-3 py-1 text-[11px] sm:text-xs font-bold shadow-2xs mb-2.5">
-            <img
-              src={BRANDING.LOGO_PATH}
-              alt="Global Trades Logo"
-              className="size-4.5 sm:size-5 object-contain"
-            />
+          <div className="inline-flex items-center gap-2 rounded-full bg-white border border-[#1A4C98]/20 px-3.5 py-1 text-[11px] sm:text-xs font-bold shadow-2xs mb-2.5">
             <span className="font-extrabold uppercase tracking-wider text-[#1A4C98]">
               {BRANDING.COMPANY_NAME}
             </span>
             <span className="text-[#081426]/25 font-light">|</span>
             <span className="text-amber-600 font-extrabold">★ {BRANDING.RATING}</span>
-            <span className="text-[#081426]/75 font-medium">({BRANDING.REVIEWS_COUNT} Reviews)</span>
+            <span className="text-[#081426]/75 font-medium">({BRANDING.REVIEWS_COUNT} Google Reviews)</span>
           </div>
 
           <h2 className="text-xl sm:text-2xl md:text-3xl font-black uppercase tracking-tight text-[#081426] leading-tight">
