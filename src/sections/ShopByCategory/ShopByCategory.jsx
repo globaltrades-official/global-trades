@@ -72,8 +72,6 @@ const CATEGORIES = [
 ];
 
 export default function ShopByCategory({ onNavigate }) {
-  const [showAllMobile, setShowAllMobile] = useState(false);
-
   const handleCategoryClick = (category) => {
     if (onNavigate) {
       onNavigate('products', '#products', { category });
@@ -114,7 +112,7 @@ export default function ShopByCategory({ onNavigate }) {
                 onClick={() => handleCategoryClick(cat.catalogCategory)}
                 className={`group cursor-pointer rounded-2xl sm:rounded-3xl bg-[#F4F8FC] p-3.5 sm:p-6 border border-[#D0DFEF] hover:border-[#1A4C98]/40 hover:bg-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between ${
                   isLast ? 'col-span-2 sm:col-span-2 lg:col-span-3 xl:col-span-1' : ''
-                } ${!showAllMobile && index >= 4 ? 'hidden sm:flex' : 'flex'}`}
+                }`}
               >
                 <div>
                   <div className="flex items-center justify-between mb-2.5 sm:mb-3">
@@ -147,27 +145,6 @@ export default function ShopByCategory({ onNavigate }) {
             );
           })}
         </div>
-
-        {/* Mobile Expand Drawer */}
-        {CATEGORIES.length > 4 && (
-          <div className="mt-6 sm:hidden flex justify-center">
-            <button
-              type="button"
-              onClick={() => setShowAllMobile(!showAllMobile)}
-              className="inline-flex items-center gap-2 rounded-full border border-[#1A4C98]/25 bg-[#F4F8FC] hover:bg-[#1A4C98] hover:text-white px-5 py-2.5 text-xs font-bold text-[#1A4C98] shadow-2xs transition-all duration-200 cursor-pointer active:scale-95"
-            >
-              <span>
-                {showAllMobile
-                  ? 'Show Fewer Categories'
-                  : `View All ${CATEGORIES.length} Categories (+${CATEGORIES.length - 4} more)`}
-              </span>
-              <ChevronDown
-                size={14}
-                className={`transition-transform duration-200 ${showAllMobile ? 'rotate-180' : ''}`}
-              />
-            </button>
-          </div>
-        )}
       </div>
     </section>
   );

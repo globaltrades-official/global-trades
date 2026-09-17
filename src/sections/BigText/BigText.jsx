@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function BigText() {
   return (
-    <section className="hidden sm:flex w-full overflow-hidden bg-gradient-to-b from-[#F4F8FC] via-[#E6F0FA] to-[#E8F1FB] py-16 md:py-28 border-t border-[#1A4C98]/10 items-center justify-center">
+    <section className="flex w-full overflow-hidden bg-gradient-to-b from-[#F4F8FC] via-[#E6F0FA] to-[#E8F1FB] py-12 sm:py-16 md:py-28 border-t border-[#1A4C98]/10 items-center justify-center">
       <div className="mx-auto flex w-full max-w-7xl flex-col items-center px-4 md:px-8 text-center">
         <h2 className="flex flex-col items-center justify-center gap-2 md:gap-4 font-black uppercase leading-[0.9] select-none tracking-tight">
           <div className="text-4xl sm:text-7xl md:text-8xl lg:text-9xl text-[#1A4C98] tracking-tight drop-shadow-sm">

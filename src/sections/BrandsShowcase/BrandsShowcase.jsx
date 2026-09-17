@@ -8,7 +8,6 @@ export default function BrandsShowcase({
   onNavigate,
 }) {
   const [failedImages, setFailedImages] = useState({});
-  const [showAllMobile, setShowAllMobile] = useState(false);
 
   // Display brands that are actively featured in Admin
   const displayBrands = useMemo(() => {
@@ -112,9 +111,7 @@ export default function BrandsShowcase({
               <div
                 key={brand.id || brand.name}
                 onClick={() => handleBrandClick(brand.name)}
-                className={`h-16 sm:h-20 md:h-24 w-full rounded-xl sm:rounded-2xl bg-white border border-[#D0DFEF] shadow-2xs hover:shadow-md hover:border-[#1A4C98]/40 hover:-translate-y-0.5 transition-all duration-300 p-2 sm:p-3 flex items-center justify-center cursor-pointer group ${
-                  !showAllMobile && index >= 6 ? 'hidden sm:flex' : 'flex'
-                }`}
+                className="h-16 sm:h-20 md:h-24 w-full rounded-xl sm:rounded-2xl bg-white border border-[#D0DFEF] shadow-2xs hover:shadow-md hover:border-[#1A4C98]/40 hover:-translate-y-0.5 transition-all duration-300 p-2 sm:p-3 flex items-center justify-center cursor-pointer group"
                 title={`View ${brand.name} Products in Wholesale Catalogue`}
               >
                 {!isFailed && currentSrc ? (
@@ -139,27 +136,6 @@ export default function BrandsShowcase({
             );
           })}
         </div>
-
-        {/* Mobile Expand Drawer */}
-        {displayBrands.length > 6 && (
-          <div className="mt-4 sm:hidden flex justify-center">
-            <button
-              type="button"
-              onClick={() => setShowAllMobile(!showAllMobile)}
-              className="inline-flex items-center gap-1.5 rounded-full border border-[#1A4C98]/20 bg-white px-4 py-2 text-xs font-bold text-[#1A4C98] shadow-2xs hover:bg-[#1A4C98] hover:text-white transition-all cursor-pointer active:scale-95"
-            >
-              <span>
-                {showAllMobile
-                  ? 'Show Fewer Brands'
-                  : `View All ${displayBrands.length} Brands (+${displayBrands.length - 6} more)`}
-              </span>
-              <ChevronDown
-                size={13}
-                className={`transition-transform duration-200 ${showAllMobile ? 'rotate-180' : ''}`}
-              />
-            </button>
-          </div>
-        )}
       </div>
     </section>
   );

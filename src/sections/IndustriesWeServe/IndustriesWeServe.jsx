@@ -81,8 +81,6 @@ const INDUSTRIES = [
 ];
 
 export default function IndustriesWeServe({ onNavigate }) {
-  const [showAllMobile, setShowAllMobile] = useState(false);
-
   const handleIndustryClick = (category) => {
     if (onNavigate) {
       onNavigate('products', '#products', { category });
@@ -122,7 +120,7 @@ export default function IndustriesWeServe({ onNavigate }) {
                 key={industry.id}
                 className={`group flex flex-col justify-between rounded-2xl sm:rounded-3xl bg-white p-3.5 sm:p-6 border border-[#D0DFEF] shadow-2xs hover:shadow-lg hover:border-[#1A4C98]/40 hover:-translate-y-0.5 transition-all duration-300 ${
                   isLast ? 'col-span-2 sm:col-span-2 lg:col-span-3 xl:col-span-1' : ''
-                } ${!showAllMobile && index >= 4 ? 'hidden sm:flex' : 'flex'}`}
+                }`}
               >
                 <div>
                   <div className="flex items-center justify-between mb-2.5 sm:mb-3">
@@ -169,27 +167,6 @@ export default function IndustriesWeServe({ onNavigate }) {
             );
           })}
         </div>
-
-        {/* Mobile Expand Drawer */}
-        {INDUSTRIES.length > 4 && (
-          <div className="mt-6 sm:hidden flex justify-center">
-            <button
-              type="button"
-              onClick={() => setShowAllMobile(!showAllMobile)}
-              className="inline-flex items-center gap-2 rounded-full border border-[#1A4C98]/25 bg-white hover:bg-[#1A4C98] hover:text-white px-5 py-2.5 text-xs font-bold text-[#1A4C98] shadow-2xs transition-all duration-200 cursor-pointer active:scale-95"
-            >
-              <span>
-                {showAllMobile
-                  ? 'Show Fewer Sectors'
-                  : `View All ${INDUSTRIES.length} Sectors (+${INDUSTRIES.length - 4} more)`}
-              </span>
-              <ChevronDown
-                size={14}
-                className={`transition-transform duration-200 ${showAllMobile ? 'rotate-180' : ''}`}
-              />
-            </button>
-          </div>
-        )}
       </div>
     </section>
   );

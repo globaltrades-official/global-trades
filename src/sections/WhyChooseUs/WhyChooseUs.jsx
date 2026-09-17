@@ -50,8 +50,6 @@ const REASONS = [
 ];
 
 export default function WhyChooseUs({ onNavigate }) {
-  const [showAllMobile, setShowAllMobile] = useState(false);
-
   return (
     <section
       id="why-global-trades"
@@ -82,9 +80,7 @@ export default function WhyChooseUs({ onNavigate }) {
             return (
               <div
                 key={reason.title}
-                className={`group rounded-2xl sm:rounded-3xl bg-[#F4F8FC] p-3.5 sm:p-7 border border-[#D0DFEF] hover:border-[#1A4C98]/40 hover:bg-white hover:shadow-lg transition-all duration-300 flex flex-col justify-between ${
-                  !showAllMobile && index >= 4 ? 'hidden sm:flex' : 'flex'
-                }`}
+                className="group rounded-2xl sm:rounded-3xl bg-[#F4F8FC] p-3.5 sm:p-7 border border-[#D0DFEF] hover:border-[#1A4C98]/40 hover:bg-white hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-2.5 sm:mb-5">
@@ -108,27 +104,6 @@ export default function WhyChooseUs({ onNavigate }) {
             );
           })}
         </div>
-
-        {/* Mobile Expand Drawer */}
-        {REASONS.length > 4 && (
-          <div className="mt-6 sm:hidden flex justify-center">
-            <button
-              type="button"
-              onClick={() => setShowAllMobile(!showAllMobile)}
-              className="inline-flex items-center gap-2 rounded-full border border-[#1A4C98]/25 bg-[#F4F8FC] hover:bg-[#1A4C98] hover:text-white px-5 py-2.5 text-xs font-bold text-[#1A4C98] shadow-2xs transition-all duration-200 cursor-pointer active:scale-95"
-            >
-              <span>
-                {showAllMobile
-                  ? 'Show Fewer Reasons'
-                  : `View All ${REASONS.length} Reasons (+${REASONS.length - 4} more)`}
-              </span>
-              <ChevronDown
-                size={14}
-                className={`transition-transform duration-200 ${showAllMobile ? 'rotate-180' : ''}`}
-              />
-            </button>
-          </div>
-        )}
       </div>
     </section>
   );
