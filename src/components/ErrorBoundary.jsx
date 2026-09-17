@@ -4,7 +4,7 @@ import { BRANDING } from '@/constants/theme';
 export default class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, error: null, showDetails: false };
   }
 
   static getDerivedStateFromError(error) {
@@ -14,18 +14,22 @@ export default class ErrorBoundary extends React.Component {
   componentDidCatch(error, errorInfo) {
     console.error('Antigravity Global ErrorBoundary caught:', error, errorInfo);
 
-    // Auto-reload once on Vite dynamic import chunk failures (common after new production deployments)
+    // Auto-reload once with cache-buster on dynamic import chunk failures
+    const msg = String(error?.message || '');
     const isChunkError =
-      error?.message?.includes('Failed to fetch dynamically imported module') ||
-      error?.message?.includes('Importing a module script failed') ||
-      error?.message?.includes('error loading dynamically imported module');
+      msg.includes('Failed to fetch dynamically imported module') ||
+      msg.includes('Importing a module script failed') ||
+      msg.includes('error loading dynamically imported module') ||
+      error?.name === 'ChunkLoadError';
 
     if (isChunkError) {
       try {
-        const hasRetried = sessionStorage.getItem('gt_chunk_reload');
+        const reloadKey = 'gt_chunk_reload_' + window.location.pathname;
+        const hasRetried = sessionStorage.getItem(reloadKey);
         if (!hasRetried) {
-          sessionStorage.setItem('gt_chunk_reload', 'true');
-          window.location.reload();
+          sessionStorage.setItem(reloadKey, 'true');
+          window.location.href =
+            window.location.origin + window.location.pathname + '?v=' + Date.now();
         }
       } catch (e) {}
     }
@@ -34,7 +38,8 @@ export default class ErrorBoundary extends React.Component {
   handleReload = () => {
     try {
       sessionStorage.clear();
-      window.location.href = window.location.origin + window.location.pathname;
+      window.location.href =
+        window.location.origin + window.location.pathname + '?refresh=' + Date.now();
     } catch (e) {
       window.location.reload();
     }
@@ -63,7 +68,7 @@ export default class ErrorBoundary extends React.Component {
             The page encountered an issue loading. Please refresh to continue exploring wholesale food supplies.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-3">
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
             <button
               onClick={this.handleReload}
               className="rounded-xl bg-[#1A4C98] hover:bg-[#123873] text-white px-6 py-3 text-sm font-black uppercase tracking-wider shadow-lg transition-all hover:scale-105 active:scale-95 cursor-pointer"
@@ -78,6 +83,29 @@ export default class ErrorBoundary extends React.Component {
               Return Home
             </a>
           </div>
+
+          {this.state.error && (
+            <div className="max-w-xl w-full text-left bg-white border border-[#D0DFEF] rounded-2xl p-4 shadow-sm text-xs">
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <span className="font-bold text-red-700">Error Details</span>
+                <button
+                  type="button"
+                  onClick={() => this.setState((prev) => ({ showDetails: !prev.showDetails }))}
+                  className="text-[11px] font-bold text-[#1A4C98] hover:underline cursor-pointer"
+                >
+                  {this.state.showDetails ? 'Hide Stack' : 'Show Stack'}
+                </button>
+              </div>
+              <p className="font-mono text-red-800 break-words font-semibold">
+                {String(this.state.error?.message || this.state.error)}
+              </p>
+              {this.state.showDetails && this.state.error?.stack && (
+                <pre className="font-mono text-[10px] text-[#081426]/70 mt-2 overflow-x-auto whitespace-pre-wrap max-h-48 border-t border-[#F0F5FA] pt-2">
+                  {this.state.error.stack}
+                </pre>
+              )}
+            </div>
+          )}
         </div>
       );
     }

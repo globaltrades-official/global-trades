@@ -13,14 +13,29 @@ import { useProductCatalog } from './hooks/useProductCatalog';
 import { useBrandCatalog } from './hooks/useBrandCatalog';
 import { useMediaQuery } from './hooks/useMediaQuery';
 
-// Code-split pages so initial load is feather-light (< 200KB)
-const ProductsPage = lazy(() => import('./pages/ProductsPage'));
-const BrandsPage = lazy(() => import('./pages/BrandsPage'));
-const ContactPage = lazy(() => import('./pages/ContactPage'));
-const AdminPage = lazy(() => import('./pages/AdminPage'));
+// Resilient code-splitting with auto-recovery on deployment chunk hash mismatches
+function lazyRetry(factory) {
+  return lazy(() =>
+    factory().catch((err) => {
+      if (typeof window !== 'undefined') {
+        const key = 'gt_lazy_retry_' + window.location.pathname;
+        if (!sessionStorage.getItem(key)) {
+          sessionStorage.setItem(key, 'true');
+          window.location.reload();
+        }
+      }
+      throw err;
+    })
+  );
+}
+
+const ProductsPage = lazyRetry(() => import('./pages/ProductsPage'));
+const BrandsPage = lazyRetry(() => import('./pages/BrandsPage'));
+const ContactPage = lazyRetry(() => import('./pages/ContactPage'));
+const AdminPage = lazyRetry(() => import('./pages/AdminPage'));
 
 // Lazy load 3D canvas only for desktop viewports
-const ViewCanvas = lazy(() => import('./components/ViewCanvas'));
+const ViewCanvas = lazyRetry(() => import('./components/ViewCanvas'));
 
 function PageFallback() {
   return (

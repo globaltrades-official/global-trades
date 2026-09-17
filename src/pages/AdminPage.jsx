@@ -175,28 +175,28 @@ export default function AdminPage({
   const featuredProductBrands = useMemo(() => {
     const set = new Set();
     (products || []).forEach((p) => {
-      if (p.isFeatured && p.brand) {
-        set.add(p.brand.toLowerCase().trim());
+      if (p && p.isFeatured && p.brand) {
+        set.add(String(p.brand).toLowerCase().trim());
       }
     });
     return set;
   }, [products]);
 
   const isBrandLiveOnHome = useCallback(
-    (b) => Boolean(b.isFeatured) || featuredProductBrands.has((b.name || '').toLowerCase().trim()),
+    (b) => Boolean(b?.isFeatured) || featuredProductBrands.has(String(b?.name || '').toLowerCase().trim()),
     [featuredProductBrands]
   );
 
   const filteredBrands = useMemo(() => {
     return (brands || []).filter((b) => {
+      if (!b) return false;
       if (brandFilter === 'featured' && !isBrandLiveOnHome(b)) return false;
       const q = (brandSearchQuery || '').toLowerCase().trim();
       if (!q) return true;
-      return (
-        (b.name && b.name.toLowerCase().includes(q)) ||
-        (b.category && b.category.toLowerCase().includes(q)) ||
-        (b.origin && b.origin.toLowerCase().includes(q))
-      );
+      const bName = String(b.name || '').toLowerCase();
+      const bCat = String(b.category || '').toLowerCase();
+      const bOrigin = String(b.origin || '').toLowerCase();
+      return bName.includes(q) || bCat.includes(q) || bOrigin.includes(q);
     });
   }, [brands, brandFilter, brandSearchQuery, isBrandLiveOnHome]);
 
@@ -462,7 +462,8 @@ END $$;`;
 
   // Filter products
   const filteredProducts = useMemo(() => {
-    return products.filter((p) => {
+    return (products || []).filter((p) => {
+      if (!p) return false;
       if (showFeaturedOnly && !p.isFeatured) {
         return false;
       }
@@ -470,13 +471,19 @@ END $$;`;
         selectedCategory === 'All' || p.category === selectedCategory;
       const matchesBrand =
         selectedBrand === 'All' || p.brand === selectedBrand;
-      const query = searchQuery.toLowerCase().trim();
+      const query = (searchQuery || '').toLowerCase().trim();
+      if (!query) return matchesCategory && matchesBrand;
+
+      const pName = String(p.name || '').toLowerCase();
+      const pBrand = String(p.brand || '').toLowerCase();
+      const pCat = String(p.category || '').toLowerCase();
+      const pSize = String(p.size || '').toLowerCase();
+
       const matchesSearch =
-        !query ||
-        p.name.toLowerCase().includes(query) ||
-        p.brand.toLowerCase().includes(query) ||
-        p.category.toLowerCase().includes(query) ||
-        (p.size && p.size.toLowerCase().includes(query));
+        pName.includes(query) ||
+        pBrand.includes(query) ||
+        pCat.includes(query) ||
+        pSize.includes(query);
 
       return matchesCategory && matchesBrand && matchesSearch;
     });
@@ -490,7 +497,7 @@ END $$;`;
   }, [filteredProducts, currentPage]);
 
   const uniqueBrands = useMemo(() => {
-    return ['All', ...Array.from(new Set(products.map((p) => p.brand).filter(Boolean))).sort()];
+    return ['All', ...Array.from(new Set((products || []).map((p) => p?.brand).filter(Boolean))).sort()];
   }, [products]);
 
   // Auth Gate Screen
