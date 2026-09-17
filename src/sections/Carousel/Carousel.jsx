@@ -1,5 +1,6 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import clsx from 'clsx';
+import gsap from 'gsap';
 import { CheckCircle2, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import WhatsAppIcon from '@/components/WhatsAppIcon';
 
@@ -217,29 +218,90 @@ export default function Carousel({ products = [], onNavigate }) {
     }
   }, [featuredProducts.length, currentProductIndex]);
 
-  function changeProduct(index) {
+  const timelineRef = useRef(null);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const changeProduct = useCallback((index) => {
     if (featuredProducts.length <= 1) return;
 
     const nextIndex = (index + featuredProducts.length) % featuredProducts.length;
     if (nextIndex === safeIndex) return;
 
     const nextProduct = featuredProducts[nextIndex];
-    const tl = gsap.timeline();
 
-    tl.to(
-      '.carousel-background, .wavy-circles-outer, .wavy-circles-inner',
-      {
-        backgroundColor: nextProduct.color,
-        fill: nextProduct.color,
-        ease: 'power2.inOut',
-        duration: 0.6,
-      },
-      0
-    )
-      .to('.showcase-card', { duration: 0.2, opacity: 0.6, scale: 0.98 }, 0)
-      .to({}, { onStart: () => setCurrentProductIndex(nextIndex) }, 0.2)
-      .to('.showcase-card', { duration: 0.3, opacity: 1, scale: 1, ease: 'back.out(1.2)' }, 0.25);
-  }
+    if (timelineRef.current) {
+      timelineRef.current.kill();
+    }
+
+    // Set state immediately so React re-renders activeProduct safely and immediately
+    setCurrentProductIndex(nextIndex);
+
+    try {
+      if (typeof gsap !== 'undefined') {
+        const tl = gsap.timeline();
+        timelineRef.current = tl;
+
+        tl.to(
+          '.carousel-background, .wavy-circles-outer, .wavy-circles-inner',
+          {
+            backgroundColor: nextProduct.color,
+            fill: nextProduct.color,
+            ease: 'power2.inOut',
+            duration: 0.5,
+          },
+          0
+        )
+        .fromTo(
+          '.showcase-card',
+          { opacity: 0.7, scale: 0.98 },
+          { duration: 0.35, opacity: 1, scale: 1, ease: 'power2.out' },
+          0
+        );
+      }
+    } catch (err) {
+      console.warn('GSAP transition error:', err);
+    }
+  }, [featuredProducts, safeIndex]);
+
+  // Gentle auto-rotation every 6 seconds when not paused by user
+  useEffect(() => {
+    if (featuredProducts.length <= 1 || isPaused) return;
+    const timer = setInterval(() => {
+      changeProduct(safeIndex + 1);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [featuredProducts.length, isPaused, safeIndex, changeProduct]);
+
+  // Touch gesture support for mobile & tablet swiping
+  const touchStartX = useRef(null);
+  const touchEndX = useRef(null);
+
+  const handleTouchStart = (e) => {
+    setIsPaused(true);
+    touchStartX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX.current !== null && touchEndX.current !== null) {
+      const diff = touchStartX.current - touchEndX.current;
+      if (Math.abs(diff) > 40) {
+        if (diff > 0) {
+          // Swiped left -> next product
+          changeProduct(safeIndex + 1);
+        } else {
+          // Swiped right -> prev product
+          changeProduct(safeIndex - 1);
+        }
+      }
+    }
+    touchStartX.current = null;
+    touchEndX.current = null;
+    setIsPaused(false);
+  };
 
   return (
     <section
@@ -271,7 +333,14 @@ export default function Carousel({ products = [], onNavigate }) {
         </div>
 
         {/* Product Showcase Hero Card */}
-        <div className="showcase-card w-full max-w-5xl transition-transform duration-300">
+        <div
+          className="showcase-card w-full max-w-5xl transition-transform duration-300 select-none"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <div className="rounded-3xl bg-white/15 backdrop-blur-md p-6 sm:p-8 md:p-10 border border-white/30 shadow-2xl relative overflow-hidden">
             {/* Quick Navigation Arrows overlay */}
             {featuredProducts.length > 1 && (
@@ -314,6 +383,8 @@ export default function Carousel({ products = [], onNavigate }) {
                   <span>{activeProduct.brand}</span>
                   <span className="opacity-50">·</span>
                   <span className="text-amber-300 font-bold">Authorized Distribution</span>
+                  <span className="opacity-50">·</span>
+                  <span className="text-white/90 font-mono text-[11px]">{safeIndex + 1}/{featuredProducts.length}</span>
                 </div>
 
                 <h3 className="text-2xl sm:text-3xl md:text-4xl font-black drop-shadow text-white leading-tight">
