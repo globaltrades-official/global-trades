@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import clsx from 'clsx';
 import gsap from 'gsap';
-import { CheckCircle2, ArrowRight, ChevronLeft, ChevronRight, Download } from 'lucide-react';
+import { CheckCircle2, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import WhatsAppIcon from '@/components/WhatsAppIcon';
 
 import { WavyCircles } from './WavyCircles';
@@ -330,19 +330,6 @@ export default function Carousel({ products = [], onNavigate }) {
           <p className="text-sm sm:text-base md:text-lg font-medium opacity-90 mt-2 max-w-2xl mx-auto leading-relaxed">
             Curated commercial food service products distributed directly to Kozhikode kitchens, cafes, and bakeries.
           </p>
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-            <a
-              href="/Global_Trades_Full_Catalog.pdf"
-              download="Global_Trades_Full_Catalog.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-white/20 hover:bg-white/30 px-4 py-2 text-xs font-black uppercase tracking-wider text-white backdrop-blur-sm border border-white/30 transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-sm"
-              title="Download complete wholesale products catalog as PDF"
-            >
-              <Download size={14} />
-              <span>Download Products as PDF (52 MB)</span>
-            </a>
-          </div>
         </div>
 
         {/* Product Showcase Hero Card */}
@@ -459,18 +446,6 @@ export default function Carousel({ products = [], onNavigate }) {
                     <ArrowRight size={13} />
                   </button>
                 )}
-
-                <a
-                  href="/Global_Trades_Full_Catalog.pdf"
-                  download="Global_Trades_Full_Catalog.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-300 hover:text-white transition-colors cursor-pointer"
-                  title="Download Complete Products Catalog as PDF"
-                >
-                  <Download size={13} />
-                  <span>Download Products as PDF</span>
-                </a>
 
                 <span className="text-[11px] font-bold uppercase tracking-wider text-white/70">
                   Instant Commercial Dispatch

@@ -184,28 +184,15 @@ export default function ProductsPage({
               </p>
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2.5 shrink-0 self-start sm:self-auto">
-            <a
-              href="/Global_Trades_Full_Catalog.pdf"
-              download="Global_Trades_Full_Catalog.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-white hover:bg-slate-50 text-[#1A4C98] border border-[#1A4C98]/30 font-extrabold px-4 py-2.5 text-xs uppercase tracking-wider transition-all shadow-xs hover:scale-105 active:scale-95 cursor-pointer"
-              title="Download Products as PDF"
-            >
-              <Download size={14} className="shrink-0 text-[#1A4C98]" />
-              <span>Download PDF</span>
-            </a>
-            <a
-              href={CONTACT.WHATSAPP_ORDER_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-800 hover:bg-emerald-900 active:scale-95 text-white font-bold px-4 py-2.5 text-xs uppercase tracking-wider transition-all shadow-sm shadow-emerald-950/20 cursor-pointer"
-            >
-              <span>Ask for Pricing</span>
-              <ArrowRight size={13} />
-            </a>
-          </div>
+          <a
+            href={CONTACT.WHATSAPP_ORDER_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-800 hover:bg-emerald-900 active:scale-95 text-white font-bold px-4 py-2.5 text-xs uppercase tracking-wider transition-all shadow-sm shadow-emerald-950/20 shrink-0 self-start sm:self-auto cursor-pointer"
+          >
+            <span>Ask for Pricing</span>
+            <ArrowRight size={13} />
+          </a>
         </div>
 
         {/* Controls Container */}
@@ -359,29 +346,13 @@ export default function ProductsPage({
           </div>
         </div>
 
-        {/* Results Bar with Download Products as PDF option */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
-          <div className="flex items-center gap-2">
-            <span className="text-[#1A4C98] font-extrabold uppercase tracking-wider text-xs">
-              Commercial Wholesale Directory
-            </span>
-            <span className="text-xs text-[#081426]/60 font-bold">
-              · Showing all {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'}
-            </span>
+        {/* Results Bar */}
+        <div className="flex items-center justify-between mb-6 text-xs sm:text-sm font-bold">
+          <div className="text-[#1A4C98] font-extrabold uppercase tracking-wider text-xs">
+            Commercial Wholesale Directory
           </div>
-
-          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
-            <a
-              href="/Global_Trades_Full_Catalog.pdf"
-              download="Global_Trades_Full_Catalog.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-[#1A4C98]/30 bg-white hover:bg-[#1A4C98] hover:text-white px-3.5 py-1.5 text-xs font-black uppercase tracking-wider text-[#1A4C98] shadow-xs transition-all hover:scale-105 active:scale-95 cursor-pointer"
-              title="Download complete wholesale products catalog as PDF"
-            >
-              <Download size={13} className="shrink-0" />
-              <span>Download Products as PDF</span>
-            </a>
+          <div className="text-[#081426]/60 font-semibold text-xs">
+            Showing all {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'}
           </div>
         </div>
 
@@ -425,17 +396,6 @@ export default function ProductsPage({
             </div>
 
             <div className="flex flex-wrap items-center gap-3 shrink-0">
-              <a
-                href="/Global_Trades_Full_Catalog.pdf"
-                download="Global_Trades_Full_Catalog.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl bg-amber-400 hover:bg-amber-300 px-5 py-3 text-xs font-black uppercase tracking-wider text-[#081426] shadow-md shadow-amber-950/20 transition-all hover:scale-105 active:scale-95 cursor-pointer"
-                title="Download complete wholesale products catalog as PDF"
-              >
-                <Download size={16} />
-                <span>Download Products as PDF</span>
-              </a>
               <a
                 href={CONTACT.WHATSAPP_ORDER_URL}
                 target="_blank"
