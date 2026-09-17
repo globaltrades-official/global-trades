@@ -2,8 +2,6 @@ import React, { useState, useMemo, useEffect } from 'react';
 import {
   Search,
   X,
-  ChevronLeft,
-  ChevronRight,
   Package,
   RotateCcw,
   ArrowLeft,
@@ -28,21 +26,17 @@ export default function ProductsPage({
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [selectedBrand, setSelectedBrand] = useState(initialBrand);
   const [sortBy, setSortBy] = useState('default');
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 24;
 
   // Sync category or brand when passed from parent / external link
   useEffect(() => {
     if (initialCategory) {
       setSelectedCategory(initialCategory);
-      setCurrentPage(1);
     }
   }, [initialCategory]);
 
   useEffect(() => {
     if (initialBrand) {
       setSelectedBrand(initialBrand);
-      setCurrentPage(1);
     }
   }, [initialBrand]);
 
@@ -88,29 +82,11 @@ export default function ProductsPage({
     return result;
   }, [selectedCategory, selectedBrand, searchQuery, sortBy]);
 
-  // Pagination calculation
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage) || 1;
-  const paginatedProducts = useMemo(() => {
-    const start = (currentPage - 1) * itemsPerPage;
-    return filteredProducts.slice(start, start + itemsPerPage);
-  }, [filteredProducts, currentPage]);
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-    const el = document.getElementById('products');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
   const resetFilters = () => {
     setSearchQuery('');
     setSelectedCategory('All');
     setSelectedBrand('All');
     setSortBy('default');
-    setCurrentPage(1);
   };
 
   return (
@@ -244,7 +220,6 @@ export default function ProductsPage({
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
-                  setCurrentPage(1);
                 }}
                 placeholder="Search products (e.g., Monin, Callebaut, Veeba, 1kg, sachet)..."
                 className="w-full rounded-xl border-2 border-[#D0DFEF] bg-[#F4F8FC] py-3 pl-11 pr-10 text-sm font-semibold text-[#081426] placeholder-[#081426]/45 focus:border-[#1A4C98] focus:bg-white focus:outline-none transition-all"
@@ -265,7 +240,6 @@ export default function ProductsPage({
                 value={selectedBrand}
                 onChange={(e) => {
                   setSelectedBrand(e.target.value);
-                  setCurrentPage(1);
                 }}
                 aria-label="Filter by Brand"
                 className="w-full rounded-xl border-2 border-[#D0DFEF] bg-[#F4F8FC] py-3 px-4 text-sm font-semibold text-[#081426] focus:border-[#1A4C98] focus:bg-white focus:outline-none cursor-pointer"
@@ -309,7 +283,6 @@ export default function ProductsPage({
                     key={cat}
                     onClick={() => {
                       setSelectedCategory(cat);
-                      setCurrentPage(1);
                     }}
                     className={`shrink-0 rounded-full px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
                       isSelected
@@ -392,8 +365,8 @@ export default function ProductsPage({
             <span className="text-[#1A4C98] font-extrabold uppercase tracking-wider text-xs">
               Commercial Wholesale Directory
             </span>
-            <span className="text-xs text-[#081426]/50 font-bold">
-              ({filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'})
+            <span className="text-xs text-[#081426]/60 font-bold">
+              · Showing all {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'}
             </span>
           </div>
 
@@ -409,10 +382,6 @@ export default function ProductsPage({
               <Download size={13} className="shrink-0" />
               <span>Download Products as PDF</span>
             </a>
-
-            <div className="text-xs font-bold text-[#081426]/60 pl-2 border-l border-[#D0DFEF]">
-              Page {currentPage} of {totalPages}
-            </div>
           </div>
         </div>
 
@@ -434,65 +403,9 @@ export default function ProductsPage({
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {paginatedProducts.map((product) => (
+            {filteredProducts.map((product) => (
               <ProductCatalogCard key={product.id} product={product} />
             ))}
-          </div>
-        )}
-
-        {/* Pagination Controls */}
-        {totalPages > 1 && (
-          <div className="mt-12 flex items-center justify-center gap-2">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="rounded-xl border border-[#D0DFEF] bg-white p-2.5 text-sm font-bold text-[#081426] hover:bg-[#1A4C98] hover:text-white disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer shadow-sm"
-              aria-label="Previous Page"
-            >
-              <ChevronLeft size={18} />
-            </button>
-
-            {Array.from({ length: totalPages }).map((_, idx) => {
-              const pageNumber = idx + 1;
-              if (
-                pageNumber === 1 ||
-                pageNumber === totalPages ||
-                (pageNumber >= currentPage - 2 && pageNumber <= currentPage + 2)
-              ) {
-                return (
-                  <button
-                    key={pageNumber}
-                    onClick={() => handlePageChange(pageNumber)}
-                    className={`min-w-10 rounded-xl px-3.5 py-2 text-xs font-bold transition-all cursor-pointer ${
-                      currentPage === pageNumber
-                        ? 'bg-[#1A4C98] text-white shadow-md shadow-[#1A4C98]/20'
-                        : 'border border-[#D0DFEF] bg-white text-[#081426] hover:bg-[#F4F8FC]'
-                    }`}
-                  >
-                    {pageNumber}
-                  </button>
-                );
-              } else if (
-                pageNumber === currentPage - 3 ||
-                pageNumber === currentPage + 3
-              ) {
-                return (
-                  <span key={pageNumber} className="px-1 text-xs text-[#081426]/40 font-bold">
-                    ...
-                  </span>
-                );
-              }
-              return null;
-            })}
-
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="rounded-xl border border-[#D0DFEF] bg-white p-2.5 text-sm font-bold text-[#081426] hover:bg-[#1A4C98] hover:text-white disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer shadow-sm"
-              aria-label="Next Page"
-            >
-              <ChevronRight size={18} />
-            </button>
           </div>
         )}
 
