@@ -77,20 +77,20 @@ export default function App() {
 
   const getPageFromLocation = useCallback(() => {
     if (typeof window === 'undefined') return 'home';
+    const path = (window.location.pathname || '').toLowerCase().replace(/\/+$/, '');
     const hash = (window.location.hash || '').toLowerCase();
-    const path = (window.location.pathname || '').toLowerCase();
 
-    if (hash.includes('admin') || path.includes('/admin')) return 'admin';
-    if (hash === '#brands' || hash === '#brands-page' || (hash.includes('brand') && !hash.includes('admin')) || path.includes('/brands')) return 'brands';
-    if (hash.includes('products') || path.includes('/products')) return 'products';
-    if (hash.includes('contact') || path.includes('/contact')) return 'contact';
+    // Primary clean HTML5 path routing
+    if (path === '/admin' || path.startsWith('/admin/')) return 'admin';
+    if (path === '/brands' || path.startsWith('/brands/')) return 'brands';
+    if (path === '/products' || path.startsWith('/products/')) return 'products';
+    if (path === '/contact' || path.startsWith('/contact/')) return 'contact';
 
-    try {
-      const savedPage = sessionStorage.getItem('gt_active_page');
-      if (savedPage && ['home', 'products', 'brands', 'admin', 'contact'].includes(savedPage)) {
-        return savedPage;
-      }
-    } catch (e) {}
+    // Backward-compatibility support for any incoming legacy hash links
+    if (hash.includes('admin')) return 'admin';
+    if (hash === '#brands' || hash === '#brands-page' || (hash.includes('brand') && !hash.includes('admin'))) return 'brands';
+    if (hash.includes('products')) return 'products';
+    if (hash.includes('contact')) return 'contact';
 
     return 'home';
   }, []);
@@ -101,17 +101,17 @@ export default function App() {
   const [productFilter, setProductFilter] = useState({ category: 'All', brand: 'All' });
 
   const navigateTo = useCallback((page, anchor, state) => {
-    let targetHash = '#';
+    let targetPath = '/';
     if (page === 'admin') {
-      targetHash = state?.tab === 'brands' ? '#admin-brands' : '#admin';
+      targetPath = state?.tab === 'brands' ? '/admin?tab=brands' : '/admin';
     } else if (page === 'brands') {
-      targetHash = '#brands';
+      targetPath = '/brands';
     } else if (page === 'products') {
-      targetHash = '#products';
+      targetPath = '/products';
     } else if (page === 'contact') {
-      targetHash = '#contact';
-    } else if (anchor && anchor !== '#') {
-      targetHash = anchor;
+      targetPath = '/contact';
+    } else if (page === 'home') {
+      targetPath = '/';
     }
 
     if (state?.tab) {
@@ -132,12 +132,10 @@ export default function App() {
       }
     } catch (e) {}
 
-    if (window.location.hash !== targetHash) {
-      window.history.pushState(
-        null,
-        '',
-        targetHash === '#' ? window.location.pathname : targetHash
-      );
+    // Push clean path to browser address bar without any #
+    const currentFullPath = window.location.pathname + (window.location.search || '');
+    if (currentFullPath !== targetPath || window.location.hash) {
+      window.history.pushState(null, '', targetPath);
     }
 
     setCurrentPage(page);
@@ -169,14 +167,32 @@ export default function App() {
     } catch (e) {}
   }, [currentPage]);
 
-  // Synchronize route state with URL hash and popstate
+  // Clean up any legacy `#hash` in URL immediately so users never see `#`
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const hash = window.location.hash;
+    if (hash) {
+      let cleanPath = '/';
+      if (hash.includes('admin')) {
+        cleanPath = hash.includes('brand') ? '/admin?tab=brands' : '/admin';
+      } else if (hash.includes('brand')) {
+        cleanPath = '/brands';
+      } else if (hash.includes('product')) {
+        cleanPath = '/products';
+      } else if (hash.includes('contact')) {
+        cleanPath = '/contact';
+      }
+      window.history.replaceState(null, '', cleanPath);
+    }
+  }, []);
+
+  // Synchronize route state with URL and popstate (back/forward buttons)
   useEffect(() => {
     const handleLocationChange = () => {
       const page = getPageFromLocation();
       setCurrentPage(page);
     };
 
-    window.addEventListener('hashchange', handleLocationChange);
     window.addEventListener('popstate', handleLocationChange);
 
     // Intercept internal link clicks to ensure instantaneous page transitions
@@ -211,7 +227,7 @@ export default function App() {
         navigateTo('contact');
       } else if (href === '#' || href === '#hero' || href === '/' || href === '/home') {
         e.preventDefault();
-        navigateTo('home', '#hero');
+        navigateTo('home');
       } else if (href.startsWith('#')) {
         e.preventDefault();
         navigateTo('home', href);
@@ -221,7 +237,6 @@ export default function App() {
     document.addEventListener('click', handleGlobalClick);
 
     return () => {
-      window.removeEventListener('hashchange', handleLocationChange);
       window.removeEventListener('popstate', handleLocationChange);
       document.removeEventListener('click', handleGlobalClick);
     };
@@ -291,7 +306,7 @@ export default function App() {
             <BrandsPage
               brands={brands}
               onNavigateHome={() => navigateTo('home')}
-              onNavigateProducts={(brand) => navigateTo('products', '#products', brand ? { brand } : undefined)}
+              onNavigateProducts={(brand) => navigateTo('products', null, brand ? { brand } : undefined)}
               onNavigateAdmin={() => navigateTo('admin', null, { tab: 'brands' })}
             />
           </Suspense>

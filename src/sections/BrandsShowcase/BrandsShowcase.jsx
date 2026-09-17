@@ -73,7 +73,7 @@ export default function BrandsShowcase({
 
   const handleBrandClick = (brandName) => {
     if (onNavigate) {
-      onNavigate('products', '#products', { brand: brandName });
+      onNavigate('products', null, { brand: brandName });
     }
   };
 

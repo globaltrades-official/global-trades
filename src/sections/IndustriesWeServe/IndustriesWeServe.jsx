@@ -83,7 +83,7 @@ const INDUSTRIES = [
 export default function IndustriesWeServe({ onNavigate }) {
   const handleIndustryClick = (category) => {
     if (onNavigate) {
-      onNavigate('products', '#products', { category });
+      onNavigate('products', null, { category });
     }
   };
 

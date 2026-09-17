@@ -74,7 +74,7 @@ const CATEGORIES = [
 export default function ShopByCategory({ onNavigate }) {
   const handleCategoryClick = (category) => {
     if (onNavigate) {
-      onNavigate('products', '#products', { category });
+      onNavigate('products', null, { category });
     }
   };
 

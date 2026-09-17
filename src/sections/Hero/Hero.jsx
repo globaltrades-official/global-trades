@@ -110,7 +110,7 @@ export default function Hero({ onNavigate }) {
 
               {/* Secondary CTA */}
               <Button
-                buttonLink="#products"
+                buttonLink="/products"
                 buttonText="Explore Products"
                 onClick={(e) => {
                   e.preventDefault();

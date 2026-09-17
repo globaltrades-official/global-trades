@@ -42,8 +42,8 @@ export default function ProductsPage({
 
   // Scroll to top on standalone page mount only
   useEffect(() => {
-    if (!isEmbedded && window.location.hash !== '#products') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (!isEmbedded) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
   }, [isEmbedded]);
 

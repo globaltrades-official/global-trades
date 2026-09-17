@@ -18,7 +18,7 @@ export default function Header({ currentPage = 'home', activeSection = 'hero', o
       <div className="w-full flex items-center justify-between px-4 sm:px-6 md:px-8 lg:px-12 py-2.5">
         {/* Brand Logo & Name */}
         <button
-          onClick={() => handleNavClick('home', '#hero')}
+          onClick={() => handleNavClick('home')}
           className="flex items-center gap-3 group text-left cursor-pointer border-none bg-transparent"
         >
           <div className="relative size-11 md:size-12 rounded-full bg-white p-1 shadow-md shadow-[#1A4C98]/20 transition-transform duration-300 group-hover:scale-105 border border-[#00A3E0]/30">
@@ -43,7 +43,7 @@ export default function Header({ currentPage = 'home', activeSection = 'hero', o
         {/* Unified Glass Model Desktop Navigation Bar */}
         <nav className="hidden xl:flex items-center gap-1 p-1 rounded-full bg-white/75 backdrop-blur-md border border-[#1A4C98]/15 shadow-sm">
           <button
-            onClick={() => handleNavClick('home', '#hero')}
+            onClick={() => handleNavClick('home')}
             className={`transition-all duration-200 cursor-pointer px-3.5 py-1.5 rounded-full text-xs lg:text-sm font-bold ${
               currentPage === 'home' && (activeSection === 'hero' || !activeSection)
                 ? 'text-white bg-[#1A4C98] shadow-sm font-black'
@@ -147,7 +147,7 @@ export default function Header({ currentPage = 'home', activeSection = 'hero', o
       {mobileMenuOpen && (
         <div className="xl:hidden px-4 pt-2 pb-4 border-t border-[#D0DFEF] bg-white/95 backdrop-blur-md flex flex-col gap-2">
           <button
-            onClick={() => handleNavClick('home', '#hero')}
+            onClick={() => handleNavClick('home')}
             className={`text-left py-2 px-3 rounded-lg text-sm font-bold ${
               currentPage === 'home' ? 'bg-[#1A4C98] text-white' : 'text-[#081426]'
             }`}
