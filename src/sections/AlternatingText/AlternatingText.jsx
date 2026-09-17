@@ -33,8 +33,49 @@ export default function AlternatingText() {
   return (
     <section
       id="benefits"
-      className="relative w-full bg-gradient-to-b from-[#E8F1FB] via-[#EFF6FC] to-[#F4F8FC] py-8 sm:py-10 md:py-12 border-t border-[#1A4C98]/15"
+      className="relative w-full bg-gradient-to-b from-[#E8F1FB] via-[#EFF6FC] to-[#F4F8FC] py-8 sm:py-10 md:py-12 border-t border-[#1A4C98]/15 overflow-hidden"
     >
+      {/* 3D Rotating Ambient Background Brand Medallion (Matching Computer to Mobile) */}
+      <div
+        className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center overflow-hidden select-none"
+        aria-hidden="true"
+      >
+        <style>{`
+          @keyframes gt-review-medallion-rotate {
+            0% {
+              transform: perspective(1000px) rotateY(0deg);
+            }
+            100% {
+              transform: perspective(1000px) rotateY(360deg);
+            }
+          }
+        `}</style>
+
+        {/* Ambient Radial Soft Glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-72 sm:size-96 rounded-full bg-gradient-to-tr from-[#00A3E0]/15 via-[#1A4C98]/10 to-[#E52528]/10 blur-3xl pointer-events-none" />
+
+        {/* Concentric Subtle Rotating Brand Accent Ring */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-64 sm:size-80 md:size-96 rounded-full border border-[#1A4C98]/10 pointer-events-none animate-[spin_40s_linear_infinite]" />
+
+        {/* 3D Brand Medallion */}
+        <div className="relative flex flex-col items-center justify-center opacity-25 sm:opacity-30 transform-gpu">
+          <div
+            className="relative size-44 sm:size-60 md:size-72 rounded-full bg-white shadow-xl p-4 sm:p-5 flex items-center justify-center border border-[#D0DFEF]"
+            style={{
+              animation: 'gt-review-medallion-rotate 22s linear infinite',
+              transformStyle: 'preserve-3d',
+            }}
+          >
+            <img
+              src={BRANDING.LOGO_PATH}
+              alt=""
+              className="size-full object-contain filter drop-shadow-sm"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </div>
+
       <div className="mx-auto w-full max-w-6xl px-4 md:px-8 relative z-10">
         {/* Compact Section Header with Small Company Logo */}
         <div className="mx-auto max-w-2xl text-center mb-5 sm:mb-7">
