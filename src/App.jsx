@@ -65,8 +65,14 @@ export default function App() {
   } = useBrandCatalog();
 
   const [adminTab, setAdminTab] = useState(() => {
-    const hash = (typeof window !== 'undefined' ? window.location.hash || '' : '').toLowerCase();
-    return hash.includes('brand') ? 'brands' : 'products';
+    if (typeof window === 'undefined') return 'products';
+    const hash = (window.location.hash || '').toLowerCase();
+    if (hash.includes('brand')) return 'brands';
+    try {
+      const savedTab = sessionStorage.getItem('gt_admin_tab');
+      if (savedTab === 'brands' || savedTab === 'products') return savedTab;
+    } catch (e) {}
+    return 'products';
   });
 
   const getPageFromLocation = useCallback(() => {
@@ -78,6 +84,14 @@ export default function App() {
     if (hash === '#brands' || hash === '#brands-page' || (hash.includes('brand') && !hash.includes('admin')) || path.includes('/brands')) return 'brands';
     if (hash.includes('products') || path.includes('/products')) return 'products';
     if (hash.includes('contact') || path.includes('/contact')) return 'contact';
+
+    try {
+      const savedPage = sessionStorage.getItem('gt_active_page');
+      if (savedPage && ['home', 'products', 'brands', 'admin', 'contact'].includes(savedPage)) {
+        return savedPage;
+      }
+    } catch (e) {}
+
     return 'home';
   }, []);
 
@@ -111,6 +125,13 @@ export default function App() {
       });
     }
 
+    try {
+      sessionStorage.setItem('gt_active_page', page);
+      if (state?.tab) {
+        sessionStorage.setItem('gt_admin_tab', state.tab);
+      }
+    } catch (e) {}
+
     if (window.location.hash !== targetHash) {
       window.history.pushState(
         null,
@@ -141,28 +162,12 @@ export default function App() {
     }
   }, []);
 
-  // On page refresh/reload, automatically redirect to home and clear hash
+  // Save active page in sessionStorage so refresh always stays on the exact same page
   useEffect(() => {
     try {
-      let isReloaded = false;
-      const navEntries = performance.getEntriesByType('navigation');
-      if (navEntries && navEntries.length > 0 && navEntries[0].type === 'reload') {
-        isReloaded = true;
-      } else if (window.performance && window.performance.navigation && window.performance.navigation.type === 1) {
-        isReloaded = true;
-      }
-
-      if (isReloaded) {
-        if (window.location.hash && window.location.hash !== '#' && window.location.hash !== '#hero') {
-          window.history.replaceState(null, '', window.location.pathname);
-        }
-        setCurrentPage('home');
-        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-      }
-    } catch (e) {
-      console.warn('Reload check warning:', e);
-    }
-  }, []);
+      sessionStorage.setItem('gt_active_page', currentPage);
+    } catch (e) {}
+  }, [currentPage]);
 
   // Synchronize route state with URL hash and popstate
   useEffect(() => {
