@@ -15,25 +15,25 @@ export default function Header({ currentPage = 'home', activeSection = 'hero', o
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-[#1A4C98]/15 shadow-sm">
-      <div className="w-full flex items-center justify-between px-4 sm:px-6 md:px-8 lg:px-12 py-2.5">
+      <div className="w-full flex items-center justify-between px-3 sm:px-6 md:px-8 lg:px-12 py-2 sm:py-2.5">
         {/* Brand Logo & Name */}
         <button
           onClick={() => handleNavClick('home')}
-          className="flex items-center gap-3 group text-left cursor-pointer border-none bg-transparent"
+          className="flex items-center gap-2 sm:gap-3 group text-left cursor-pointer border-none bg-transparent min-w-0"
         >
-          <div className="relative size-11 md:size-12 rounded-full bg-white p-1 shadow-md shadow-[#1A4C98]/20 transition-transform duration-300 group-hover:scale-105 border border-[#00A3E0]/30">
+          <div className="relative size-9 sm:size-11 md:size-12 rounded-full bg-white p-1 shadow-md shadow-[#1A4C98]/20 transition-transform duration-300 group-hover:scale-105 border border-[#00A3E0]/30 shrink-0">
             <img
               src={BRANDING.LOGO_PATH}
               alt="Global Trades Logo"
               className="size-full object-contain"
             />
           </div>
-          <div className="flex flex-col">
-            <span className="text-xl md:text-2xl font-black tracking-tight text-[#1A4C98] uppercase leading-none font-heading">
+          <div className="flex flex-col min-w-0">
+            <span className="text-lg sm:text-xl md:text-2xl font-black tracking-tight text-[#1A4C98] uppercase leading-none font-heading whitespace-nowrap">
               {BRANDING.COMPANY_NAME}
             </span>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="text-[11px] font-bold text-[#E52528] tracking-wide uppercase">
+            <div className="flex items-center gap-2 mt-0.5 sm:mt-1">
+              <span className="text-[10px] sm:text-[11px] font-bold text-[#E52528] tracking-wide uppercase">
                 Kozhikode
               </span>
             </div>
@@ -92,31 +92,32 @@ export default function Header({ currentPage = 'home', activeSection = 'hero', o
 
         {/* Quick Actions / Dedicated Unmistakable Contact Channels */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Call for Enquiries: 94479 31507 */}
+          {/* Call for Enquiries: 94479 31507 (Always visible on mobile & desktop) */}
           <a
             href={`tel:${CONTACT.ENQUIRY_PHONE_RAW}`}
-            className="hidden sm:flex items-center gap-1.5 rounded-xl border border-[#1A4C98]/20 bg-white/80 px-2.5 py-1.5 text-[#1A4C98] shadow-sm transition-all duration-200 hover:bg-[#1A4C98] hover:text-white hover:scale-105 active:scale-95 cursor-pointer"
+            className="flex items-center gap-1.5 rounded-xl border border-[#1A4C98]/20 bg-white/90 px-2 sm:px-2.5 py-1.5 text-[#1A4C98] shadow-sm transition-all duration-200 hover:bg-[#1A4C98] hover:text-white hover:scale-105 active:scale-95 cursor-pointer group"
             title="Call for Enquiries: 94479 31507"
+            aria-label={`Call for Enquiries: ${CONTACT.ENQUIRY_PHONE}`}
           >
-            <div className="size-6 rounded-lg bg-[#1A4C98]/10 flex items-center justify-center shrink-0">
-              <Phone size={12} className="text-[#1A4C98]" />
+            <div className="size-6 rounded-lg bg-[#1A4C98]/10 group-hover:bg-white/20 flex items-center justify-center shrink-0 transition-colors">
+              <Phone size={13} className="text-[#1A4C98] group-hover:text-white transition-colors" />
             </div>
             <div className="flex flex-col text-left leading-tight">
-              <span className="text-[9px] uppercase font-bold text-[#081426]/60 tracking-wider">
+              <span className="hidden sm:inline text-[9px] uppercase font-bold text-[#081426]/60 group-hover:text-white/80 tracking-wider transition-colors">
                 Call for Enquiries
               </span>
-              <span className="text-xs font-black tracking-tight whitespace-nowrap">
+              <span className="text-[11px] sm:text-xs font-black tracking-tight whitespace-nowrap">
                 {CONTACT.ENQUIRY_PHONE}
               </span>
             </div>
           </a>
 
-          {/* WhatsApp Orders: 0495 2765320 */}
+          {/* WhatsApp Orders: 0495 2765320 (Hidden on mobile where floating button is used, visible on sm+ screens) */}
           <a
             href={CONTACT.WHATSAPP_ORDER_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 px-2.5 sm:px-3 py-1.5 text-white shadow-md shadow-emerald-900/25 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
+            className="hidden sm:flex items-center gap-1.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 px-2.5 sm:px-3 py-1.5 text-white shadow-md shadow-emerald-900/25 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
             title="WhatsApp Orders: 0495 2765320"
           >
             <div className="size-6 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
