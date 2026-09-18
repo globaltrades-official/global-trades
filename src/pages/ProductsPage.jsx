@@ -30,32 +30,62 @@ export default function ProductsPage({
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [selectedBrand, setSelectedBrand] = useState(initialBrand);
   const [sortBy, setSortBy] = useState('default');
-  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
-  const [pdfProgress, setPdfProgress] = useState({ percent: 0, status: '' });
+  const [isGeneratingFullPdf, setIsGeneratingFullPdf] = useState(false);
+  const [fullPdfProgress, setFullPdfProgress] = useState({ percent: 0, status: '' });
+  const [isGeneratingFilteredPdf, setIsGeneratingFilteredPdf] = useState(false);
+  const [filteredPdfProgress, setFilteredPdfProgress] = useState({ percent: 0, status: '' });
   const [isDownloadingFullCatalog, setIsDownloadingFullCatalog] = useState(false);
 
-  const handleDownloadFilteredPdf = async () => {
-    if (filteredProducts.length === 0 || isGeneratingPdf) return;
-    setIsGeneratingPdf(true);
-    setPdfProgress({ percent: 5, status: 'Initializing catalog generator...' });
+  // Downloads ALL products without filtering (Red marked top button)
+  const handleDownloadFullProductsPdf = async () => {
+    if (products.length === 0 || isGeneratingFullPdf) return;
+    setIsGeneratingFullPdf(true);
+    setFullPdfProgress({ percent: 5, status: 'Initializing complete catalog...' });
     try {
       await generateCatalogPdf(
-        filteredProducts,
+        products, // ALL products, unfiltered!
+        {
+          category: 'All',
+          brand: 'All',
+          search: '',
+        },
+        (progress) => {
+          setFullPdfProgress(progress);
+        }
+      );
+    } catch (err) {
+      console.error('Failed to generate full catalog PDF:', err);
+    } finally {
+      setTimeout(() => {
+        setIsGeneratingFullPdf(false);
+        setFullPdfProgress({ percent: 0, status: '' });
+      }, 700);
+    }
+  };
+
+  // Downloads ONLY the filtered products (Black marked results button)
+  const handleDownloadFilteredPdf = async () => {
+    if (filteredProducts.length === 0 || isGeneratingFilteredPdf) return;
+    setIsGeneratingFilteredPdf(true);
+    setFilteredPdfProgress({ percent: 5, status: 'Initializing filtered catalog...' });
+    try {
+      await generateCatalogPdf(
+        filteredProducts, // ONLY filtered products!
         {
           category: selectedCategory,
           brand: selectedBrand,
           search: searchQuery,
         },
         (progress) => {
-          setPdfProgress(progress);
+          setFilteredPdfProgress(progress);
         }
       );
     } catch (err) {
-      console.error('Failed to generate PDF:', err);
+      console.error('Failed to generate filtered catalog PDF:', err);
     } finally {
       setTimeout(() => {
-        setIsGeneratingPdf(false);
-        setPdfProgress({ percent: 0, status: '' });
+        setIsGeneratingFilteredPdf(false);
+        setFilteredPdfProgress({ percent: 0, status: '' });
       }, 700);
     }
   };
@@ -188,25 +218,25 @@ export default function ProductsPage({
             {/* Download Products as PDF CTA with Interactive Progress Feedback */}
             <div className="mt-6 flex flex-col gap-3">
               <div className="flex flex-wrap items-center gap-3">
-                {/* Filtered Catalog PDF with Product Images */}
+                {/* Full Wholesale Products PDF without Filtering (Red marked button in user UI) */}
                 <button
-                  onClick={handleDownloadFilteredPdf}
-                  disabled={isGeneratingPdf || filteredProducts.length === 0}
+                  onClick={handleDownloadFullProductsPdf}
+                  disabled={isGeneratingFullPdf || products.length === 0}
                   className="inline-flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-300 hover:from-amber-300 hover:to-amber-200 active:scale-95 text-[#081426] px-5 py-3 text-xs sm:text-sm font-black uppercase tracking-wider shadow-lg shadow-amber-950/20 transition-all hover:scale-105 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed group"
-                  title="Download filtered products with photos as PDF"
+                  title="Download complete catalog of all products without filtering"
                 >
-                  {isGeneratingPdf ? (
+                  {isGeneratingFullPdf ? (
                     <Loader2 size={18} className="animate-spin text-[#081426]" />
                   ) : (
                     <Download size={18} className="shrink-0 text-[#081426] transition-transform group-hover:-translate-y-0.5" />
                   )}
                   <span>
-                    {isGeneratingPdf
-                      ? `Generating (${pdfProgress.percent || 0}%)...`
-                      : 'Download Filtered PDF (with Images)'}
+                    {isGeneratingFullPdf
+                      ? `Generating (${fullPdfProgress.percent || 0}%)...`
+                      : 'Download Full Catalog (PDF)'}
                   </span>
                   <span className="rounded-md bg-black/15 px-2 py-0.5 text-[10px] font-black uppercase">
-                    {filteredProducts.length} {filteredProducts.length === 1 ? 'Item' : 'Items'}
+                    {products.length} Items
                   </span>
                 </button>
 
@@ -230,20 +260,20 @@ export default function ProductsPage({
                 </button>
               </div>
 
-              {/* Real-time PDF Generation Progress Bar Banner */}
-              {isGeneratingPdf && (
+              {/* Real-time Full PDF Generation Progress Bar Banner */}
+              {isGeneratingFullPdf && (
                 <div className="w-full max-w-xl rounded-xl bg-[#081426]/85 backdrop-blur-md border border-amber-400/40 p-3 shadow-xl">
                   <div className="flex items-center justify-between text-xs text-white mb-1.5 font-bold">
                     <span className="flex items-center gap-2 text-amber-300">
                       <ImageIcon size={14} className="animate-pulse" />
-                      <span>{pdfProgress.status || 'Generating PDF catalog...'}</span>
+                      <span>{fullPdfProgress.status || 'Generating full catalog PDF...'}</span>
                     </span>
-                    <span className="font-mono text-amber-300">{pdfProgress.percent || 0}%</span>
+                    <span className="font-mono text-amber-300">{fullPdfProgress.percent || 0}%</span>
                   </div>
                   <div className="w-full h-2 rounded-full bg-white/15 overflow-hidden">
                     <div
                       className="h-full bg-gradient-to-r from-amber-400 to-amber-200 transition-all duration-300 rounded-full"
-                      style={{ width: `${pdfProgress.percent || 5}%` }}
+                      style={{ width: `${fullPdfProgress.percent || 5}%` }}
                     />
                   </div>
                 </div>
@@ -453,19 +483,19 @@ export default function ProductsPage({
             {filteredProducts.length > 0 && (
               <button
                 onClick={handleDownloadFilteredPdf}
-                disabled={isGeneratingPdf}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-[#1A4C98]/10 hover:bg-[#1A4C98] hover:text-white text-[#1A4C98] px-3 py-1.5 text-xs font-bold transition-all cursor-pointer active:scale-95 border border-[#1A4C98]/20 disabled:opacity-50"
-                title="Download filtered products with photos as PDF"
+                disabled={isGeneratingFilteredPdf}
+                className="inline-flex items-center gap-1.5 rounded-xl bg-[#1A4C98] hover:bg-[#123873] active:scale-95 text-white px-3.5 py-2 text-xs font-bold transition-all cursor-pointer shadow-sm shadow-[#1A4C98]/20 disabled:opacity-50"
+                title="Download only the currently filtered products as PDF"
               >
-                {isGeneratingPdf ? (
-                  <Loader2 size={13} className="animate-spin text-[#1A4C98]" />
+                {isGeneratingFilteredPdf ? (
+                  <Loader2 size={13} className="animate-spin text-white" />
                 ) : (
-                  <Download size={13} />
+                  <Download size={13} className="text-white" />
                 )}
                 <span>
-                  {isGeneratingPdf
-                    ? `Generating (${pdfProgress.percent || 0}%)...`
-                    : 'Export Filtered PDF (with Images)'}
+                  {isGeneratingFilteredPdf
+                    ? `Generating (${filteredPdfProgress.percent || 0}%)...`
+                    : `Export Filtered PDF (${filteredProducts.length})`}
                 </span>
               </button>
             )}
