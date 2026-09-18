@@ -9,6 +9,9 @@ import {
   Info,
   HelpCircle,
   Download,
+  Loader2,
+  FileText,
+  Image as ImageIcon,
 } from 'lucide-react';
 import WhatsAppIcon from '@/components/WhatsAppIcon';
 import { CATALOG_CATEGORIES, CATALOG_PRODUCTS, CATALOG_BRANDS } from '@/data/catalogProducts';
@@ -28,21 +31,48 @@ export default function ProductsPage({
   const [selectedBrand, setSelectedBrand] = useState(initialBrand);
   const [sortBy, setSortBy] = useState('default');
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [pdfProgress, setPdfProgress] = useState({ percent: 0, status: '' });
+  const [isDownloadingFullCatalog, setIsDownloadingFullCatalog] = useState(false);
 
-  const handleDownloadFilteredPdf = () => {
+  const handleDownloadFilteredPdf = async () => {
     if (filteredProducts.length === 0 || isGeneratingPdf) return;
     setIsGeneratingPdf(true);
+    setPdfProgress({ percent: 5, status: 'Initializing catalog generator...' });
     try {
-      generateCatalogPdf(filteredProducts, {
-        category: selectedCategory,
-        brand: selectedBrand,
-        search: searchQuery,
-      });
+      await generateCatalogPdf(
+        filteredProducts,
+        {
+          category: selectedCategory,
+          brand: selectedBrand,
+          search: searchQuery,
+        },
+        (progress) => {
+          setPdfProgress(progress);
+        }
+      );
     } catch (err) {
       console.error('Failed to generate PDF:', err);
     } finally {
-      setIsGeneratingPdf(false);
+      setTimeout(() => {
+        setIsGeneratingPdf(false);
+        setPdfProgress({ percent: 0, status: '' });
+      }, 700);
     }
+  };
+
+  const handleDownloadFullCatalog = () => {
+    setIsDownloadingFullCatalog(true);
+    const link = document.createElement('a');
+    link.href = '/Global_Trades_Full_Catalog.pdf';
+    link.download = 'Global_Trades_Full_Catalog.pdf';
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    setTimeout(() => {
+      setIsDownloadingFullCatalog(false);
+    }, 3500);
   };
 
   // Sync category or brand when passed from parent / external link
@@ -155,31 +185,69 @@ export default function ProductsPage({
               Complete inventory of imported syrups, cafe sachets, Belgian chocolates, gourmet purees, sauces, canned fruits, and frozen foods. Every item includes genuine product imagery extracted directly from our official commercial products directory.
             </p>
 
-            {/* Download Products as PDF CTA */}
-            <div className="mt-6 flex flex-wrap items-center gap-3">
-              <button
-                onClick={handleDownloadFilteredPdf}
-                disabled={isGeneratingPdf || filteredProducts.length === 0}
-                className="inline-flex items-center gap-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 active:scale-95 text-[#081426] px-5 py-3 text-xs sm:text-sm font-black uppercase tracking-wider shadow-lg shadow-amber-950/20 transition-all hover:scale-105 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                title="Download filtered products as PDF"
-              >
-                <Download size={18} className="shrink-0 text-[#081426]" />
-                <span>{isGeneratingPdf ? 'Generating PDF...' : 'Download Filtered PDF'}</span>
-                <span className="rounded-md bg-black/15 px-2 py-0.5 text-[10px] font-black uppercase">
-                  {filteredProducts.length} {filteredProducts.length === 1 ? 'Item' : 'Items'}
-                </span>
-              </button>
+            {/* Download Products as PDF CTA with Interactive Progress Feedback */}
+            <div className="mt-6 flex flex-col gap-3">
+              <div className="flex flex-wrap items-center gap-3">
+                {/* Filtered Catalog PDF with Product Images */}
+                <button
+                  onClick={handleDownloadFilteredPdf}
+                  disabled={isGeneratingPdf || filteredProducts.length === 0}
+                  className="inline-flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-300 hover:from-amber-300 hover:to-amber-200 active:scale-95 text-[#081426] px-5 py-3 text-xs sm:text-sm font-black uppercase tracking-wider shadow-lg shadow-amber-950/20 transition-all hover:scale-105 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed group"
+                  title="Download filtered products with photos as PDF"
+                >
+                  {isGeneratingPdf ? (
+                    <Loader2 size={18} className="animate-spin text-[#081426]" />
+                  ) : (
+                    <Download size={18} className="shrink-0 text-[#081426] transition-transform group-hover:-translate-y-0.5" />
+                  )}
+                  <span>
+                    {isGeneratingPdf
+                      ? `Generating (${pdfProgress.percent || 0}%)...`
+                      : 'Download Filtered PDF (with Images)'}
+                  </span>
+                  <span className="rounded-md bg-black/15 px-2 py-0.5 text-[10px] font-black uppercase">
+                    {filteredProducts.length} {filteredProducts.length === 1 ? 'Item' : 'Items'}
+                  </span>
+                </button>
 
-              <a
-                href="/Global_Trades_Full_Catalog.pdf"
-                download="Global_Trades_Full_Catalog.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 text-white border border-white/25 px-4 py-3 text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer"
-                title="Download complete original commercial catalog PDF (52 MB)"
-              >
-                <span>Full Commercial Catalog (52 MB)</span>
-              </a>
+                {/* Complete Commercial Catalog PDF (52 MB) */}
+                <button
+                  onClick={handleDownloadFullCatalog}
+                  disabled={isDownloadingFullCatalog}
+                  className="inline-flex items-center gap-2 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 text-white border border-white/25 px-4 py-3 text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer disabled:opacity-60"
+                  title="Download complete original commercial catalog PDF (52 MB)"
+                >
+                  {isDownloadingFullCatalog ? (
+                    <Loader2 size={16} className="animate-spin text-amber-300" />
+                  ) : (
+                    <FileText size={16} className="text-white/80" />
+                  )}
+                  <span>
+                    {isDownloadingFullCatalog
+                      ? 'Downloading 52 MB PDF...'
+                      : 'Full Commercial Catalog (52 MB)'}
+                  </span>
+                </button>
+              </div>
+
+              {/* Real-time PDF Generation Progress Bar Banner */}
+              {isGeneratingPdf && (
+                <div className="w-full max-w-xl rounded-xl bg-[#081426]/85 backdrop-blur-md border border-amber-400/40 p-3 shadow-xl">
+                  <div className="flex items-center justify-between text-xs text-white mb-1.5 font-bold">
+                    <span className="flex items-center gap-2 text-amber-300">
+                      <ImageIcon size={14} className="animate-pulse" />
+                      <span>{pdfProgress.status || 'Generating PDF catalog...'}</span>
+                    </span>
+                    <span className="font-mono text-amber-300">{pdfProgress.percent || 0}%</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-white/15 overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-amber-400 to-amber-200 transition-all duration-300 rounded-full"
+                      style={{ width: `${pdfProgress.percent || 5}%` }}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="mt-4 flex flex-wrap items-center gap-3 text-xs md:text-sm font-semibold text-white/90">
@@ -387,10 +455,18 @@ export default function ProductsPage({
                 onClick={handleDownloadFilteredPdf}
                 disabled={isGeneratingPdf}
                 className="inline-flex items-center gap-1.5 rounded-lg bg-[#1A4C98]/10 hover:bg-[#1A4C98] hover:text-white text-[#1A4C98] px-3 py-1.5 text-xs font-bold transition-all cursor-pointer active:scale-95 border border-[#1A4C98]/20 disabled:opacity-50"
-                title="Download filtered products as custom PDF"
+                title="Download filtered products with photos as PDF"
               >
-                <Download size={13} />
-                <span>{isGeneratingPdf ? 'Generating...' : 'Export Filtered PDF'}</span>
+                {isGeneratingPdf ? (
+                  <Loader2 size={13} className="animate-spin text-[#1A4C98]" />
+                ) : (
+                  <Download size={13} />
+                )}
+                <span>
+                  {isGeneratingPdf
+                    ? `Generating (${pdfProgress.percent || 0}%)...`
+                    : 'Export Filtered PDF (with Images)'}
+                </span>
               </button>
             )}
           </div>
