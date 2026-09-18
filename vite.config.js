@@ -35,6 +35,9 @@ export default defineConfig({
             if (id.includes('lucide-react')) {
               return 'vendor-lucide';
             }
+            if (id.includes('jspdf') || id.includes('canvg') || id.includes('html2canvas')) {
+              return 'vendor-pdf';
+            }
             if (id.includes('react') || id.includes('react-dom') || id.includes('zustand')) {
               return 'vendor-react';
             }

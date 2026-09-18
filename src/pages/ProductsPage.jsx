@@ -13,6 +13,7 @@ import {
 import WhatsAppIcon from '@/components/WhatsAppIcon';
 import { CATALOG_CATEGORIES, CATALOG_PRODUCTS, CATALOG_BRANDS } from '@/data/catalogProducts';
 import { BRANDING, CONTACT } from '@/constants/theme';
+import { generateCatalogPdf } from '@/utils/generateCatalogPdf';
 
 export default function ProductsPage({
   onNavigateHome,
@@ -26,6 +27,23 @@ export default function ProductsPage({
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [selectedBrand, setSelectedBrand] = useState(initialBrand);
   const [sortBy, setSortBy] = useState('default');
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+
+  const handleDownloadFilteredPdf = () => {
+    if (filteredProducts.length === 0 || isGeneratingPdf) return;
+    setIsGeneratingPdf(true);
+    try {
+      generateCatalogPdf(filteredProducts, {
+        category: selectedCategory,
+        brand: selectedBrand,
+        search: searchQuery,
+      });
+    } catch (err) {
+      console.error('Failed to generate PDF:', err);
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  };
 
   // Sync category or brand when passed from parent / external link
   useEffect(() => {
@@ -139,19 +157,28 @@ export default function ProductsPage({
 
             {/* Download Products as PDF CTA */}
             <div className="mt-6 flex flex-wrap items-center gap-3">
+              <button
+                onClick={handleDownloadFilteredPdf}
+                disabled={isGeneratingPdf || filteredProducts.length === 0}
+                className="inline-flex items-center gap-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 active:scale-95 text-[#081426] px-5 py-3 text-xs sm:text-sm font-black uppercase tracking-wider shadow-lg shadow-amber-950/20 transition-all hover:scale-105 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Download filtered products as PDF"
+              >
+                <Download size={18} className="shrink-0 text-[#081426]" />
+                <span>{isGeneratingPdf ? 'Generating PDF...' : 'Download Filtered PDF'}</span>
+                <span className="rounded-md bg-black/15 px-2 py-0.5 text-[10px] font-black uppercase">
+                  {filteredProducts.length} {filteredProducts.length === 1 ? 'Item' : 'Items'}
+                </span>
+              </button>
+
               <a
                 href="/Global_Trades_Full_Catalog.pdf"
                 download="Global_Trades_Full_Catalog.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 active:scale-95 text-[#081426] px-5 py-3 text-xs sm:text-sm font-black uppercase tracking-wider shadow-lg shadow-amber-950/20 transition-all hover:scale-105 cursor-pointer"
-                title="Download complete wholesale products catalog as PDF"
+                className="inline-flex items-center gap-2 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 text-white border border-white/25 px-4 py-3 text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer"
+                title="Download complete original commercial catalog PDF (52 MB)"
               >
-                <Download size={18} className="shrink-0 text-[#081426]" />
-                <span>Download Products as PDF</span>
-                <span className="rounded-md bg-black/15 px-2 py-0.5 text-[10px] font-black uppercase">
-                  PDF · 52 MB
-                </span>
+                <span>Full Commercial Catalog (52 MB)</span>
               </a>
             </div>
 
@@ -347,12 +374,25 @@ export default function ProductsPage({
         </div>
 
         {/* Results Bar */}
-        <div className="flex items-center justify-between mb-6 text-xs sm:text-sm font-bold">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-6 text-xs sm:text-sm font-bold">
           <div className="text-[#1A4C98] font-extrabold uppercase tracking-wider text-xs">
             Commercial Wholesale Directory
           </div>
-          <div className="text-[#081426]/60 font-semibold text-xs">
-            Showing all {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'}
+          <div className="flex items-center gap-3">
+            <span className="text-[#081426]/60 font-semibold text-xs">
+              Showing {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'}
+            </span>
+            {filteredProducts.length > 0 && (
+              <button
+                onClick={handleDownloadFilteredPdf}
+                disabled={isGeneratingPdf}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-[#1A4C98]/10 hover:bg-[#1A4C98] hover:text-white text-[#1A4C98] px-3 py-1.5 text-xs font-bold transition-all cursor-pointer active:scale-95 border border-[#1A4C98]/20 disabled:opacity-50"
+                title="Download filtered products as custom PDF"
+              >
+                <Download size={13} />
+                <span>{isGeneratingPdf ? 'Generating...' : 'Export Filtered PDF'}</span>
+              </button>
+            )}
           </div>
         </div>
 
