@@ -3,60 +3,112 @@ import autoTable from 'jspdf-autotable';
 import { BRANDING, CONTACT } from '@/constants/theme';
 
 /**
- * Preloads and scales down an image to lightweight base64 JPEG to avoid PDF bloat.
+ * Loads an image via fetch + Blob URL + canvas downscaling to create a lightweight,
+ * high-resolution base64 JPEG that NEVER taints the canvas and works across all browsers.
  *
- * @param {string} url - Image path or URL
- * @param {number} maxWidth - Max pixel width
- * @param {number} maxHeight - Max pixel height
- * @returns {Promise<{data: string, format: string}|null>}
+ * @param {string} url - Relative or absolute image URL
+ * @param {number} maxDim - Maximum width/height in pixels
+ * @returns {Promise<string|null>} Data URL string or null
  */
-function preloadImage(url, maxWidth = 180, maxHeight = 180) {
-  return new Promise((resolve) => {
-    if (!url) return resolve(null);
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
+async function loadScaledImageDataUrl(url, maxDim = 160) {
+  if (!url) return null;
 
-    const timeout = setTimeout(() => {
-      resolve(null);
-    }, 3000); // 3s safety timeout per image
+  // Strategy A: Native fetch -> Blob -> local Blob URL -> Canvas (immune to CORS taint)
+  try {
+    const res = await fetch(url);
+    if (res.ok) {
+      const blob = await res.blob();
+      const dataUrl = await new Promise((resolve) => {
+        const blobUrl = URL.createObjectURL(blob);
+        const img = new Image();
+        const timer = setTimeout(() => {
+          URL.revokeObjectURL(blobUrl);
+          // Fallback: Read directly via FileReader
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(typeof reader.result === 'string' ? reader.result : null);
+          reader.onerror = () => resolve(null);
+          reader.readAsDataURL(blob);
+        }, 3000);
+
+        img.onload = () => {
+          clearTimeout(timer);
+          try {
+            const canvas = document.createElement('canvas');
+            let width = img.naturalWidth || maxDim;
+            let height = img.naturalHeight || maxDim;
+
+            if (width > height) {
+              if (width > maxDim) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              }
+            } else {
+              if (height > maxDim) {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, width, height);
+            ctx.drawImage(img, 0, 0, width, height);
+
+            const exportedData = canvas.toDataURL('image/jpeg', 0.82);
+            URL.revokeObjectURL(blobUrl);
+            resolve(exportedData);
+          } catch (e) {
+            URL.revokeObjectURL(blobUrl);
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(typeof reader.result === 'string' ? reader.result : null);
+            reader.onerror = () => resolve(null);
+            reader.readAsDataURL(blob);
+          }
+        };
+
+        img.onerror = () => {
+          clearTimeout(timer);
+          URL.revokeObjectURL(blobUrl);
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(typeof reader.result === 'string' ? reader.result : null);
+          reader.onerror = () => resolve(null);
+          reader.readAsDataURL(blob);
+        };
+
+        img.src = blobUrl;
+      });
+
+      if (dataUrl) return dataUrl;
+    }
+  } catch (err) {
+    // Strategy A failed, proceed to Strategy B
+  }
+
+  // Strategy B: Standard Image element without crossOrigin for direct same-domain loading
+  return new Promise((resolve) => {
+    const img = new Image();
+    const timer = setTimeout(() => resolve(null), 3000);
 
     img.onload = () => {
-      clearTimeout(timeout);
+      clearTimeout(timer);
       try {
         const canvas = document.createElement('canvas');
-        let width = img.naturalWidth || maxWidth;
-        let height = img.naturalHeight || maxHeight;
-
-        if (width > height) {
-          if (width > maxWidth) {
-            height = Math.round((height * maxWidth) / width);
-            width = maxWidth;
-          }
-        } else {
-          if (height > maxHeight) {
-            width = Math.round((width * maxHeight) / height);
-            height = maxHeight;
-          }
-        }
-
-        canvas.width = width;
-        canvas.height = height;
+        canvas.width = Math.min(img.naturalWidth || maxDim, maxDim);
+        canvas.height = Math.min(img.naturalHeight || maxDim, maxDim);
         const ctx = canvas.getContext('2d');
-
-        // Crisp white background for PNG/transparent artwork
         ctx.fillStyle = '#FFFFFF';
-        ctx.fillRect(0, 0, width, height);
-        ctx.drawImage(img, 0, 0, width, height);
-
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
-        resolve({ data: dataUrl, format: 'JPEG', width, height });
-      } catch (err) {
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', 0.82));
+      } catch (e) {
         resolve(null);
       }
     };
 
     img.onerror = () => {
-      clearTimeout(timeout);
+      clearTimeout(timer);
       resolve(null);
     };
 
@@ -78,7 +130,7 @@ export async function generateCatalogPdf(products = [], activeFilters = {}, onPr
 
   // 1. Preload Company Logo
   if (onProgress) onProgress({ percent: 5, status: 'Preparing branding...' });
-  const logoObj = await preloadImage(BRANDING.LOGO_PATH || '/company-logo.png', 180, 180);
+  const logoDataUrl = await loadScaledImageDataUrl(BRANDING.LOGO_PATH || '/company-logo.png', 180);
 
   // 2. Preload Product Images concurrently in batches
   if (onProgress) onProgress({ percent: 15, status: `Loading product photos (0/${total})...`, current: 0, total });
@@ -86,17 +138,17 @@ export async function generateCatalogPdf(products = [], activeFilters = {}, onPr
   const productImages = [];
   let loadedCount = 0;
 
-  // Process in concurrent batches of 10 to ensure speed and low memory pressure
-  const batchSize = 12;
+  // Process in concurrent batches of 10 for rapid loading and smooth progress
+  const batchSize = 10;
   for (let i = 0; i < products.length; i += batchSize) {
     const batch = products.slice(i, i + batchSize);
     const batchPromises = batch.map(async (item) => {
       const safeName = (item.name || '').replace(/[^a-zA-Z0-9]/g, '_');
       const imageSrc = item.image || `/catalog_images/${safeName}.jpg`;
-      const img = await preloadImage(imageSrc, 160, 160);
+      const dataUrl = await loadScaledImageDataUrl(imageSrc, 160);
       loadedCount++;
       if (onProgress) {
-        const percent = Math.min(85, Math.round(15 + (loadedCount / total) * 70));
+        const percent = Math.min(88, Math.round(15 + (loadedCount / total) * 73));
         onProgress({
           percent,
           status: `Processing product images (${loadedCount}/${total})...`,
@@ -104,14 +156,14 @@ export async function generateCatalogPdf(products = [], activeFilters = {}, onPr
           total,
         });
       }
-      return img;
+      return dataUrl;
     });
 
     const batchResults = await Promise.all(batchPromises);
     productImages.push(...batchResults);
   }
 
-  if (onProgress) onProgress({ percent: 88, status: 'Designing PDF document pages...' });
+  if (onProgress) onProgress({ percent: 90, status: 'Designing PDF document pages...' });
 
   // 3. Initialize jsPDF Document (A4 Portrait)
   const doc = new jsPDF({
@@ -140,14 +192,14 @@ export async function generateCatalogPdf(products = [], activeFilters = {}, onPr
   doc.rect(0, 41.5, pageWidth, 1.2, 'F');
 
   // Render Logo Badge in Header
-  if (logoObj && logoObj.data) {
-    // White circular container for the emblem
+  if (logoDataUrl) {
     doc.setFillColor(255, 255, 255);
     doc.roundedRect(12, 6, 28, 28, 4, 4, 'F');
     doc.setDrawColor(245, 158, 11);
     doc.setLineWidth(0.4);
     doc.roundedRect(12, 6, 28, 28, 4, 4, 'S');
-    doc.addImage(logoObj.data, 'JPEG', 14, 8, 24, 24);
+    const logoFormat = logoDataUrl.includes('data:image/png') ? 'PNG' : 'JPEG';
+    doc.addImage(logoDataUrl, logoFormat, 14, 8, 24, 24);
   }
 
   // Company Name
@@ -267,7 +319,7 @@ export async function generateCatalogPdf(products = [], activeFilters = {}, onPr
       cellPadding: 2,
       lineColor: [220, 230, 242],
       lineWidth: 0.15,
-      minCellHeight: 18.5, // Ensures ample space for the 15mm image
+      minCellHeight: 20, // Ample space for the 15mm image
       valign: 'middle',
     },
     headStyles: {
@@ -283,7 +335,7 @@ export async function generateCatalogPdf(products = [], activeFilters = {}, onPr
     },
     columnStyles: {
       0: { halign: 'center', cellWidth: 9, fontStyle: 'bold', textColor: [100, 116, 139] },
-      1: { halign: 'center', cellWidth: 20 },
+      1: { halign: 'center', cellWidth: 24 },
       2: { cellWidth: 'auto', fontStyle: 'bold' },
       3: { halign: 'center', cellWidth: 32, fontStyle: 'bold', textColor: [26, 76, 152] },
       4: { halign: 'center', cellWidth: 24, fontStyle: 'bold', textColor: [8, 20, 38] },
@@ -294,22 +346,24 @@ export async function generateCatalogPdf(products = [], activeFilters = {}, onPr
       // Draw product packshot thumbnail in column 1 (IMAGE)
       if (data.section === 'body' && data.column.index === 1) {
         const rowIndex = data.row.index;
-        const imgObj = productImages[rowIndex];
+        const imgDataUrl = productImages[rowIndex];
         const cell = data.cell;
-        const imgSize = 14.5; // mm
+        const imgSize = 15.5; // mm
         const x = cell.x + (cell.width - imgSize) / 2;
         const y = cell.y + (cell.height - imgSize) / 2;
 
-        if (imgObj && imgObj.data) {
+        if (imgDataUrl) {
           try {
             // White card background behind the packshot
             doc.setFillColor(255, 255, 255);
             doc.setDrawColor(218, 228, 240);
             doc.setLineWidth(0.2);
             doc.roundedRect(x - 0.6, y - 0.6, imgSize + 1.2, imgSize + 1.2, 1, 1, 'FD');
-            doc.addImage(imgObj.data, imgObj.format || 'JPEG', x, y, imgSize, imgSize);
+
+            const format = imgDataUrl.includes('data:image/png') ? 'PNG' : 'JPEG';
+            doc.addImage(imgDataUrl, format, x, y, imgSize, imgSize);
           } catch (e) {
-            // fallback gracefully
+            console.error('Failed to embed product image in cell:', e);
           }
         } else {
           // Monogram placeholder if photo unavailable

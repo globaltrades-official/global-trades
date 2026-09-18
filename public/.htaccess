@@ -20,4 +20,7 @@
   ExpiresByType image/svg+xml "access plus 1 year"
   ExpiresByType font/woff2 "access plus 1 year"
   ExpiresByType application/pdf "access plus 1 day"
+# Enable CORS for Assets & Images
+<IfModule mod_headers.c>
+  Header set Access-Control-Allow-Origin "*"
 </IfModule>
