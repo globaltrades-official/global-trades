@@ -30,6 +30,7 @@ export default function ProductsPage({
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [selectedBrand, setSelectedBrand] = useState(initialBrand);
   const [sortBy, setSortBy] = useState('default');
+  const [pdfTemplate, setPdfTemplate] = useState('table'); // 'table' | 'cards' | 'minimalist'
   const [isGeneratingFullPdf, setIsGeneratingFullPdf] = useState(false);
   const [fullPdfProgress, setFullPdfProgress] = useState({ percent: 0, status: '' });
   const [isGeneratingFilteredPdf, setIsGeneratingFilteredPdf] = useState(false);
@@ -51,7 +52,8 @@ export default function ProductsPage({
         },
         (progress) => {
           setFullPdfProgress(progress);
-        }
+        },
+        pdfTemplate
       );
     } catch (err) {
       console.error('Failed to generate full catalog PDF:', err);
@@ -78,7 +80,8 @@ export default function ProductsPage({
         },
         (progress) => {
           setFilteredPdfProgress(progress);
-        }
+        },
+        pdfTemplate
       );
     } catch (err) {
       console.error('Failed to generate filtered catalog PDF:', err);
@@ -216,7 +219,50 @@ export default function ProductsPage({
             </p>
 
             {/* Download Products as PDF CTA with Interactive Progress Feedback */}
-            <div className="mt-6 flex flex-col gap-3">
+            <div className="mt-6 flex flex-col gap-3.5">
+              {/* PDF Template Selector to try all 3 templates */}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-white/80 font-bold uppercase tracking-wider text-[11px]">Choose PDF Template:</span>
+                <div className="inline-flex rounded-xl bg-black/30 p-1 border border-white/20 backdrop-blur-md">
+                  <button
+                    type="button"
+                    onClick={() => setPdfTemplate('table')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      pdfTemplate === 'table'
+                        ? 'bg-amber-400 text-[#081426] shadow-md font-black'
+                        : 'text-white/80 hover:text-white hover:bg-white/10'
+                    }`}
+                    title="Executive Catalog Table with product packshots, brand tags, and packaging"
+                  >
+                    📋 Executive Table
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPdfTemplate('cards')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      pdfTemplate === 'cards'
+                        ? 'bg-amber-400 text-[#081426] shadow-md font-black'
+                        : 'text-white/80 hover:text-white hover:bg-white/10'
+                    }`}
+                    title="2-Column Lookbook Product Cards with large photos and badge chips"
+                  >
+                    🎴 Lookbook Cards
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPdfTemplate('minimalist')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      pdfTemplate === 'minimalist'
+                        ? 'bg-amber-400 text-[#081426] shadow-md font-black'
+                        : 'text-white/80 hover:text-white hover:bg-white/10'
+                    }`}
+                    title="Minimalist clean layout with horizontal rows and high whitespace"
+                  >
+                    📄 Minimalist Luxury
+                  </button>
+                </div>
+              </div>
+
               <div className="flex flex-wrap items-center gap-3">
                 {/* Full Wholesale Products PDF without Filtering (Red marked button in user UI) */}
                 <button
