@@ -4,17 +4,13 @@ import {
   X,
   Package,
   RotateCcw,
-  ArrowLeft,
-  ArrowRight,
-  Info,
   HelpCircle,
   Download,
   Loader2,
-  FileText,
   Image as ImageIcon,
 } from 'lucide-react';
 import WhatsAppIcon from '@/components/WhatsAppIcon';
-import { CATALOG_CATEGORIES, CATALOG_PRODUCTS, CATALOG_BRANDS } from '@/data/catalogProducts';
+import { CATALOG_CATEGORIES, CATALOG_PRODUCTS } from '@/data/catalogProducts';
 import { BRANDING, CONTACT } from '@/constants/theme';
 import { generateCatalogPdf } from '@/utils/generateCatalogPdf';
 
@@ -34,7 +30,6 @@ export default function ProductsPage({
   const [fullPdfProgress, setFullPdfProgress] = useState({ percent: 0, status: '' });
   const [isGeneratingFilteredPdf, setIsGeneratingFilteredPdf] = useState(false);
   const [filteredPdfProgress, setFilteredPdfProgress] = useState({ percent: 0, status: '' });
-  const [isDownloadingFullCatalog, setIsDownloadingFullCatalog] = useState(false);
 
   // Downloads ALL products without filtering (Red marked top button)
   const handleDownloadFullProductsPdf = async () => {
@@ -88,11 +83,6 @@ export default function ProductsPage({
         setFilteredPdfProgress({ percent: 0, status: '' });
       }, 700);
     }
-  };
-
-  // Also generates the new template for the commercial catalog button
-  const handleDownloadFullCatalog = async () => {
-    return handleDownloadFullProductsPdf();
   };
 
   // Sync category or brand when passed from parent / external link
@@ -224,25 +214,6 @@ export default function ProductsPage({
                     {isGeneratingFullPdf
                       ? `Generating (${fullPdfProgress.percent || 0}%)...`
                       : 'Download Full Catalog (PDF)'}
-                  </span>
-                </button>
-
-                {/* Complete Commercial Catalog PDF (52 MB) */}
-                <button
-                  onClick={handleDownloadFullCatalog}
-                  disabled={isDownloadingFullCatalog}
-                  className="inline-flex items-center gap-2 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 text-white border border-white/25 px-4 py-3 text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer disabled:opacity-60"
-                  title="Download complete original commercial catalog PDF (52 MB)"
-                >
-                  {isDownloadingFullCatalog ? (
-                    <Loader2 size={16} className="animate-spin text-amber-300" />
-                  ) : (
-                    <FileText size={16} className="text-white/80" />
-                  )}
-                  <span>
-                    {isDownloadingFullCatalog
-                      ? 'Downloading 52 MB PDF...'
-                      : 'Full Commercial Catalog (52 MB)'}
                   </span>
                 </button>
               </div>

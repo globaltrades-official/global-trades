@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   GlassWater,
   CakeSlice,
@@ -9,7 +9,6 @@ import {
   Boxes,
   ArrowRight,
   Sparkles,
-  ChevronDown,
 } from 'lucide-react';
 
 const CATEGORIES = [

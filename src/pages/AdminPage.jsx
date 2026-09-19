@@ -12,11 +12,8 @@ import {
   ArrowLeft,
   Upload,
   Image as ImageIcon,
-  RotateCcw,
   Package,
   SlidersHorizontal,
-  ExternalLink,
-  Star,
   Cloud,
   CloudOff,
   Database,
@@ -26,7 +23,7 @@ import {
   Check,
   Sparkles,
 } from 'lucide-react';
-import { CATALOG_CATEGORIES, CATALOG_BRANDS } from '@/data/catalogProducts';
+import { CATALOG_CATEGORIES } from '@/data/catalogProducts';
 import { BRANDING, CONTACT } from '@/constants/theme';
 import {
   saveSupabaseConfig,

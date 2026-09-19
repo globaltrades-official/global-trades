@@ -4,14 +4,9 @@ import {
   Mail,
   MapPin,
   Clock,
-  ArrowLeft,
   Building2,
   CheckCircle2,
-  ExternalLink,
   Send,
-  Store,
-  Truck,
-  ShieldCheck,
 } from 'lucide-react';
 import WhatsAppIcon from '@/components/WhatsAppIcon';
 import StoreDeliveryInfoCard from '@/components/StoreDeliveryInfoCard';

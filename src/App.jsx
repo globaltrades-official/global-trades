@@ -11,7 +11,6 @@ import AlternatingText from './sections/AlternatingText/AlternatingText';
 import BigText from './sections/BigText/BigText';
 import { useProductCatalog } from './hooks/useProductCatalog';
 import { useBrandCatalog } from './hooks/useBrandCatalog';
-import { useMediaQuery } from './hooks/useMediaQuery';
 
 // Resilient code-splitting with auto-recovery on deployment chunk hash mismatches
 function lazyRetry(factory) {
@@ -95,7 +94,6 @@ export default function App() {
     return 'home';
   }, []);
 
-  const isDesktop = useMediaQuery('(min-width: 768px)', true);
   const [currentPage, setCurrentPage] = useState(getPageFromLocation);
   const [activeSection, setActiveSection] = useState('hero');
   const [productFilter, setProductFilter] = useState({ category: 'All', brand: 'All' });
@@ -344,7 +342,7 @@ export default function App() {
           <Hero onNavigate={navigateTo} />
 
           {/* 2. Featured Brands (Logos Only, Derived from Admin Portal) */}
-          <BrandsShowcase brands={brands} products={products} onNavigate={navigateTo} />
+          <BrandsShowcase brands={brands} onNavigate={navigateTo} />
 
           {/* 3. Shop by Category (Linked directly to catalogue filters) */}
           <ShopByCategory onNavigate={navigateTo} />
@@ -353,7 +351,7 @@ export default function App() {
           <Carousel products={products} onNavigate={navigateTo} />
 
           {/* 5. Why Global Trades (6 Simple Cards) */}
-          <WhyChooseUs onNavigate={navigateTo} />
+          <WhyChooseUs />
 
           {/* 6. Social Proof & Reviews ("Trusted by Kozhikode Food Businesses") */}
           <AlternatingText />

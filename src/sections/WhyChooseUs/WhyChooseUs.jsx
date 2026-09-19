@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   ShieldCheck,
   TrendingDown,
@@ -7,7 +7,6 @@ import {
   Store,
   Truck,
   CheckCircle2,
-  ChevronDown,
 } from 'lucide-react';
 
 const REASONS = [
@@ -49,7 +48,7 @@ const REASONS = [
   },
 ];
 
-export default function WhyChooseUs({ onNavigate }) {
+export default function WhyChooseUs() {
   return (
     <section
       id="why-global-trades"

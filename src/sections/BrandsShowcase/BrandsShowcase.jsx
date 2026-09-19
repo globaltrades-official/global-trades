@@ -1,10 +1,8 @@
 import React, { useMemo, useState } from 'react';
-import { ChevronDown } from 'lucide-react';
 import { DEFAULT_TRUSTED_BRANDS } from '@/hooks/useBrandCatalog';
 
 export default function BrandsShowcase({
   brands = DEFAULT_TRUSTED_BRANDS,
-  products = [],
   onNavigate,
 }) {
   const [failedImages, setFailedImages] = useState({});

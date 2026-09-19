@@ -1,25 +1,17 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import {
-  Sparkles,
-  ArrowLeft,
   ArrowRight,
   Search,
   X,
   Phone,
   CheckCircle2,
-  ExternalLink,
   Store,
   Truck,
-  FileText,
-  BadgeCheck,
-  Star,
-  Package,
 } from 'lucide-react';
 import WhatsAppIcon from '@/components/WhatsAppIcon';
 import StoreDeliveryInfoCard from '@/components/StoreDeliveryInfoCard';
 import { BRANDING, CONTACT } from '@/constants/theme';
 import { DEFAULT_TRUSTED_BRANDS } from '@/hooks/useBrandCatalog';
-import { CATALOG_PRODUCTS } from '@/data/catalogProducts';
 
 export default function BrandsPage({
   brands = DEFAULT_TRUSTED_BRANDS,
