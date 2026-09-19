@@ -1,5 +1,4 @@
 import * as jspdfLib from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import { BRANDING, CONTACT } from '@/constants/theme';
 
 const jsPDF = jspdfLib.jsPDF || jspdfLib.default?.jsPDF || jspdfLib.default;
@@ -119,7 +118,7 @@ async function loadScaledImageDataUrl(url, maxDim = 200) {
 
 /**
  * Draws the Master Executive Header on Page 1 (Height: ~43mm).
- * Crisp, clean, authoritative white & royal blue aesthetic.
+ * Crisp, clean, authoritative white & royal blue aesthetic with integrated contact card.
  */
 function drawPageOneMasterHeader(doc, logoDataUrl, activeFilters, total, dateStr, pageWidth) {
   // Top Triple Accent Bar
@@ -245,7 +244,7 @@ function drawSubsequentPageHeader(doc, logoDataUrl, pageWidth) {
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(6.5);
   doc.setTextColor(0, 163, 224);
-  doc.text('WHOLESALE PRODUCT CATALOGUE · KOZHIKODE', textStartX, 10.5);
+  doc.text('WHOLESALE PRODUCT LOOKBOOK · KOZHIKODE', textStartX, 10.5);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7.2);
@@ -285,16 +284,77 @@ function drawPageFooter(doc, currentPage, totalPages, pageWidth, pageHeight) {
   doc.text(pageStr, pageWidth - 12, pageHeight - 6.5, { align: 'right' });
 }
 
-// ----------------------------------------------------------------------------
-// TEMPLATE: LOOKBOOK 2-COLUMN PRODUCT CARDS (Default)
-// ----------------------------------------------------------------------------
-function generateCardsTemplate(doc, products, productImages, activeFilters, dateStr, logoDataUrl, pageWidth, pageHeight) {
+/**
+ * Generates and downloads the Lookbook Cards PDF catalog based on customer filters.
+ *
+ * @param {Array} products - Filtered or full products list
+ * @param {Object} activeFilters - Current filter criteria { category, brand, search }
+ * @param {Function} onProgress - Progress callback ({ percent, status, current, total })
+ */
+export async function generateCatalogPdf(products = [], activeFilters = {}, onProgress = null) {
+  if (!products || products.length === 0) return;
+
+  const total = products.length;
+  const { category = 'All', brand = 'All', search = '' } = activeFilters;
+
+  // 1. Preload Company Logo
+  if (onProgress) onProgress({ percent: 5, status: 'Preparing branding & high-res assets...' });
+  const logoDataUrl = await loadScaledImageDataUrl(BRANDING.LOGO_PATH || '/company-logo.png', 200);
+
+  // 2. Preload Product Images concurrently in batches
+  if (onProgress) onProgress({ percent: 12, status: `Loading product photos (0/${total})...`, current: 0, total });
+
+  const productImages = [];
+  let loadedCount = 0;
+  const batchSize = 10;
+
+  for (let i = 0; i < products.length; i += batchSize) {
+    const batch = products.slice(i, i + batchSize);
+    const batchPromises = batch.map(async (item) => {
+      const safeName = (item.name || '').replace(/[^a-zA-Z0-9]/g, '_');
+      const imageSrc = item.image || `/catalog_images/${safeName}.jpg`;
+      const dataUrl = await loadScaledImageDataUrl(imageSrc, 200);
+      loadedCount++;
+      if (onProgress) {
+        const percent = Math.min(85, Math.round(12 + (loadedCount / total) * 73));
+        onProgress({
+          percent,
+          status: `Processing product images (${loadedCount}/${total})...`,
+          current: loadedCount,
+          total,
+        });
+      }
+      return dataUrl;
+    });
+
+    const batchResults = await Promise.all(batchPromises);
+    productImages.push(...batchResults);
+  }
+
+  if (onProgress) onProgress({ percent: 88, status: 'Composing Lookbook catalog pages...' });
+
+  // 3. Initialize jsPDF Document (A4 Portrait)
+  const doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4',
+  });
+
+  const pageWidth = doc.internal.pageSize.getWidth(); // 210mm
+  const pageHeight = doc.internal.pageSize.getHeight(); // 297mm
+
+  const dateStr = new Date().toLocaleDateString('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+
+  // Render 2-Column Lookbook Cards
   const marginX = 12;
   const colGap = 6;
   const cardW = (pageWidth - 2 * marginX - colGap) / 2; // 90mm
   const cardH = 44; // 44mm
   const rowGap = 3.5;
-  const total = products.length;
 
   let currentProductIndex = 0;
   let pageNumber = 1;
@@ -439,285 +499,6 @@ function generateCardsTemplate(doc, products, productImages, activeFilters, date
     doc.setPage(p);
     drawPageFooter(doc, p, totalPages, pageWidth, pageHeight);
   }
-}
-
-// ----------------------------------------------------------------------------
-// TEMPLATE: EXECUTIVE CATALOG TABLE
-// ----------------------------------------------------------------------------
-function generateTableTemplate(doc, products, productImages, activeFilters, dateStr, logoDataUrl, pageWidth, pageHeight) {
-  const tableData = products.map((item, idx) => [
-    idx + 1,
-    '', // Photo placeholder
-    `${item.name}\nCategory: ${item.category || 'Wholesale Goods'}`,
-    item.brand || 'Global Trades',
-    item.size || 'Standard',
-    'Inquire on WhatsApp',
-  ]);
-
-  autoTable(doc, {
-    startY: 46, // Starts right below the 43mm master header
-    head: [['NO.', 'IMAGE', 'PRODUCT DESCRIPTION & CATEGORY', 'BRAND', 'PACKAGING', 'STOCK / ENQUIRY']],
-    body: tableData,
-    theme: 'grid',
-    styles: {
-      font: 'helvetica',
-      fontSize: 8.2,
-      textColor: [8, 20, 38],
-      cellPadding: 2.2,
-      lineColor: [218, 228, 240],
-      lineWidth: 0.15,
-      minCellHeight: 21,
-      valign: 'middle',
-    },
-    headStyles: {
-      fillColor: [15, 38, 74],
-      textColor: [255, 255, 255],
-      fontStyle: 'bold',
-      fontSize: 7.8,
-      halign: 'left',
-      minCellHeight: 8,
-    },
-    alternateRowStyles: {
-      fillColor: [248, 250, 254],
-    },
-    columnStyles: {
-      0: { halign: 'center', cellWidth: 9, fontStyle: 'bold', textColor: [100, 116, 139] },
-      1: { halign: 'center', cellWidth: 26 },
-      2: { cellWidth: 'auto', fontStyle: 'bold' },
-      3: { halign: 'center', cellWidth: 30, fontStyle: 'bold', textColor: [26, 76, 152] },
-      4: { halign: 'center', cellWidth: 22, fontStyle: 'bold', textColor: [30, 41, 59] },
-      5: { halign: 'center', cellWidth: 26, fontStyle: 'bold', textColor: [5, 150, 105] },
-    },
-    margin: { left: 12, right: 12, bottom: 15, top: 17 },
-
-    didDrawCell: (data) => {
-      if (data.section === 'body' && data.column.index === 1) {
-        const rowIndex = data.row.index;
-        const imgDataUrl = productImages[rowIndex];
-        const cell = data.cell;
-        const imgSize = 17;
-        const x = cell.x + (cell.width - imgSize) / 2;
-        const y = cell.y + (cell.height - imgSize) / 2;
-
-        if (imgDataUrl) {
-          try {
-            doc.setFillColor(255, 255, 255);
-            doc.setDrawColor(218, 228, 240);
-            doc.setLineWidth(0.2);
-            doc.roundedRect(x - 0.5, y - 0.5, imgSize + 1, imgSize + 1, 1, 1, 'FD');
-
-            const format = imgDataUrl.includes('data:image/png') ? 'PNG' : 'JPEG';
-            doc.addImage(imgDataUrl, format, x, y, imgSize, imgSize);
-          } catch (e) {}
-        } else {
-          doc.setFillColor(240, 245, 252);
-          doc.roundedRect(x, y, imgSize, imgSize, 1.5, 1.5, 'FD');
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(8);
-          doc.setTextColor(26, 76, 152);
-          doc.text('GT', x + imgSize / 2, y + imgSize / 2 + 2, { align: 'center' });
-        }
-      }
-    },
-
-    didDrawPage: (data) => {
-      const pageCount = doc.internal.getNumberOfPages();
-      const currentPage = data.pageNumber;
-
-      if (currentPage === 1) {
-        drawPageOneMasterHeader(doc, logoDataUrl, activeFilters, products.length, dateStr, pageWidth);
-      } else {
-        drawSubsequentPageHeader(doc, logoDataUrl, pageWidth);
-      }
-
-      drawPageFooter(doc, currentPage, pageCount, pageWidth, pageHeight);
-    },
-  });
-}
-
-// ----------------------------------------------------------------------------
-// TEMPLATE: MINIMALIST LUXURY
-// ----------------------------------------------------------------------------
-function generateMinimalistTemplate(doc, products, productImages, activeFilters, dateStr, logoDataUrl, pageWidth, pageHeight) {
-  const marginX = 12;
-  const rowW = pageWidth - 2 * marginX;
-  const rowH = 21;
-  const total = products.length;
-
-  let currentProductIndex = 0;
-  let pageNumber = 1;
-
-  while (currentProductIndex < total) {
-    const isPageOne = pageNumber === 1;
-    let startY = 17;
-    let maxRows = 11;
-
-    if (isPageOne) {
-      drawPageOneMasterHeader(doc, logoDataUrl, activeFilters, total, dateStr, pageWidth);
-      startY = 46;
-      maxRows = 10;
-    } else {
-      drawSubsequentPageHeader(doc, logoDataUrl, pageWidth);
-      startY = 17;
-      maxRows = 11;
-    }
-
-    const pageItems = products.slice(currentProductIndex, currentProductIndex + maxRows);
-
-    pageItems.forEach((item, idx) => {
-      const rowY = startY + idx * rowH;
-      const globalIndex = currentProductIndex + idx;
-      const imgDataUrl = productImages[globalIndex];
-
-      if (idx % 2 === 1) {
-        doc.setFillColor(249, 251, 254);
-        doc.rect(marginX, rowY, rowW, rowH, 'F');
-      }
-
-      doc.setDrawColor(230, 238, 248);
-      doc.setLineWidth(0.2);
-      doc.line(marginX, rowY + rowH, marginX + rowW, rowY + rowH);
-
-      const photoSize = 17;
-      const photoX = marginX + 3;
-      const photoY = rowY + (rowH - photoSize) / 2;
-
-      doc.setFillColor(255, 255, 255);
-      doc.setDrawColor(218, 228, 240);
-      doc.setLineWidth(0.2);
-      doc.roundedRect(photoX, photoY, photoSize, photoSize, 1.5, 1.5, 'FD');
-
-      if (imgDataUrl) {
-        try {
-          const format = imgDataUrl.includes('data:image/png') ? 'PNG' : 'JPEG';
-          doc.addImage(imgDataUrl, format, photoX + 0.5, photoY + 0.5, photoSize - 1, photoSize - 1);
-        } catch (e) {}
-      } else {
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(7.5);
-        doc.setTextColor(26, 76, 152);
-        doc.text('GT', photoX + photoSize / 2, photoY + photoSize / 2 + 2, { align: 'center' });
-      }
-
-      const detailsX = photoX + photoSize + 5;
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(8.5);
-      doc.setTextColor(8, 20, 38);
-      doc.text(item.name || '', detailsX, rowY + 8);
-
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(6.8);
-      doc.setTextColor(100, 116, 139);
-      doc.text(`Brand: ${item.brand || 'Global Trades'}   ·   Category: ${item.category || 'General'}`, detailsX, rowY + 14.5);
-
-      const packStr = item.size ? `Size: ${item.size}` : 'Standard';
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(6.8);
-      const packW = doc.getTextWidth(packStr) + 6;
-      const packX = marginX + rowW - packW - 4;
-
-      doc.setFillColor(241, 245, 249);
-      doc.setDrawColor(226, 232, 240);
-      doc.roundedRect(packX, rowY + 4.5, packW, 4.8, 1.2, 1.2, 'FD');
-      doc.setTextColor(30, 41, 59);
-      doc.text(packStr, packX + 3, rowY + 8);
-
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(6.5);
-      doc.setTextColor(5, 150, 105);
-      doc.text('WhatsApp: 0495 2765320', packX + packW, rowY + 15.5, { align: 'right' });
-    });
-
-    currentProductIndex += pageItems.length;
-
-    if (currentProductIndex < total) {
-      doc.addPage();
-      pageNumber++;
-    }
-  }
-
-  const totalPages = doc.internal.getNumberOfPages();
-  for (let p = 1; p <= totalPages; p++) {
-    doc.setPage(p);
-    drawPageFooter(doc, p, totalPages, pageWidth, pageHeight);
-  }
-}
-
-/**
- * Generates and downloads a custom branded PDF catalog based on customer filters and selected template.
- *
- * @param {Array} products - Filtered or full products list
- * @param {Object} activeFilters - Current filter criteria { category, brand, search }
- * @param {Function} onProgress - Progress callback ({ percent, status, current, total })
- * @param {string} template - Template style: 'cards' (default lookbook) | 'table' | 'minimalist'
- */
-export async function generateCatalogPdf(products = [], activeFilters = {}, onProgress = null, template = 'cards') {
-  if (!products || products.length === 0) return;
-
-  const total = products.length;
-  const { category = 'All', brand = 'All', search = '' } = activeFilters;
-
-  // 1. Preload Company Logo
-  if (onProgress) onProgress({ percent: 5, status: 'Preparing branding & high-res assets...' });
-  const logoDataUrl = await loadScaledImageDataUrl(BRANDING.LOGO_PATH || '/company-logo.png', 200);
-
-  // 2. Preload Product Images concurrently in batches
-  if (onProgress) onProgress({ percent: 12, status: `Loading product photos (0/${total})...`, current: 0, total });
-
-  const productImages = [];
-  let loadedCount = 0;
-  const batchSize = 10;
-
-  for (let i = 0; i < products.length; i += batchSize) {
-    const batch = products.slice(i, i + batchSize);
-    const batchPromises = batch.map(async (item) => {
-      const safeName = (item.name || '').replace(/[^a-zA-Z0-9]/g, '_');
-      const imageSrc = item.image || `/catalog_images/${safeName}.jpg`;
-      const dataUrl = await loadScaledImageDataUrl(imageSrc, 200);
-      loadedCount++;
-      if (onProgress) {
-        const percent = Math.min(85, Math.round(12 + (loadedCount / total) * 73));
-        onProgress({
-          percent,
-          status: `Processing product images (${loadedCount}/${total})...`,
-          current: loadedCount,
-          total,
-        });
-      }
-      return dataUrl;
-    });
-
-    const batchResults = await Promise.all(batchPromises);
-    productImages.push(...batchResults);
-  }
-
-  if (onProgress) onProgress({ percent: 88, status: `Composing ${template.toUpperCase()} catalog pages...` });
-
-  // 3. Initialize jsPDF Document (A4 Portrait)
-  const doc = new jsPDF({
-    orientation: 'portrait',
-    unit: 'mm',
-    format: 'a4',
-  });
-
-  const pageWidth = doc.internal.pageSize.getWidth(); // 210mm
-  const pageHeight = doc.internal.pageSize.getHeight(); // 297mm
-
-  const dateStr = new Date().toLocaleDateString('en-IN', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
-
-  // Render according to selected template
-  if (template === 'table') {
-    generateTableTemplate(doc, products, productImages, activeFilters, dateStr, logoDataUrl, pageWidth, pageHeight);
-  } else if (template === 'minimalist') {
-    generateMinimalistTemplate(doc, products, productImages, activeFilters, dateStr, logoDataUrl, pageWidth, pageHeight);
-  } else {
-    // Default: 'cards' (Modern 2-Column Lookbook Cards)
-    generateCardsTemplate(doc, products, productImages, activeFilters, dateStr, logoDataUrl, pageWidth, pageHeight);
-  }
 
   // 4. Generate Meaningful Filename
   let fileSlug = 'Wholesale_Catalog';
@@ -729,8 +510,7 @@ export async function generateCatalogPdf(products = [], activeFilters = {}, onPr
     fileSlug = `Catalog_${search.trim().replace(/[^a-zA-Z0-9]/g, '_')}`;
   }
 
-  const templateSlug = template !== 'cards' ? `_${template}` : '';
-  const fileName = `Global_Trades_${fileSlug}${templateSlug}.pdf`;
+  const fileName = `Global_Trades_${fileSlug}.pdf`;
 
   if (onProgress) onProgress({ percent: 100, status: 'Downloading PDF catalog...' });
 
