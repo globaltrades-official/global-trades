@@ -209,7 +209,7 @@ function drawPageOneMasterHeader(doc, logoDataUrl, activeFilters, total, dateStr
   doc.text(`SELECTION: ${filterSummaryText}`, 15, 38);
 
   doc.setTextColor(8, 20, 38);
-  doc.text(`${total} Products Listed   |   Issued: ${dateStr}`, pageWidth - 15, 38, { align: 'right' });
+  doc.text(`Issued: ${dateStr}`, pageWidth - 15, 38, { align: 'right' });
 
   // Crisp Divider Line
   doc.setDrawColor(220, 230, 242);

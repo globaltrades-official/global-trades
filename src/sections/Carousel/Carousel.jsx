@@ -383,8 +383,6 @@ export default function Carousel({ products = [], onNavigate }) {
                   <span>{activeProduct.brand}</span>
                   <span className="opacity-50">·</span>
                   <span className="text-amber-300 font-bold">Authorized Distribution</span>
-                  <span className="opacity-50">·</span>
-                  <span className="text-white/90 font-mono text-[11px]">{safeIndex + 1}/{featuredProducts.length}</span>
                 </div>
 
                 <h3 className="text-2xl sm:text-3xl md:text-4xl font-black drop-shadow text-white leading-tight">

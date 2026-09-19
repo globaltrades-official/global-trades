@@ -225,9 +225,6 @@ export default function ProductsPage({
                       ? `Generating (${fullPdfProgress.percent || 0}%)...`
                       : 'Download Full Catalog (PDF)'}
                   </span>
-                  <span className="rounded-md bg-black/15 px-2 py-0.5 text-[10px] font-black uppercase">
-                    {products.length} Items
-                  </span>
                 </button>
 
                 {/* Complete Commercial Catalog PDF (52 MB) */}
@@ -467,9 +464,6 @@ export default function ProductsPage({
             Commercial Wholesale Directory
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-[#081426]/60 font-semibold text-xs">
-              Showing {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'}
-            </span>
             {filteredProducts.length > 0 && (
               <button
                 onClick={handleDownloadFilteredPdf}
@@ -485,7 +479,7 @@ export default function ProductsPage({
                 <span>
                   {isGeneratingFilteredPdf
                     ? `Generating (${filteredPdfProgress.percent || 0}%)...`
-                    : `Export Filtered PDF (${filteredProducts.length})`}
+                    : 'Export Filtered PDF'}
                 </span>
               </button>
             )}
