@@ -15,7 +15,7 @@ const jsPDF = jspdfLib.jsPDF || jspdfLib.default?.jsPDF || jspdfLib.default;
 async function loadScaledImageDataUrl(url, maxDim = 200) {
   if (!url) return null;
 
-  // Strategy A: Native fetch -> Blob -> local Blob URL -> Canvas (immune to CORS taint)
+  // Strategy A: Native fetch -> Blob -> local Blob URL -> Canvas
   try {
     const res = await fetch(url);
     if (res.ok) {
@@ -84,10 +84,10 @@ async function loadScaledImageDataUrl(url, maxDim = 200) {
       if (dataUrl) return dataUrl;
     }
   } catch (err) {
-    // Strategy A failed, proceed to Strategy B
+    // Proceed to Strategy B
   }
 
-  // Strategy B: Standard Image element fallback
+  // Strategy B: Image element fallback
   return new Promise((resolve) => {
     const img = new Image();
     const timer = setTimeout(() => resolve(null), 3000);
@@ -118,171 +118,142 @@ async function loadScaledImageDataUrl(url, maxDim = 200) {
 }
 
 /**
- * Draws the Master Branded Header on Page 1 (Height: 38mm + 2.7mm stripes).
+ * Draws the Master Executive Header on Page 1 (Height: ~43mm).
+ * Crisp, clean, authoritative white & royal blue aesthetic.
  */
-function drawPageOneHeader(doc, logoDataUrl, pageWidth) {
-  // Midnight Navy Background
-  doc.setFillColor(8, 20, 38); // #081426
-  doc.rect(0, 0, pageWidth, 38, 'F');
+function drawPageOneMasterHeader(doc, logoDataUrl, activeFilters, total, dateStr, pageWidth) {
+  // Top Triple Accent Bar
+  doc.setFillColor(8, 20, 38); // Midnight Navy
+  doc.rect(0, 0, pageWidth, 4, 'F');
+  doc.setFillColor(245, 158, 11); // Gold
+  doc.rect(0, 4, pageWidth, 1.2, 'F');
+  doc.setFillColor(0, 163, 224); // Cyan
+  doc.rect(0, 5.2, pageWidth, 0.8, 'F');
 
-  // Dual Accent Stripes: Gold (#F59E0B) & Cyan (#00A3E0)
-  doc.setFillColor(245, 158, 11);
-  doc.rect(0, 38, pageWidth, 1.5, 'F');
-  doc.setFillColor(0, 163, 224);
-  doc.rect(0, 39.5, pageWidth, 1.2, 'F');
-
-  // Left Logo Box (Crisp white badge with gold border)
-  const logoBoxW = 28;
-  const logoBoxH = 28;
-  doc.setFillColor(255, 255, 255);
-  doc.roundedRect(12, 5, logoBoxW, logoBoxH, 3, 3, 'F');
-  doc.setDrawColor(245, 158, 11);
-  doc.setLineWidth(0.4);
-  doc.roundedRect(12, 5, logoBoxW, logoBoxH, 3, 3, 'S');
-
+  // Left: Official Logo
   if (logoDataUrl) {
     const logoFormat = logoDataUrl.includes('data:image/png') ? 'PNG' : 'JPEG';
-    doc.addImage(logoDataUrl, logoFormat, 14, 7, 24, 24);
+    doc.addImage(logoDataUrl, logoFormat, 12, 8, 23, 23);
   }
 
   // Company Name
-  doc.setTextColor(255, 255, 255);
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(18);
-  doc.text(BRANDING.COMPANY_NAME || 'GLOBAL TRADES', 45, 14);
+  doc.setFontSize(20);
+  doc.setTextColor(8, 20, 38); // Deep Midnight Navy
+  doc.text(BRANDING.COMPANY_NAME || 'GLOBAL TRADES', 38, 16.5);
 
-  // Top Right Badge
-  const badgeW = 44;
-  const badgeX = pageWidth - 12 - badgeW;
+  // Wholesale Badge next to name
   doc.setFillColor(245, 158, 11); // Gold
-  doc.roundedRect(badgeX, 7.5, badgeW, 6.2, 1.8, 1.8, 'F');
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(7);
+  doc.roundedRect(106, 11.5, 36, 5.5, 1.5, 1.5, 'F');
   doc.setTextColor(8, 20, 38);
-  doc.text('WHOLESALE DIRECTORY', badgeX + badgeW / 2, 11.8, { align: 'center' });
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(6.8);
+  doc.text('OFFICIAL WHOLESALE', 124, 15.2, { align: 'center' });
 
   // Subtitle
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8);
-  doc.setTextColor(0, 163, 224); // Cyan
-  doc.text('DISTRIBUTORS, DEALERS & C&F AGENTS OF PROCESSED FOODS · KOZHIKODE', 45, 20);
+  doc.setFontSize(7.8);
+  doc.setTextColor(26, 76, 152); // Royal Blue
+  doc.text('DISTRIBUTORS, DEALERS & C&F AGENTS OF PROCESSED FOODS · KOZHIKODE', 38, 22);
 
-  // Contact Details
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(7.5);
-  doc.setTextColor(220, 235, 255);
-  doc.text(
-    `Enquiries Desk: +91 ${CONTACT.ENQUIRY_PHONE || '94479 31507'}   |   WhatsApp Orders: ${CONTACT.WHATSAPP_DISPLAY || '0495 2765320'}`,
-    45,
-    26
-  );
-
-  // Address
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(7);
-  doc.setTextColor(170, 195, 225);
-  doc.text('PT Usha Road, 4th Gate, Vellayil, Kozhikode - 673032 · Kerala, India', 45, 32);
-}
-
-/**
- * Draws the Summary & Filter Criteria Container on Page 1.
- */
-function drawPageOneSummaryCard(doc, activeFilters, total, dateStr, pageWidth, summaryY) {
-  const summaryHeight = 17;
-  const { category = 'All', brand = 'All', search = '' } = activeFilters;
-
-  doc.setFillColor(243, 247, 252);
-  doc.setDrawColor(186, 210, 238);
-  doc.setLineWidth(0.3);
-  doc.roundedRect(12, summaryY, pageWidth - 24, summaryHeight, 2.5, 2.5, 'FD');
-
-  // Title
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(9.2);
-  doc.setTextColor(15, 38, 74);
-  doc.text('Official Commercial Products Directory (Direct Wholesale)', 16, summaryY + 5.5);
-
-  // Active filter criteria
-  const activeLabels = [];
-  if (category && category !== 'All') activeLabels.push(`Category: ${category}`);
-  if (brand && brand !== 'All') activeLabels.push(`Brand: ${brand}`);
-  if (search && search.trim()) activeLabels.push(`Search: "${search.trim()}"`);
-  if (activeLabels.length === 0) activeLabels.push('All Commercial Categories & Brands Included');
-
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(7.2);
-  doc.setTextColor(40, 65, 95);
-  doc.text(`Selection: ${activeLabels.join('   •   ')}`, 16, summaryY + 10.8);
-
-  // Note
-  doc.setFont('helvetica', 'italic');
-  doc.setFontSize(6.8);
-  doc.setTextColor(90, 110, 135);
-  doc.text(
-    'Note: Live wholesale rates & institutional bulk tiers are confirmed daily on WhatsApp: 0495 2765320.',
-    16,
-    summaryY + 15
-  );
-
-  // Total Items Badge on Right
-  const badgeW = 40;
-  const badgeX = pageWidth - 12 - badgeW - 4;
-  doc.setFillColor(245, 158, 11);
-  doc.roundedRect(badgeX, summaryY + 3.5, badgeW, 6.5, 1.8, 1.8, 'F');
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(7.5);
-  doc.setTextColor(8, 20, 38);
-  doc.text(`${total} Products`, badgeX + badgeW / 2, summaryY + 7.8, { align: 'center' });
-
-  // Date
+  // Specialties
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(6.8);
   doc.setTextColor(100, 116, 139);
-  doc.text(`Issued: ${dateStr}`, badgeX + badgeW / 2, summaryY + 14.5, { align: 'center' });
+  doc.text('Processed Foods · Beverages · HORECA & Institutional Food Service Supplies', 38, 27);
+
+  // Right Side: Structured Contact & Orders Card
+  const cardX = 145;
+  const cardY = 7.5;
+  const cardW = 53;
+  const cardH = 24.5;
+
+  doc.setFillColor(244, 248, 252);
+  doc.setDrawColor(208, 223, 239);
+  doc.setLineWidth(0.25);
+  doc.roundedRect(cardX, cardY, cardW, cardH, 2, 2, 'FD');
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(7);
+  doc.setTextColor(8, 20, 38);
+  doc.text(`Enquiries: +91 ${CONTACT.ENQUIRY_PHONE || '94479 31507'}`, cardX + 3.5, cardY + 5);
+
+  doc.setTextColor(5, 150, 105); // Emerald Green
+  doc.text(`WhatsApp: ${CONTACT.WHATSAPP_DISPLAY || '0495 2765320'}`, cardX + 3.5, cardY + 10);
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(6);
+  doc.setTextColor(100, 116, 139);
+  doc.text('PT Usha Rd, Vellayil, Kozhikode - 673032', cardX + 3.5, cardY + 15);
+
+  doc.setFont('helvetica', 'italic');
+  doc.setFontSize(5.5);
+  doc.setTextColor(180, 83, 9);
+  doc.text('Live rates & tier discounts on WhatsApp', cardX + 3.5, cardY + 20);
+
+  // Filter & Selection Ribbon (Y = 33.5 to 40.5mm)
+  const { category = 'All', brand = 'All', search = '' } = activeFilters;
+  const filterParts = [];
+  if (category && category !== 'All') filterParts.push(`Category: ${category}`);
+  if (brand && brand !== 'All') filterParts.push(`Brand: ${brand}`);
+  if (search && search.trim()) filterParts.push(`Search: "${search.trim()}"`);
+  const filterSummaryText = filterParts.length > 0 ? filterParts.join('   •   ') : 'All Commercial Categories & Brands Included';
+
+  doc.setFillColor(248, 250, 253);
+  doc.setDrawColor(226, 234, 244);
+  doc.setLineWidth(0.2);
+  doc.roundedRect(12, 33.5, pageWidth - 24, 7, 1.5, 1.5, 'FD');
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(6.8);
+  doc.setTextColor(26, 76, 152);
+  doc.text(`SELECTION: ${filterSummaryText}`, 15, 38);
+
+  doc.setTextColor(8, 20, 38);
+  doc.text(`${total} Products Listed   |   Issued: ${dateStr}`, pageWidth - 15, 38, { align: 'right' });
+
+  // Crisp Divider Line
+  doc.setDrawColor(220, 230, 242);
+  doc.setLineWidth(0.3);
+  doc.line(12, 42.5, pageWidth - 12, 42.5);
 }
 
 /**
- * Draws the Running Header on Pages 2+ (Height: 15mm + 1mm stripe).
+ * Draws the Running Header on Pages 2+ (Height: 14mm).
  */
 function drawSubsequentPageHeader(doc, logoDataUrl, pageWidth) {
-  // Midnight Navy Banner
+  // Top Bar
   doc.setFillColor(8, 20, 38);
-  doc.rect(0, 0, pageWidth, 15, 'F');
-
-  // Gold Stripe
+  doc.rect(0, 0, pageWidth, 13, 'F');
   doc.setFillColor(245, 158, 11);
-  doc.rect(0, 15, pageWidth, 1, 'F');
+  doc.rect(0, 13, pageWidth, 1, 'F');
 
-  // Mini Logo Badge (if available)
   let textStartX = 12;
   if (logoDataUrl) {
     doc.setFillColor(255, 255, 255);
-    doc.roundedRect(12, 2, 11, 11, 1.5, 1.5, 'F');
+    doc.roundedRect(12, 1.5, 10, 10, 1.5, 1.5, 'F');
     const logoFormat = logoDataUrl.includes('data:image/png') ? 'PNG' : 'JPEG';
-    doc.addImage(logoDataUrl, logoFormat, 12.8, 2.8, 9.4, 9.4);
-    textStartX = 26;
+    doc.addImage(logoDataUrl, logoFormat, 12.8, 2.3, 8.4, 8.4);
+    textStartX = 25;
   }
 
-  // Header Title
   doc.setTextColor(255, 255, 255);
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(9.5);
-  doc.text(BRANDING.COMPANY_NAME || 'GLOBAL TRADES', textStartX, 7.5);
+  doc.setFontSize(9);
+  doc.text(BRANDING.COMPANY_NAME || 'GLOBAL TRADES', textStartX, 6.8);
 
-  // Header Subtitle
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(6.8);
+  doc.setFontSize(6.5);
   doc.setTextColor(0, 163, 224);
-  doc.text('COMMERCIAL WHOLESALE DIRECTORY · KOZHIKODE', textStartX, 12);
+  doc.text('WHOLESALE PRODUCT CATALOGUE · KOZHIKODE', textStartX, 10.5);
 
-  // Right Header Contacts
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(7.5);
+  doc.setFontSize(7.2);
   doc.setTextColor(220, 235, 255);
   doc.text(
     `WhatsApp Orders: ${CONTACT.WHATSAPP_DISPLAY || '0495 2765320'}   |   Call: ${CONTACT.ENQUIRY_PHONE || '94479 31507'}`,
     pageWidth - 12,
-    9,
+    7.8,
     { align: 'right' }
   );
 }
@@ -291,16 +262,13 @@ function drawSubsequentPageHeader(doc, logoDataUrl, pageWidth) {
  * Draws the Running Footer on every page.
  */
 function drawPageFooter(doc, currentPage, totalPages, pageWidth, pageHeight) {
-  // Divider line
   doc.setDrawColor(210, 225, 240);
   doc.setLineWidth(0.3);
   doc.line(12, pageHeight - 11, pageWidth - 12, pageHeight - 11);
 
-  // Gold Dot Accent
   doc.setFillColor(245, 158, 11);
   doc.circle(14, pageHeight - 6.5, 0.8, 'F');
 
-  // Left Disclaimer
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(6.8);
   doc.setTextColor(100, 116, 139);
@@ -310,7 +278,6 @@ function drawPageFooter(doc, currentPage, totalPages, pageWidth, pageHeight) {
     pageHeight - 6.5
   );
 
-  // Right Page Number
   const pageStr = `Page ${currentPage} of ${totalPages}`;
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7.5);
@@ -319,118 +286,14 @@ function drawPageFooter(doc, currentPage, totalPages, pageWidth, pageHeight) {
 }
 
 // ----------------------------------------------------------------------------
-// TEMPLATE 1: EXECUTIVE CATALOG TABLE (Option 1)
-// ----------------------------------------------------------------------------
-function generateTableTemplate(doc, products, productImages, activeFilters, dateStr, logoDataUrl, pageWidth, pageHeight) {
-  const summaryY = 42;
-  const summaryHeight = 17;
-  const tableStartY = summaryY + summaryHeight + 5; // 64mm on page 1
-
-  const tableData = products.map((item, idx) => [
-    idx + 1,
-    '', // Photo placeholder
-    `${item.name}\nCategory: ${item.category || 'Wholesale Goods'}`,
-    item.brand || 'Global Trades',
-    item.size || 'Standard',
-    'Inquire on WhatsApp',
-  ]);
-
-  autoTable(doc, {
-    startY: tableStartY,
-    head: [['NO.', 'IMAGE', 'PRODUCT DESCRIPTION & CATEGORY', 'BRAND', 'PACKAGING', 'STOCK / ENQUIRY']],
-    body: tableData,
-    theme: 'grid',
-    styles: {
-      font: 'helvetica',
-      fontSize: 8.2,
-      textColor: [8, 20, 38],
-      cellPadding: 2.2,
-      lineColor: [218, 228, 240],
-      lineWidth: 0.15,
-      minCellHeight: 22,
-      valign: 'middle',
-    },
-    headStyles: {
-      fillColor: [15, 38, 74], // Deep Navy
-      textColor: [255, 255, 255],
-      fontStyle: 'bold',
-      fontSize: 7.8,
-      halign: 'left',
-      minCellHeight: 8,
-    },
-    alternateRowStyles: {
-      fillColor: [248, 250, 254],
-    },
-    columnStyles: {
-      0: { halign: 'center', cellWidth: 9, fontStyle: 'bold', textColor: [100, 116, 139] },
-      1: { halign: 'center', cellWidth: 26 },
-      2: { cellWidth: 'auto', fontStyle: 'bold' },
-      3: { halign: 'center', cellWidth: 30, fontStyle: 'bold', textColor: [26, 76, 152] },
-      4: { halign: 'center', cellWidth: 22, fontStyle: 'bold', textColor: [30, 41, 59] },
-      5: { halign: 'center', cellWidth: 26, fontStyle: 'bold', textColor: [5, 150, 105] },
-    },
-    margin: { left: 12, right: 12, bottom: 15, top: 19 },
-
-    didDrawCell: (data) => {
-      // Draw product packshot thumbnail in column 1
-      if (data.section === 'body' && data.column.index === 1) {
-        const rowIndex = data.row.index;
-        const imgDataUrl = productImages[rowIndex];
-        const cell = data.cell;
-        const imgSize = 18; // mm
-        const x = cell.x + (cell.width - imgSize) / 2;
-        const y = cell.y + (cell.height - imgSize) / 2;
-
-        if (imgDataUrl) {
-          try {
-            doc.setFillColor(255, 255, 255);
-            doc.setDrawColor(218, 228, 240);
-            doc.setLineWidth(0.2);
-            doc.roundedRect(x - 0.6, y - 0.6, imgSize + 1.2, imgSize + 1.2, 1.2, 1.2, 'FD');
-
-            const format = imgDataUrl.includes('data:image/png') ? 'PNG' : 'JPEG';
-            doc.addImage(imgDataUrl, format, x, y, imgSize, imgSize);
-          } catch (e) {
-            console.error('Failed to embed product image in cell:', e);
-          }
-        } else {
-          doc.setFillColor(240, 245, 252);
-          doc.setDrawColor(218, 228, 240);
-          doc.roundedRect(x, y, imgSize, imgSize, 1.5, 1.5, 'FD');
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(8);
-          doc.setTextColor(26, 76, 152);
-          doc.text('GT', x + imgSize / 2, y + imgSize / 2 + 2, { align: 'center' });
-        }
-      }
-    },
-
-    didDrawPage: (data) => {
-      const pageCount = doc.internal.getNumberOfPages();
-      const currentPage = data.pageNumber;
-
-      if (currentPage === 1) {
-        drawPageOneHeader(doc, logoDataUrl, pageWidth);
-        drawPageOneSummaryCard(doc, activeFilters, products.length, dateStr, pageWidth, summaryY);
-      } else {
-        drawSubsequentPageHeader(doc, logoDataUrl, pageWidth);
-      }
-
-      drawPageFooter(doc, currentPage, pageCount, pageWidth, pageHeight);
-    },
-  });
-}
-
-// ----------------------------------------------------------------------------
-// TEMPLATE 2: LOOKBOOK 2-COLUMN PRODUCT CARDS (Option 2)
+// TEMPLATE: LOOKBOOK 2-COLUMN PRODUCT CARDS (Default)
 // ----------------------------------------------------------------------------
 function generateCardsTemplate(doc, products, productImages, activeFilters, dateStr, logoDataUrl, pageWidth, pageHeight) {
   const marginX = 12;
   const colGap = 6;
   const cardW = (pageWidth - 2 * marginX - colGap) / 2; // 90mm
-  const cardH = 48; // 48mm
-  const rowGap = 4;
-  const summaryY = 42;
+  const cardH = 44; // 44mm
+  const rowGap = 3.5;
   const total = products.length;
 
   let currentProductIndex = 0;
@@ -438,18 +301,17 @@ function generateCardsTemplate(doc, products, productImages, activeFilters, date
 
   while (currentProductIndex < total) {
     const isPageOne = pageNumber === 1;
-    let startY = 19;
+    let startY = 17;
     let maxRows = 5;
 
     if (isPageOne) {
-      drawPageOneHeader(doc, logoDataUrl, pageWidth);
-      drawPageOneSummaryCard(doc, activeFilters, total, dateStr, pageWidth, summaryY);
-      startY = 63;
-      maxRows = 4; // 4 rows = 8 cards on page 1
+      drawPageOneMasterHeader(doc, logoDataUrl, activeFilters, total, dateStr, pageWidth);
+      startY = 46;
+      maxRows = 5; // 5 rows = 10 cards on page 1
     } else {
       drawSubsequentPageHeader(doc, logoDataUrl, pageWidth);
-      startY = 19;
-      maxRows = 5; // 5 rows = 10 cards on subsequent pages
+      startY = 17;
+      maxRows = 5; // 5 rows = 10 cards on page 2+
     }
 
     const maxItemsOnThisPage = maxRows * 2;
@@ -469,22 +331,22 @@ function generateCardsTemplate(doc, products, productImages, activeFilters, date
       doc.setLineWidth(0.3);
       doc.roundedRect(cardX, cardY, cardW, cardH, 2.5, 2.5, 'FD');
 
-      // Top Accent Stripe
+      // Top Accent Stripe (Royal Blue)
       doc.setFillColor(26, 76, 152);
       doc.roundedRect(cardX, cardY, cardW, 1.2, 1, 1, 'F');
 
-      // Photo Box
-      const photoBoxW = 34;
-      const photoBoxH = 41;
-      const photoBoxX = cardX + 3.5;
-      const photoBoxY = cardY + 3.5;
+      // Left Photo Box
+      const photoBoxW = 32;
+      const photoBoxH = 37.5;
+      const photoBoxX = cardX + 3;
+      const photoBoxY = cardY + 3.2;
 
       doc.setFillColor(248, 250, 253);
       doc.setDrawColor(226, 234, 244);
       doc.setLineWidth(0.2);
       doc.roundedRect(photoBoxX, photoBoxY, photoBoxW, photoBoxH, 2, 2, 'FD');
 
-      const imgSize = 30;
+      const imgSize = 28;
       const imgX = photoBoxX + (photoBoxW - imgSize) / 2;
       const imgY = photoBoxY + (photoBoxH - imgSize) / 2;
 
@@ -497,70 +359,70 @@ function generateCardsTemplate(doc, products, productImages, activeFilters, date
         }
       } else {
         doc.setFillColor(235, 242, 250);
-        doc.circle(photoBoxX + photoBoxW / 2, photoBoxY + photoBoxH / 2 - 2, 10, 'F');
+        doc.circle(photoBoxX + photoBoxW / 2, photoBoxY + photoBoxH / 2 - 2, 9, 'F');
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(9.5);
+        doc.setFontSize(9);
         doc.setTextColor(26, 76, 152);
-        doc.text('GT', photoBoxX + photoBoxW / 2, photoBoxY + photoBoxH / 2 + 1.5, { align: 'center' });
+        doc.text('GT', photoBoxX + photoBoxW / 2, photoBoxY + photoBoxH / 2 + 1.2, { align: 'center' });
       }
 
-      // Text Details
-      const textX = cardX + 41;
-      const maxTextW = cardW - 44;
+      // Text Details Area
+      const textX = cardX + 38;
+      const maxTextW = cardW - 41;
 
       // Brand Badge Pill
       const brandName = item.brand || 'Global Trades';
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(7);
+      doc.setFontSize(6.8);
       const brandTextW = Math.min(doc.getTextWidth(brandName) + 4.5, maxTextW);
       doc.setFillColor(235, 243, 252);
-      doc.roundedRect(textX, cardY + 4.2, brandTextW, 4.2, 1, 1, 'F');
+      doc.roundedRect(textX, cardY + 3.8, brandTextW, 3.8, 1, 1, 'F');
       doc.setTextColor(26, 76, 152);
-      doc.text(brandName, textX + 2.2, cardY + 7.4);
+      doc.text(brandName, textX + 2.2, cardY + 6.6);
 
       // Product Name
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(8.2);
+      doc.setFontSize(7.8);
       doc.setTextColor(8, 20, 38);
       const nameLines = doc.splitTextToSize(item.name || '', maxTextW);
       if (nameLines.length === 1) {
-        doc.text(nameLines[0], textX, cardY + 13.5);
+        doc.text(nameLines[0], textX, cardY + 12);
       } else {
-        doc.text(nameLines[0], textX, cardY + 12.2);
-        doc.text(nameLines[1], textX, cardY + 15.8);
+        doc.text(nameLines[0], textX, cardY + 11);
+        doc.text(nameLines[1], textX, cardY + 14.3);
       }
 
       // Packaging Badge
       const sizeStr = item.size ? `Pack: ${item.size}` : 'Standard Pack';
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(6.8);
-      const sizeTextW = Math.min(doc.getTextWidth(sizeStr) + 5, maxTextW);
-      const sizeY = nameLines.length > 1 ? cardY + 20.2 : cardY + 18.2;
+      doc.setFontSize(6.5);
+      const sizeTextW = Math.min(doc.getTextWidth(sizeStr) + 4.5, maxTextW);
+      const sizeY = nameLines.length > 1 ? cardY + 18.5 : cardY + 16.5;
       doc.setFillColor(241, 245, 249);
       doc.setDrawColor(226, 232, 240);
       doc.setLineWidth(0.2);
-      doc.roundedRect(textX, sizeY, sizeTextW, 4.2, 1, 1, 'FD');
+      doc.roundedRect(textX, sizeY, sizeTextW, 3.8, 1, 1, 'FD');
       doc.setTextColor(30, 41, 59);
-      doc.text(sizeStr, textX + 2.5, sizeY + 3.1);
+      doc.text(sizeStr, textX + 2.2, sizeY + 2.8);
 
       // Category
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(6.6);
+      doc.setFontSize(6.4);
       doc.setTextColor(100, 116, 139);
-      doc.text(`Cat: ${item.category || 'General Wholesale'}`, textX, sizeY + 8);
+      doc.text(`Cat: ${item.category || 'General'}`, textX, sizeY + 7.5);
 
       // Wholesale Stock Tag
-      const badgeY = cardY + 39.5;
+      const badgeY = cardY + 36.5;
       doc.setFillColor(236, 253, 245);
       doc.setDrawColor(167, 243, 208);
       doc.setLineWidth(0.2);
-      doc.roundedRect(textX, badgeY, maxTextW, 4.5, 1, 1, 'FD');
+      doc.roundedRect(textX, badgeY, maxTextW, 4.2, 1, 1, 'FD');
       doc.setFillColor(16, 185, 129);
-      doc.circle(textX + 2.8, badgeY + 2.25, 0.8, 'F');
+      doc.circle(textX + 2.6, badgeY + 2.1, 0.7, 'F');
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(6.2);
+      doc.setFontSize(6);
       doc.setTextColor(6, 95, 70);
-      doc.text('Wholesale Stock · Inquire Now', textX + 5, badgeY + 3.2);
+      doc.text('Wholesale Stock · Inquire Now', textX + 4.8, badgeY + 3);
     });
 
     currentProductIndex += pageItems.length;
@@ -580,13 +442,106 @@ function generateCardsTemplate(doc, products, productImages, activeFilters, date
 }
 
 // ----------------------------------------------------------------------------
-// TEMPLATE 3: MINIMALIST LUXURY (Option 3)
+// TEMPLATE: EXECUTIVE CATALOG TABLE
+// ----------------------------------------------------------------------------
+function generateTableTemplate(doc, products, productImages, activeFilters, dateStr, logoDataUrl, pageWidth, pageHeight) {
+  const tableData = products.map((item, idx) => [
+    idx + 1,
+    '', // Photo placeholder
+    `${item.name}\nCategory: ${item.category || 'Wholesale Goods'}`,
+    item.brand || 'Global Trades',
+    item.size || 'Standard',
+    'Inquire on WhatsApp',
+  ]);
+
+  autoTable(doc, {
+    startY: 46, // Starts right below the 43mm master header
+    head: [['NO.', 'IMAGE', 'PRODUCT DESCRIPTION & CATEGORY', 'BRAND', 'PACKAGING', 'STOCK / ENQUIRY']],
+    body: tableData,
+    theme: 'grid',
+    styles: {
+      font: 'helvetica',
+      fontSize: 8.2,
+      textColor: [8, 20, 38],
+      cellPadding: 2.2,
+      lineColor: [218, 228, 240],
+      lineWidth: 0.15,
+      minCellHeight: 21,
+      valign: 'middle',
+    },
+    headStyles: {
+      fillColor: [15, 38, 74],
+      textColor: [255, 255, 255],
+      fontStyle: 'bold',
+      fontSize: 7.8,
+      halign: 'left',
+      minCellHeight: 8,
+    },
+    alternateRowStyles: {
+      fillColor: [248, 250, 254],
+    },
+    columnStyles: {
+      0: { halign: 'center', cellWidth: 9, fontStyle: 'bold', textColor: [100, 116, 139] },
+      1: { halign: 'center', cellWidth: 26 },
+      2: { cellWidth: 'auto', fontStyle: 'bold' },
+      3: { halign: 'center', cellWidth: 30, fontStyle: 'bold', textColor: [26, 76, 152] },
+      4: { halign: 'center', cellWidth: 22, fontStyle: 'bold', textColor: [30, 41, 59] },
+      5: { halign: 'center', cellWidth: 26, fontStyle: 'bold', textColor: [5, 150, 105] },
+    },
+    margin: { left: 12, right: 12, bottom: 15, top: 17 },
+
+    didDrawCell: (data) => {
+      if (data.section === 'body' && data.column.index === 1) {
+        const rowIndex = data.row.index;
+        const imgDataUrl = productImages[rowIndex];
+        const cell = data.cell;
+        const imgSize = 17;
+        const x = cell.x + (cell.width - imgSize) / 2;
+        const y = cell.y + (cell.height - imgSize) / 2;
+
+        if (imgDataUrl) {
+          try {
+            doc.setFillColor(255, 255, 255);
+            doc.setDrawColor(218, 228, 240);
+            doc.setLineWidth(0.2);
+            doc.roundedRect(x - 0.5, y - 0.5, imgSize + 1, imgSize + 1, 1, 1, 'FD');
+
+            const format = imgDataUrl.includes('data:image/png') ? 'PNG' : 'JPEG';
+            doc.addImage(imgDataUrl, format, x, y, imgSize, imgSize);
+          } catch (e) {}
+        } else {
+          doc.setFillColor(240, 245, 252);
+          doc.roundedRect(x, y, imgSize, imgSize, 1.5, 1.5, 'FD');
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(8);
+          doc.setTextColor(26, 76, 152);
+          doc.text('GT', x + imgSize / 2, y + imgSize / 2 + 2, { align: 'center' });
+        }
+      }
+    },
+
+    didDrawPage: (data) => {
+      const pageCount = doc.internal.getNumberOfPages();
+      const currentPage = data.pageNumber;
+
+      if (currentPage === 1) {
+        drawPageOneMasterHeader(doc, logoDataUrl, activeFilters, products.length, dateStr, pageWidth);
+      } else {
+        drawSubsequentPageHeader(doc, logoDataUrl, pageWidth);
+      }
+
+      drawPageFooter(doc, currentPage, pageCount, pageWidth, pageHeight);
+    },
+  });
+}
+
+// ----------------------------------------------------------------------------
+// TEMPLATE: MINIMALIST LUXURY
 // ----------------------------------------------------------------------------
 function generateMinimalistTemplate(doc, products, productImages, activeFilters, dateStr, logoDataUrl, pageWidth, pageHeight) {
   const marginX = 12;
   const rowW = pageWidth - 2 * marginX;
-  const rowH = 22; // 22mm
-  const summaryY = 42;
+  const rowH = 21;
   const total = products.length;
 
   let currentProductIndex = 0;
@@ -594,18 +549,17 @@ function generateMinimalistTemplate(doc, products, productImages, activeFilters,
 
   while (currentProductIndex < total) {
     const isPageOne = pageNumber === 1;
-    let startY = 19;
+    let startY = 17;
     let maxRows = 11;
 
     if (isPageOne) {
-      drawPageOneHeader(doc, logoDataUrl, pageWidth);
-      drawPageOneSummaryCard(doc, activeFilters, total, dateStr, pageWidth, summaryY);
-      startY = 63;
-      maxRows = 9; // 9 rows on page 1
+      drawPageOneMasterHeader(doc, logoDataUrl, activeFilters, total, dateStr, pageWidth);
+      startY = 46;
+      maxRows = 10;
     } else {
       drawSubsequentPageHeader(doc, logoDataUrl, pageWidth);
-      startY = 19;
-      maxRows = 11; // 11 rows on page 2+
+      startY = 17;
+      maxRows = 11;
     }
 
     const pageItems = products.slice(currentProductIndex, currentProductIndex + maxRows);
@@ -615,19 +569,16 @@ function generateMinimalistTemplate(doc, products, productImages, activeFilters,
       const globalIndex = currentProductIndex + idx;
       const imgDataUrl = productImages[globalIndex];
 
-      // Row background
       if (idx % 2 === 1) {
         doc.setFillColor(249, 251, 254);
         doc.rect(marginX, rowY, rowW, rowH, 'F');
       }
 
-      // Subtle bottom divider
       doc.setDrawColor(230, 238, 248);
       doc.setLineWidth(0.2);
       doc.line(marginX, rowY + rowH, marginX + rowW, rowY + rowH);
 
-      // Photo frame (Left)
-      const photoSize = 18;
+      const photoSize = 17;
       const photoX = marginX + 3;
       const photoY = rowY + (rowH - photoSize) / 2;
 
@@ -648,37 +599,33 @@ function generateMinimalistTemplate(doc, products, productImages, activeFilters,
         doc.text('GT', photoX + photoSize / 2, photoY + photoSize / 2 + 2, { align: 'center' });
       }
 
-      // Product Details (Middle)
       const detailsX = photoX + photoSize + 5;
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(8.5);
       doc.setTextColor(8, 20, 38);
-      doc.text(item.name || '', detailsX, rowY + 8.5);
+      doc.text(item.name || '', detailsX, rowY + 8);
 
-      // Category & Brand subtitle
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(7);
+      doc.setFontSize(6.8);
       doc.setTextColor(100, 116, 139);
-      doc.text(`Brand: ${item.brand || 'Global Trades'}   ·   Category: ${item.category || 'General'}`, detailsX, rowY + 15);
+      doc.text(`Brand: ${item.brand || 'Global Trades'}   ·   Category: ${item.category || 'General'}`, detailsX, rowY + 14.5);
 
-      // Packaging Chip (Right)
       const packStr = item.size ? `Size: ${item.size}` : 'Standard';
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(7);
+      doc.setFontSize(6.8);
       const packW = doc.getTextWidth(packStr) + 6;
       const packX = marginX + rowW - packW - 4;
 
       doc.setFillColor(241, 245, 249);
       doc.setDrawColor(226, 232, 240);
-      doc.roundedRect(packX, rowY + 5, packW, 5, 1.2, 1.2, 'FD');
+      doc.roundedRect(packX, rowY + 4.5, packW, 4.8, 1.2, 1.2, 'FD');
       doc.setTextColor(30, 41, 59);
-      doc.text(packStr, packX + 3, rowY + 8.5);
+      doc.text(packStr, packX + 3, rowY + 8);
 
-      // WhatsApp Order indicator
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(6.5);
       doc.setTextColor(5, 150, 105);
-      doc.text('WhatsApp: 0495 2765320', packX + packW, rowY + 16, { align: 'right' });
+      doc.text('WhatsApp: 0495 2765320', packX + packW, rowY + 15.5, { align: 'right' });
     });
 
     currentProductIndex += pageItems.length;
@@ -689,7 +636,6 @@ function generateMinimalistTemplate(doc, products, productImages, activeFilters,
     }
   }
 
-  // Stamp Footers
   const totalPages = doc.internal.getNumberOfPages();
   for (let p = 1; p <= totalPages; p++) {
     doc.setPage(p);
@@ -703,9 +649,9 @@ function generateMinimalistTemplate(doc, products, productImages, activeFilters,
  * @param {Array} products - Filtered or full products list
  * @param {Object} activeFilters - Current filter criteria { category, brand, search }
  * @param {Function} onProgress - Progress callback ({ percent, status, current, total })
- * @param {string} template - Template style: 'table' (default) | 'cards' | 'minimalist'
+ * @param {string} template - Template style: 'cards' (default lookbook) | 'table' | 'minimalist'
  */
-export async function generateCatalogPdf(products = [], activeFilters = {}, onProgress = null, template = 'table') {
+export async function generateCatalogPdf(products = [], activeFilters = {}, onProgress = null, template = 'cards') {
   if (!products || products.length === 0) return;
 
   const total = products.length;
@@ -764,13 +710,13 @@ export async function generateCatalogPdf(products = [], activeFilters = {}, onPr
   });
 
   // Render according to selected template
-  if (template === 'cards') {
-    generateCardsTemplate(doc, products, productImages, activeFilters, dateStr, logoDataUrl, pageWidth, pageHeight);
+  if (template === 'table') {
+    generateTableTemplate(doc, products, productImages, activeFilters, dateStr, logoDataUrl, pageWidth, pageHeight);
   } else if (template === 'minimalist') {
     generateMinimalistTemplate(doc, products, productImages, activeFilters, dateStr, logoDataUrl, pageWidth, pageHeight);
   } else {
-    // Default: 'table' (Executive Catalog Table)
-    generateTableTemplate(doc, products, productImages, activeFilters, dateStr, logoDataUrl, pageWidth, pageHeight);
+    // Default: 'cards' (Modern 2-Column Lookbook Cards)
+    generateCardsTemplate(doc, products, productImages, activeFilters, dateStr, logoDataUrl, pageWidth, pageHeight);
   }
 
   // 4. Generate Meaningful Filename
@@ -783,7 +729,7 @@ export async function generateCatalogPdf(products = [], activeFilters = {}, onPr
     fileSlug = `Catalog_${search.trim().replace(/[^a-zA-Z0-9]/g, '_')}`;
   }
 
-  const templateSlug = template !== 'table' ? `_${template}` : '';
+  const templateSlug = template !== 'cards' ? `_${template}` : '';
   const fileName = `Global_Trades_${fileSlug}${templateSlug}.pdf`;
 
   if (onProgress) onProgress({ percent: 100, status: 'Downloading PDF catalog...' });

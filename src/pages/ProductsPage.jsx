@@ -30,7 +30,7 @@ export default function ProductsPage({
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [selectedBrand, setSelectedBrand] = useState(initialBrand);
   const [sortBy, setSortBy] = useState('default');
-  const [pdfTemplate, setPdfTemplate] = useState('table'); // 'table' | 'cards' | 'minimalist'
+  const [pdfTemplate, setPdfTemplate] = useState('cards'); // Default: 'cards' (Lookbook) | 'table' | 'minimalist'
   const [isGeneratingFullPdf, setIsGeneratingFullPdf] = useState(false);
   const [fullPdfProgress, setFullPdfProgress] = useState({ percent: 0, status: '' });
   const [isGeneratingFilteredPdf, setIsGeneratingFilteredPdf] = useState(false);
@@ -93,19 +93,9 @@ export default function ProductsPage({
     }
   };
 
-  const handleDownloadFullCatalog = () => {
-    setIsDownloadingFullCatalog(true);
-    const link = document.createElement('a');
-    link.href = '/Global_Trades_Full_Catalog.pdf';
-    link.download = 'Global_Trades_Full_Catalog.pdf';
-    link.target = '_blank';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    setTimeout(() => {
-      setIsDownloadingFullCatalog(false);
-    }, 3500);
+  // Also generates the new template for the commercial catalog button
+  const handleDownloadFullCatalog = async () => {
+    return handleDownloadFullProductsPdf();
   };
 
   // Sync category or brand when passed from parent / external link
