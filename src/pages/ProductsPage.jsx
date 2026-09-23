@@ -8,6 +8,9 @@ import {
   Download,
   Loader2,
   Image as ImageIcon,
+  ArrowLeft,
+  ArrowRight,
+  Info,
 } from 'lucide-react';
 import WhatsAppIcon from '@/components/WhatsAppIcon';
 import { CATALOG_CATEGORIES, CATALOG_PRODUCTS } from '@/data/catalogProducts';

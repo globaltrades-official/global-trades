@@ -22,6 +22,9 @@ import {
   Copy,
   Check,
   Sparkles,
+  RotateCcw,
+  Star,
+  ExternalLink,
 } from 'lucide-react';
 import { CATALOG_CATEGORIES } from '@/data/catalogProducts';
 import { BRANDING, CONTACT } from '@/constants/theme';

@@ -7,11 +7,18 @@ import {
   CheckCircle2,
   Store,
   Truck,
+  ArrowLeft,
+  Package,
+  Sparkles,
+  BadgeCheck,
+  FileText,
+  Star,
 } from 'lucide-react';
 import WhatsAppIcon from '@/components/WhatsAppIcon';
 import StoreDeliveryInfoCard from '@/components/StoreDeliveryInfoCard';
 import { BRANDING, CONTACT } from '@/constants/theme';
 import { DEFAULT_TRUSTED_BRANDS } from '@/hooks/useBrandCatalog';
+import { CATALOG_PRODUCTS } from '@/data/catalogProducts';
 
 export default function BrandsPage({
   brands = DEFAULT_TRUSTED_BRANDS,

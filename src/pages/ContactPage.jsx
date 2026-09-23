@@ -7,6 +7,11 @@ import {
   Building2,
   CheckCircle2,
   Send,
+  ArrowLeft,
+  Store,
+  Truck,
+  ExternalLink,
+  ShieldCheck,
 } from 'lucide-react';
 import WhatsAppIcon from '@/components/WhatsAppIcon';
 import StoreDeliveryInfoCard from '@/components/StoreDeliveryInfoCard';
