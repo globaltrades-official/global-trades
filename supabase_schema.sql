@@ -30,14 +30,26 @@ ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 
 -- 4. Create Security Policies
 -- Policy: Allow public read access (for mobile visitors & web clients)
+-- Supabase Security Advisor approves SELECT with USING (true) for public catalogs.
 DROP POLICY IF EXISTS "Allow public read access" ON public.products;
 CREATE POLICY "Allow public read access" ON public.products
-  FOR SELECT USING (true);
+  FOR SELECT
+  TO public
+  USING (true);
 
--- Policy: Allow write/update access
+-- Security Hardening:
+-- Drop insecure open write policy that triggers "RLS Policy Always True" in Supabase Security Advisor.
+-- Direct connections via pgAdmin 4 (using the 'postgres' superuser) and Supabase Dashboard
+-- Table Editor ('service_role') automatically bypass Row Level Security with full write access.
 DROP POLICY IF EXISTS "Allow write access" ON public.products;
-CREATE POLICY "Allow write access" ON public.products
-  FOR ALL USING (true) WITH CHECK (true);
+
+-- (Optional) If you enable Supabase Auth for web admin dashboard users, allow authenticated writes:
+-- DROP POLICY IF EXISTS "Allow authenticated write access" ON public.products;
+-- CREATE POLICY "Allow authenticated write access" ON public.products
+--   FOR ALL
+--   TO authenticated
+--   USING (auth.role() = 'authenticated')
+--   WITH CHECK (auth.role() = 'authenticated');
 
 -- 5. Enable Real-Time Replication
 -- This broadcasts row updates to mobile phones & PC browsers within milliseconds

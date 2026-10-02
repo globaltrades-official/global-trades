@@ -278,12 +278,12 @@ CREATE INDEX IF NOT EXISTS idx_products_category ON public.products (category);
 -- 3. Row Level Security (RLS)
 ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 
--- 4. Policies (Public Read + Full Edit)
+-- 4. Policies (Public Read + Secure Admin Access)
 DROP POLICY IF EXISTS "Allow public read access" ON public.products;
 CREATE POLICY "Allow public read access" ON public.products FOR SELECT USING (true);
 
+-- Drop insecure open write policy (pgAdmin 4 'postgres' & Supabase 'service_role' bypass RLS automatically)
 DROP POLICY IF EXISTS "Allow write access" ON public.products;
-CREATE POLICY "Allow write access" ON public.products FOR ALL USING (true) WITH CHECK (true);
 
 -- 5. Real-Time Replication (Syncs with mobile phones)
 DO $$
